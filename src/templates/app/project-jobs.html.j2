@@ -1,0 +1,173 @@
+{% extends 'app/layout.html.j2' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/project.css')|autoversion }}">
+<script type=text/javascript>
+trackingIds = [
+    {% for job in processing_jobs %}'{{ job.tracking_id }}',{% endfor %}
+    {% for job in queued_jobs %}'{{ job.tracking_id }}',{% endfor %}
+];
+findings_severity = {
+{% for domain in project.domains if domain.domain_id %}
+    {{ domain.domain_id }}: {{ domain.findings_severity }},
+{% endfor %}
+};
+</script>
+{% include 'app/project-banner.html.j2' %}
+<div class="project-container">
+    <div class="container-tabs">
+        <a href="/app/project/{{ project.project_id }}">Domains <span class="counter">{{ domains_count }}</span></a>
+        <a href="/app/project/{{ project.project_id }}/jobs" class="active">Jobs <span class="counter">{{ jobs_count }}</span></a>
+        <a href="/app/project/{{ project.project_id }}/reports">Reports <span class="counter">{{ reports_count }}</span></a>
+    </div>
+
+    <section class="fields" id="jobs-list"{% if not error_jobs %} style="display: none;"{% endif %}>
+        <h2>Job Errors</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="jobs-list">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Last Message</th>
+                            <th>Created</th>
+                            <th>Started</th>
+                            <th>Updated</th>
+                            <th colspan="2">Completed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for job in error_jobs %}{% set queue_data = job.queue_data | from_json %}
+                        <tr data-jobrun-id="{{ job.job_run_id }}">
+                            <td><span class="icofont-globe"></span> {{ queue_data.target }}</td>
+                            <td>{{ queue_data.service_type_category }}</td>
+                            <td>{{ queue_data.scan_type }}</td>
+                            <td>{{ job.worker_message }}</td>
+                            <td><time datetime="{{ job.created_at }}"></time></td>
+                            <td>{% if job.started_at %}<time datetime="{{ job.started_at }}"></time>{% endif %}</td>
+                            <td>{% if job.updated_at %}<time datetime="{{ job.updated_at }}"></time>{% endif %}</td>
+                            <td>{% if job.completed_at %}<time datetime="{{ job.completed_at }}"></time>{% endif %}</td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <br>
+    <section class="fields" id="jobs-list"{% if not processing_jobs %} style="display: none;"{% endif %}>
+        <h2>Jobs In Progress</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="jobs-list">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Created</th>
+                            <th>Started</th>
+                            <th colspan="2">Updated</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for job in processing_jobs %}{% set queue_data = job.queue_data | from_json %}
+                        <tr data-jobrun-id="{{ job.job_run_id }}">
+                            <td><span class="icofont-globe"></span> {{ queue_data.target }}</td>
+                            <td>{{ queue_data.service_type_category }}</td>
+                            <td>{{ queue_data.scan_type }}</td>
+                            <td><time datetime="{{ job.created_at }}"></time></td>
+                            <td>{% if job.started_at %}<time datetime="{{ job.started_at }}"></time>{% endif %}</td>
+                            <td>{% if job.updated_at %}<time datetime="{{ job.updated_at }}"></time>{% endif %}</td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <br>
+    <section class="fields" id="jobs-list"{% if not queued_jobs %} style="display: none;"{% endif %}>
+        <h2>Queue</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="jobs-list">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th colspan="2">Created</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for job in queued_jobs %}{% set queue_data = job.queue_data | from_json %}
+                        <tr data-jobrun-id="{{ job.job_run_id }}">
+                            <td><span class="icofont-globe"></span> {{ queue_data.target }}</td>
+                            <td>{{ queue_data.service_type_category }}</td>
+                            <td>{{ queue_data.scan_type }}</td>
+                            <td><time datetime="{{ job.created_at }}"></time></td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    <br>
+    <section class="fields" id="jobs-list"{% if not complete_jobs %} style="display: none;"{% endif %}>
+        <h2>Complete Jobs</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="jobs-list">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Result</th>
+                            <th>Created</th>
+                            <th>Started</th>
+                            <th>Updated</th>
+                            <th colspan="2">Completed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for job in complete_jobs %}{% set queue_data = job.queue_data | from_json %}
+                        <tr data-jobrun-id="{{ job.job_run_id }}">
+                            <td><span class="icofont-globe"></span> {{ queue_data.target }}</td>
+                            <td>{{ queue_data.service_type_category }}</td>
+                            <td>{{ queue_data.scan_type }}</td>
+                            <td>{{ queue_data.report_summary if queue_data.report_summary }}</td>
+                            <td><time datetime="{{ job.created_at }}"></time></td>
+                            <td>{% if job.started_at %}<time datetime="{{ job.started_at }}"></time>{% endif %}</td>
+                            <td>{% if job.updated_at %}<time datetime="{{ job.updated_at }}"></time>{% endif %}</td>
+                            <td>{% if job.completed_at %}<time datetime="{{ job.completed_at }}"></time>{% endif %}</td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+</div>
+<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/app/project.js')|autoversion }}"></script>
+{% endblock %}

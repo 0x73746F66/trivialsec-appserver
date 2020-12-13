@@ -1,0 +1,55 @@
+{% extends 'backend/layout.html.j2' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/keyvalues.css')|autoversion }}">
+    <form class="add_keyvalue_form" action="/backend/keyvalues" method="POST">
+        <input type="hidden" name="id" />
+        <input type="hidden" name="hidden" />
+        <div class="add_keyvalue_values">
+            <input autocomplete="off" type="text" name="type" placeholder="Enter your type" required />
+            <input autocomplete="off" type="text" name="key" placeholder="Enter your key" required />
+            <input autocomplete="off" type="date" name="active_date" placeholder="Enter the active date" />
+        </div>
+        <textarea name="value" placeholder="Enter your value" required></textarea>
+        <button id="add_keyvalue" type="submit">Add</button>
+    </form>
+    <div class="table-inner">
+        <table id="kv-list" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <th><input type="checkbox" id="table_keyvalues"/></th>
+                <th>Key</th>
+                <th>Type</th>
+                <th>Active Date</th>
+                <th>Created</th>
+                <th class="actions">
+                    <i class="icofont-close-squared"></i>
+                </th>
+            </tr>
+            {% for kv in keyvalues %}
+            <tr class="highlight open-modal{% if kv.hidden %} hidden{% endif %}" data-modal-id="{{ kv.key_value_id }}" data-kv-id="{{ kv.key_value_id }}">
+                <td>
+                    <input type="checkbox" name="table_kv" value="{{ kv.key_value_id }}"/>
+                    <input type="hidden" name="hidden" value="{{ kv.hidden }}"/>
+                    <textarea style="display: none" name="value">{{ kv.value }}</textarea>
+                </td>
+                <td class="type-cell" title="{{ kv.type }}">{{ kv.type }}</td>
+                <td class="key-cell" title="{{ kv.key }}">{{ kv.key }}</td>
+                <td class="active_date-cell" title="{{ kv.active_date }}">
+                    <time datetime="{{ kv.active_date }}" title="{{ kv.active_date }}"></time>
+                </td>
+                <td class="created_at-cell" title="{{ kv.created_at }}">
+                    <time datetime="{{ kv.created_at }}" title="{{ kv.created_at }}"></time>
+                </td>
+                <td class="actions">
+                    <i class="icofont-close" data-kv-id="{{ kv.key_value_id }}" data-action="deleted" title="Hide Content"></i>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% include 'backend/pagination.html.j2' %}
+    </div>
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/keyvalues.js')|autoversion }}"></script>
+{% endblock %}

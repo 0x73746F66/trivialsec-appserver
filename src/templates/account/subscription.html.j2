@@ -1,0 +1,25 @@
+{% extends 'account/layout.html.j2' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/subscription.css')|autoversion }}">
+
+    <section class="fields">
+        <h2>Update Billing Email</h2>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="billing_email">Billing Email</label>
+            </div>
+            <div class="input-column column">
+                <input id="billing_email" type="email" name="billing_email" placeholder="Enter your billing email here" value="{{ account.account.billing_email }}">
+            </div>
+            <div class="label-column column">
+                <label for="billing_password">Current Password</label>
+            </div>
+            <div class="input-column column">
+                <input id="billing_password" type="password" name="password" placeholder="Enter your current password here">
+                <button id="billing-email-button" type="button">Update</button>
+            </div>
+        </div>
+    </section>
+
+<script type=text/javascript src="{{url_for('static', filename='js/account/subscription.js')|autoversion }}"></script>
+{% endblock %}

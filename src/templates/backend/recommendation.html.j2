@@ -1,0 +1,119 @@
+{% extends 'backend/layout.html.j2' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/recommendation.css')|autoversion }}">
+
+{% include 'backend/datalists.html.j2' %}
+<form method="post" action="/backend/recommendation">
+    <input type="hidden" name="action" value="review_details"/>
+    <input type="hidden" name="finding_detail_id" value="{{ recommendation.finding_detail_id }}"/>
+    <div class="recommendation-header">
+        <i class="icofont-ui-close close"></i>
+        <h2>{{ recommendation.title }}</h2>
+    </div>
+    <div class="recommendation-body">
+        <div class="edit-title">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="title{{ recommendation.finding_detail_id }}">Title</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="title{{ recommendation.finding_detail_id }}" name="title" type="text" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.title }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation-title">
+            Description
+        </div>
+        <textarea required id="description{{ recommendation.finding_detail_id }}" name="description" data-review-id="{{ recommendation.finding_detail_id }}">{{ recommendation.description }}</textarea>
+        <div class="recommendation-title">
+            Recommendation
+        </div>
+        <textarea required id="recommendation{{ recommendation.finding_detail_id }}" name="recommendation" data-review-id="{{ recommendation.finding_detail_id }}">{{ recommendation.recommendation }}</textarea>
+
+        <div class="edit-recommendation_url">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="recommendation_url{{ recommendation.finding_detail_id }}">Recommendation URL</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="recommendation_url{{ recommendation.finding_detail_id }}" name="recommendation_url" type="url" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.recommendation_url }}">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="recommendation-sidebar">
+        <div class="edit-criticality">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="criticality{{ recommendation.finding_detail_id }}">Criticality</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="criticality{{ recommendation.finding_detail_id }}" name="criticality" type="number" min="0" max="100" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.criticality }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-confidence">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="confidence{{ recommendation.finding_detail_id }}">Confidence</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="confidence{{ recommendation.finding_detail_id }}" name="confidence" type="number" min="0" max="100" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.confidence }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-severity_product">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="severity_product{{ recommendation.finding_detail_id }}">Severity Product</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="severity_product{{ recommendation.finding_detail_id }}" name="severity_product" type="number" min="0" max="100" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.severity_product }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-type_namespace">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="type_namespace{{ recommendation.finding_detail_id }}">Type Namespace</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="type_namespace{{ recommendation.finding_detail_id }}" name="type_namespace" type="text" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.type_namespace }}" list="namespaces">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-type_category">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="type_category{{ recommendation.finding_detail_id }}">Type Category</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="type_category{{ recommendation.finding_detail_id }}" name="type_category" type="text" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.type_category }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-type_classifier">
+            <div class="recommendation-group">
+                <div class="recommendation-label">
+                    <label class="recommendation-title" for="type_classifier{{ recommendation.finding_detail_id }}">Type Classifier</label>
+                </div>
+                <div class="recommendation-input">
+                    <input autocomplete="off" id="type_classifier{{ recommendation.finding_detail_id }}" name="type_classifier" type="text" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.type_classifier }}">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="actions">
+        <button name="configure" value="{{ recommendation.finding_detail_id }}" type="submit"><i class="icofont-submit"></i> Save</button>
+    </div>
+</form>
+<script type=text/javascript src="{{url_for('static', filename='js/backend/recommendation.js')|autoversion }}"></script>
+{% endblock %}

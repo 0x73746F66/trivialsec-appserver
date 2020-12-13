@@ -1,0 +1,40 @@
+{% extends 'backend/layout.html.j2' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/recommendations.css')|autoversion }}">
+
+{% include 'backend/datalists.html.j2' %}
+<div class="table-inner">
+    <table id="review-list" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+            <th><input type="checkbox" id="table_reviews"/></th>
+            <th>Title</th>
+            <th>Created</th>
+            <th class="actions">
+                <i class="icofont-close-squared"></i>
+            </th>
+        </tr>
+        {% for detail in finding_details %}
+        <tr class="highlight open-modal" data-modal-id="{{ detail.finding_detail_id }}" data-detail-id="{{ detail.finding_detail_id }}">
+            <td>
+                <input type="checkbox" name="table_detail" value="{{ detail.finding_detail_id }}"/>
+            </td>
+            <td class="title-cell">
+                {{ detail.title }}
+            </td>
+            <td class="created_at-cell" title="{{ detail.created_at }}">
+                <time datetime="{{ detail.created_at }}" title="{{ detail.created_at }}"></time>
+            </td>
+            <td class="actions">
+                <i class="icofont-close" data-detail-id="{{ detail.finding_detail_id }}" data-action="deleted" title="Delete"></i>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% include 'backend/pagination.html.j2' %}
+</div>
+
+<script type=text/javascript src="{{url_for('static', filename='js/backend/recommendations.js')|autoversion }}"></script>
+{% endblock %}

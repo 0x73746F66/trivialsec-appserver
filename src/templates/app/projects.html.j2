@@ -1,0 +1,41 @@
+{% extends 'app/layout.html.j2' %} 
+{% block body %}
+{% include 'app/datalists.html.j2' %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/projects.css')|autoversion }}">
+
+<div class="projects-container">
+    {% if not roles.is_readonly_member %}
+    <div class="create_project_form">
+        <input type="hidden" id="project-tracking-id">
+        <input autocomplete="off" type="text" name="project_name" id="project_name_input" placeholder="Enter project name" tabindex="1" list="projects">
+        <input autocomplete="off" type="text" name="domain_name" id="domain_name_input" placeholder="Enter domain name" tabindex="2" list="domains">
+        <button id="create_project_input" type="button" tabindex="3"><i class="icofont-ui-add"></i> New Project</button>
+    </div>
+    {% endif %}
+
+    <section class="fields" id="projects-list"{% if not projects %} style="display: none;"{% endif %}>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="projects-list">
+                    <table cellspacing="0" cellpadding="0">
+                        <tbody>
+                        {% for project in projects %}
+                        <tr class="highlight" data-project-id="{{ project.project_id }}">
+                            <td>{{ project.name }}</td>
+                            <td title="Domains">{% if project.domains %}<i class="icofont-globe"></i><div>{{ project.domains }}</div>{% endif %}</td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% if not projects %}
+    <span id="no-projects">No Projects</span>
+    {% endif %}
+</div>
+
+<script type=text/javascript src="{{url_for('static', filename='js/app/projects.js')|autoversion }}"></script>
+{% endblock %}

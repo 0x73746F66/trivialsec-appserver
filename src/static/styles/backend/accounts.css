@@ -1,0 +1,49 @@
+td i {
+    font-size: 25px;
+    color: #34495ef0;
+    cursor: pointer;
+}
+
+td i:hover {
+    color: #1ABB9C;
+}
+
+th.actions i {
+    font-size: 25px;
+    color: #fffffff0;
+    cursor: pointer;
+}
+
+td.actions {
+    min-width: 55px;
+}
+
+select {
+    height: 32px;
+}
+textarea {
+    height: 80px;
+    width: 91%;
+}
+
+input, select {
+    width: 90%;
+}
+.choices__list--dropdown {
+    width: 94% !important;
+}
+
+/* Modal Customisations */
+
+.modal-content .actions {
+    padding: 20px;
+}
+
+.account-heading {
+    color: #6d6d6d;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 30px 0 10px 0;
+}
+
+

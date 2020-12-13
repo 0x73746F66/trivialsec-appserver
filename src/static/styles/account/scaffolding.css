@@ -1,0 +1,33 @@
+.col-2, .col-3, .col-4, .col-5 {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.col-5 > div {
+    flex-basis: 20%;
+    flex-grow: 0;
+}
+
+.col-4 > div {
+    flex-basis: 25%;
+    flex-grow: 0;
+}
+
+.col-3 > div {
+    flex-basis: 33.3%;
+    flex-grow: 0;
+}
+
+.col-2 > div {
+    flex-basis: 50%;
+    flex-grow: 0;
+}
+
+@media screen and (min-width:600px) {
+    .col-2, .col-3 {
+        flex-wrap: nowrap;
+    }
+}

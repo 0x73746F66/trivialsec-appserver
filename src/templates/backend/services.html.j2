@@ -1,0 +1,25 @@
+{% extends 'backend/layout.html.j2' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/services.css')|autoversion }}">
+    {# <div class="service-list">
+    {{ list }}
+    {% for service in services %}
+        <div class="service-item-outer" data-category="{{ service.category }}">
+            <div class="service-item-header">
+                <div class="service-name">{{ service.name }}</div>
+                <div class="service-status service-status-{{ service.status }}">{{ service.status }}</div>
+            </div>
+            <div class="service-item-body">
+                <div class="service-item nodes">Active Nodes: <span>{{ service.nodes }}</span></div>
+                <div class="service-item queued">Queued Jobs: <span>{{ service.queued_jobs }}</span></div>
+                <div class="service-item running">Active Jobs: <span>{{ service.running_jobs }}</span></div>
+                <div class="service-item errors">Job Error: <span>{{ service.errored_jobs }}</span></div>
+                <div class="service-item last-event">Last Event: <span>{{ service.last_event }}</span></div>
+                <div class="service-item timestamp">Time: <span><time datetime="{{ service.updated_at }}"></span></div>
+            </div>
+        </div>
+    {% endfor %}
+    </div> #}
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/services.js')|autoversion }}"></script>
+{% endblock %}

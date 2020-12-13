@@ -1,0 +1,32 @@
+h2 {
+    color: #666;
+    margin: 0 0 20px 0 !important;
+}
+section.fields {
+    width: 90%;
+    margin: 2% 10% 0 0;
+}
+.fields-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+}
+.label-column {
+    flex: 30%;
+}
+.label-column label {
+    margin: 20px 0 0 20px;
+}
+.input-column {
+    flex: 70%;
+}
+.label-column label img {
+    margin: 0;
+    vertical-align: bottom;
+}

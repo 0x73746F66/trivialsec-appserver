@@ -1,0 +1,43 @@
+.col-3 {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.col-3 .left {
+    order: 1;
+    flex-basis: 100%;
+    min-height: 300px
+}
+
+.col-3 .middle {
+    order: 3;
+    flex-basis: 100%;
+    min-height: 300px;
+}
+
+.col-3 .right {
+    order: 2;
+    flex-basis: 100%;
+    min-height: 300px;
+}
+
+@media screen and (min-width:600px) {
+    .col-3 {
+        flex-wrap: nowrap;
+    }
+    .col-3 .left {
+        flex-basis: 200px;
+        order: 1;
+    }
+    .col-3 .middle {
+        flex-basis: 1;
+        order: 2;
+    }
+    .col-3 .right {
+        flex-basis: 200px;
+        order: 3;
+    }
+}

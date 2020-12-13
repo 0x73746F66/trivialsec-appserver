@@ -1,0 +1,239 @@
+.rating-pip {
+    padding: 2px 6px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 400;
+    min-width: 65px;
+    display: inline-block;
+}
+
+.table-wrapper {
+    margin-top: 10px;
+}
+
+.pie-canvas {
+    display: inline-block;
+    width: 25vw;
+    margin: auto 1vw;
+}
+
+.pie-heading {
+    text-align: center;
+    color: #6d6d6d;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.severity-info,
+.severity-none {
+    border: solid 1px #fff;
+    background: rgb(103, 154, 255);
+}
+
+.severity-low {
+    border: solid 1px #fff;
+    background: rgb(53, 167, 30);
+}
+
+.severity-medium {
+    border: solid 1px #fff;
+    background: rgb(255, 183, 48);
+}
+
+.severity-high {
+    border: solid 1px #fff;
+    background: rgb(255, 107, 48);
+}
+
+.severity-critical {
+    border: solid 1px #fff;
+    background: rgb(121, 18, 18);
+}
+
+.criticality-info,
+.criticality-none {
+    border: solid 1px #fff;
+    background: rgb(44, 192, 255);
+}
+
+.criticality-low {
+    border: solid 1px #fff;
+    background: rgb(0, 162, 232);
+}
+
+.criticality-medium {
+    border: solid 1px #fff;
+    background: rgb(5, 100, 140);
+}
+
+.criticality-high {
+    border: solid 1px #fff;
+    background: rgb(5, 72, 100);
+}
+
+.criticality-critical {
+    border: solid 1px #ffffff;
+    background: rgb(5, 48, 66);
+}
+
+.confidence-low {
+    border: solid 1px #fff;
+    background: rgb(0, 90, 72);
+}
+
+.confidence-medium {
+    border: solid 1px #fff;
+    background: rgb(15, 145, 119);
+}
+
+.confidence-high {
+    border: solid 1px #fff;
+    background: rgb(7, 189, 152);
+}
+
+th.actions i {
+    font-size: 25px;
+    color: #fffffff0;
+    cursor: pointer;
+}
+
+td.actions {
+    min-width: 55px;
+}
+
+.actions i {
+    font-size: 25px;
+    color: #34495ef0;
+    cursor: pointer;
+}
+
+.actions i:hover {
+    color: #1ABB9C;
+}
+
+td.title-cell {
+    white-space: nowrap;
+    resize: horizontal;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #11a789;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+td.desc-cell {
+    white-space: nowrap;
+    resize: horizontal;
+    max-width: 130px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.modal-group .modal-label label,
+.modal-group .modal-input input {
+    line-height: 38px;
+}
+
+input[type="date"],
+select {
+    height: 32px;
+}
+
+input[type="date"] {
+    width: 90%;
+}
+
+select {
+    width: 95%;
+}
+
+.submit-notes-group button {
+    margin-right: 5px;
+}
+
+.source-active {
+    color: #682a9b;
+}
+
+.source-passive {
+    color: #2a669b;
+}
+
+.finding-notes-section {
+    margin-top: 30px;
+    border-top: solid 1px#e6e6e6;
+}
+
+.finding-heading {
+    color: #6d6d6d;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 30px 0 10px 0;
+}
+
+.notes-member time {
+    font-size: .9em;
+    margin: 0 0 0 10px;
+}
+
+.notes-item .notes-member {
+    color: #34495ef0;
+    display: inline-block;
+    width: 32vw;
+    font-size: .9em;
+}
+
+.notes-text {
+    width: 32vw;
+}
+
+.notes-item {
+    border-radius: 10px;
+    padding: 10px 24px;
+    margin-bottom: 5px;
+}
+
+.submit-notes-group {
+    display: table;
+}
+
+.submit-notes-input {
+    display: table-row;
+}
+
+.submit-notes-input textarea {
+    width: 34vw;
+    height: 70px;
+    border-radius: 10px;
+    border: solid 1px #34495ef0;
+    padding: 5px;
+}
+
+.submit-notes-group button {
+    display: table-row;
+    margin-top: 5px;
+}
+
+.modal-footer i {
+    font-size: 15px;
+}
+
+.finding-actions {
+    float: right;
+    line-height: 32px;
+    position: relative;
+    bottom: 20px;
+    right: 3px;
+}
+
+button[name="true_positive"],
+button[name="archive"] {
+    background: #ffdb70;
+}
+
+button[name="true_positive"]:hover,
+button[name="archive"]:hover {
+    background: #ffe69b;
+}

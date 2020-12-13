@@ -1,0 +1,9 @@
+{% if datalists %}
+{% for datalist in datalists %}
+<datalist id="{{ datalist.name }}">
+    {% for option in datalist.options %}
+    <option value="{{ option }}">
+    {% endfor %}
+</datalist>
+{% endfor %}
+{% endif %}

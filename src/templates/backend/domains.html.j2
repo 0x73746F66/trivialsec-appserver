@@ -1,0 +1,38 @@
+{% extends 'backend/layout.html.j2' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/domains.css')|autoversion }}">
+    <div class="table-wrapper">
+        <div class="table-inner">
+        <table id="domains-list" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <th><input type="checkbox" name="table_domains"/></th>
+                <th>Project</th>
+                <th>Domain</th>
+            </tr>
+            {% for domain in domains %}
+            <tr class="highlight" data-domain-id="{{ domain.domain_id }}">
+                <td><input type="checkbox" name="table_domains" value="{{ domain.domain_id }}"/></td>
+                <td><a href="/app/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></td>
+                <td><a href="/app/domain/{{ domain.domain_id }}">{{ domain.name }}</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% include 'backend/pagination.html.j2' %}
+        {% for domain in domains %}
+            <div class="edit-domain-container" data-domain-id="{{ domain.domain_id }}" style="display: none;">
+                <form>
+                    <label for="schedule">Schedule</label>
+                    <input autocomplete="off" type="text" id="schedule" name="schedule" value="{{ domain.schedule }}">
+                    <label for="enabled">Enabled</label>
+                    <input type="checkbox" id="enabled" name="enabled" value="{{ domain.domain_id }}"{% if domain.enabled == 1 %} checked{% endif %}>
+                    <button type="button" value="{{ domain.domain_id }}">Delete</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/domains.js')|autoversion }}"></script>
+{% endblock %}

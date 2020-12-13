@@ -1,0 +1,54 @@
+{% extends 'app/layout.html.j2' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/domain.css')|autoversion }}">
+<script type=text/javascript>
+trackingIds = [{% for job in job_runs %}'{{ job.tracking_id }}',{% endfor %}];
+</script>
+{% include 'app/domain-banner.html.j2' %}
+<div class="domain-container">
+    <div class="container-tabs">
+        <a href="/app/domain/{{ domain.domain_id }}">Details</a>
+        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs <span class="counter">{{ jobs_count }}</span></a>
+        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory <span class="counter">{{ programs_count }}</span></a>
+        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains <span class="counter">{{ subdomains_count }}</span></a>
+        <a href="/app/domain/{{ domain.domain_id }}/findings" class="active">Findings <span class="counter">{{ findings_count }}</span></a>
+    </div>
+    <div class="domain-body">
+        <div class="fields" id="finding-list"{% if not findings %} style="display: none;"{% endif %}>
+            <div class="fields-row">
+                <div class="input-column column">
+                    <div class="findings-list">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Source</th>
+                                <th>Severity</th>
+                                <th>Evidence</th>
+                                <th colspan="2">Last Observed</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for finding in findings %}
+                            <tr data-finding-id="{{ finding.finding_id }}">
+                                <td>{{ finding.detail_title }}</td>
+                                <td>{{ finding.source_description }}</td>
+                                <td>{{ finding.severity_normalized }}</td>
+                                <td><pre class="code">{{ finding.evidence }}</pre></td>
+                                <td><time datetime="{{ finding.last_observed_at }}"></time></td>
+                                <td width="10px"><i class="icofont-curved-right"></i></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/app/domain.js')|autoversion }}"></script>
+{% endblock %}

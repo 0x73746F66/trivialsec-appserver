@@ -1,0 +1,139 @@
+<div class="navbar-row">
+    <nav role="navigation" class="navigation-top">
+      <a href="/" class="title-link-top">
+        <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+        <span>Trivial Security</span>
+      </a>
+      {% if account.is_authenticated %}
+      <div class="user-profile-wrapper">
+        <a href="javascript:void(0)" class="user-profile">
+          <span>{{ account.email }}</span>
+        </a>
+      </div>
+      {% endif %}
+      <ul class="breadcrumbs">
+          <li><a href="/app">Dashboard</a></li>
+          {% if page == 'projects' and not project %}
+          <li>Projects</li>
+          {% elif page == 'domains' and not domain %}
+          <li>Domains</li>
+          {% endif %}
+          {% if project %}
+          <li><a href="/app/projects">Projects</a></li>
+          <li>{{ project.name }}</li>
+          {% endif %}
+          {% if domain and domain.project %}
+          <li><a href="/app/projects">Projects</a></li>
+          <li><a href="/app/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
+          {% if domain %}
+          <li><a href="/app/domains">Domains</a></li>
+          <li>{{ domain.name }}</li>
+          {% endif %}
+          {% endif %}
+      </ul>
+    </nav>
+    <div class="toggle-sidenav"><i class="icofont-rounded-double-left"></i></div>
+</div>
+<div class="sidebar-column">
+  <div class="navigation-bar">
+    <a href="/" class="title-link-side">
+      <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+      <span>Trivial Security</span>
+    </a>
+    <div class="menu-opener">
+      <i class="icofont-rounded-double-right"></i>
+    </div>
+    <nav role="navigation" class="navigation-menu">
+      <ul>
+        {% if roles.is_internal_member %}
+        <li class="nav-backend">
+          <a href="/backend/accounts">
+            <i class="icofont-arrow-left"></i>
+            <span>Backend</span>
+          </a>
+        </li>
+        {% endif %}
+        {% if account.is_authenticated %}
+        <li class="{% if page == 'dashboard' %}active {% endif %}nav-dashboard">
+          <a href="/app">
+            <i class="icofont-dashboard"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="{% if page == 'projects' %}active {% endif %}nav-projects">
+          <a href="/app/projects">
+            <i class="icofont-label"></i>
+            <span>Projects</span>
+          </a>
+        </li>
+        <li class="{% if page == 'domains' %}active {% endif %}nav-domains">
+          <a href="/app/domains">
+            <i class="icofont-globe"></i>
+            <span>Domains</span>
+          </a>
+        </li>
+        <li class="{% if page == 'repositories' %}active {% endif %}nav-repositories">
+          <a href="/app/repositories">
+            <i class="icofont-code"></i>
+            <span>Repositories</span>
+          </a>
+        </li>
+        <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
+          <a href="/app/inventory">
+            <i class="icofont-clip-board"></i>
+            <span>Inventory</span>
+          </a>
+        </li>
+        <li class="{% if page == 'findings' %}active {% endif %}nav-findings">
+          <a href="/app/findings">
+            <i class="icofont-safety"></i>
+            <span>Findings</span>
+          </a>
+        </li>
+        <li class="{% if page == 'reports' %}active {% endif %}nav-reports">
+          <a href="/app/reports">
+            <i class="icofont-archive"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
+          <a href="/app/feed">
+            <i class="icofont-rss-feed"></i>
+            <span>Feed</span>
+          </a>
+        </li>
+      </ul>
+
+      {% endif %}
+    </nav>
+  </div>
+  <div class="sidebar-footer">
+    {% if account.is_authenticated %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/account/preferences" title="Preferences">
+      <i class="icofont-options"></i>
+    </a>
+    <a data-toggle="tooltip" href="/app/notifications" title="Notifications">
+      <i class="icofont-notification"></i>
+    </a>
+    <a data-toggle="tooltip" href="/logout" title="Logout">
+      <i class="icofont-logout"></i>
+    </a>
+    {% else %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/contact" title="Contact">
+      <i class="icofont-headphone-alt-2"></i>
+    </a>
+    <a data-toggle="tooltip" href="/register" title="Register">
+      <i class="icofont-sign-out"></i>
+    </a>
+    <a data-toggle="tooltip" href="/login" title="Login">
+      <i class="icofont-sign-in"></i>
+    </a>
+    {% endif %}
+  </div>
+</div>

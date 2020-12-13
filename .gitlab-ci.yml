@@ -1,0 +1,39 @@
+before_script:
+  - python3 --version
+  - pylint --version
+  - aws --version
+
+stages:
+  - test
+  - deploy
+
+lint:
+  retry: 2
+  tags:
+    - python
+  stage: test
+  script:
+    - pip install -q -U pylint
+    - make lint
+  only:
+    refs:
+      - merge_request
+      - master
+
+deploy:
+  tags:
+    - python
+  stage: deploy
+  variables:
+    COMMON_VERSION: 0.1.4
+    TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod/fcf5cd3c70ceb857
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  script:
+    - COUNT=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
+    - echo ${COUNT}
+    - bash -c "./scripts/deploy/launch-appservers.sh ${COUNT}"
+  only:
+    refs:
+      - master

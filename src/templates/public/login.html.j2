@@ -1,0 +1,60 @@
+{% extends 'public/layout.html.j2' %} 
+{% block body %}  
+    <div class="section">
+        <div id="app-messages">{% if error %}
+            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
+            {% endif %}{% if success %}
+            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
+            {% endif %}{% if info %}
+            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
+            {% endif %}{% if warning %}
+            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
+{% endif %}</div>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/login.css')|autoversion }}">
+    <section class="tabs-wrapper">
+        <ul class="tabs">
+            <li data-tab="login" class="active"><i class="icofont-login"></i>Admin Login</li>
+            <li data-tab="password_reset" ><i class="icofont-unlock"></i></i>Admin Password Reset</li>
+        </ul>
+
+        <ul class="tab__content">
+            <li data-tab="login" class="active">
+                <div class="content__wrapper show">
+                    <form id="login_form" method="POST" action="/login">
+                        <input type="hidden" name="recaptcha_token" id="recaptcha_token" />
+                        <ul class="flex-outer">
+                        <li>
+                            <label for="login_email">Email</label>
+                            <input type="email" id="login_email" name="email" value="{{ email | default('') }}" placeholder="Enter your email here">
+                        </li>
+                        <li>
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password">
+                        </li>
+                        <li>
+                            <button class="wait_recaptcha" disabled type="submit">Login</button>
+                        </li>
+                        </ul>
+                    </form>
+                </div>
+            </li>
+            <li data-tab="password_reset">
+                <div class="content__wrapper hide">
+                    <form id="password_reset_form" method="POST" action="/password-reset">
+                        <ul class="flex-outer">
+                        <li>
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="{{ email | default('') }}" placeholder="Enter your email here">
+                        </li>
+                        <li>
+                            <button class="wait_recaptcha" disabled type="submit">Request Reset</button>
+                        </li>
+                        </ul>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </section>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/public/login.js')|autoversion }}"></script>
+{% endblock %}

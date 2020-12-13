@@ -1,0 +1,33 @@
+.add_domain_form {
+    width: 90%;
+}
+
+#domain_search_input {
+    padding: 12px 0 12px 15px;
+    margin: 0 0 0 30px;
+    width: 50%;
+    border: 0;
+    background: #EDEDED;
+    color: #73879C;
+    font-size: 18px;
+}
+
+#project_select {
+    padding: 12px 0 12px 15px;
+    margin: 0 0 0 1%;
+    width: 29%;
+    border: 0;
+    background: #EDEDED;
+    color: #73879C;
+    font-size: 18px;
+}
+
+#add_domain {
+    padding: 12px 0;
+    margin: 0 0 0 1%;
+    width: 9%;
+    border: 0;
+    background: #1ABB9C;
+    color: #fff;
+    font-size: 18px;
+}

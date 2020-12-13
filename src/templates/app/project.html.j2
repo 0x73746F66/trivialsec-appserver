@@ -1,0 +1,138 @@
+{% extends 'app/layout.html.j2' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/project.css')|autoversion }}">
+{% if project.domains|length == 1 and not project.domains[0].http_last_checked %}
+<div class="alert alert-warning loading-project"><i class="icofont-warning"></i> Loading, please allow a moment to prepare the new project<i class="icofont-close"></i></div>
+{% endif %}
+<script type=text/javascript>
+trackingIds = [
+    {% for job in processing_jobs %}'{{ job.tracking_id }}',{% endfor %}
+    {% for job in queued_jobs %}'{{ job.tracking_id }}',{% endfor %}
+];
+</script>
+{% include 'app/project-banner.html.j2' %}
+<div class="project-container">
+    <div class="container-tabs">
+        <a href="/app/project/{{ project.project_id }}" class="active">Domains <span class="counter">{{ domains_count }}</span></a>
+        <a href="/app/project/{{ project.project_id }}/jobs">Jobs <span class="counter">{{ jobs_count }}</span></a>
+        <a href="/app/project/{{ project.project_id }}/reports">Reports <span class="counter">{{ reports_count }}</span></a>
+    </div>
+    <div class="project-body">
+        <section class="fields" id="domains-list"{% if not project.domains %} style="display: none;"{% endif %}>
+            <div class="fields-row">
+                <div class="input-column column">
+                    <div class="domains-list">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th colspan="2">Domain Name</th>
+                                <th>Certificate Authority (CA)</th>
+                                <th>Last Checked</th>
+                                <th>Monitored</th>
+                                <th colspan="10"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for domain in project.domains %}
+                            <tr data-domain-id="{{ domain.domain_id }}" class="{% if not domain.http_last_checked %}disabled-events{% endif %}">
+                                <td title="{% if domain.http_code %}HTTP {{ domain.http_code.value }}{% endif %}">
+                                    {% if domain.http_code %}
+                                    <span class="pip http-{{ domain.http_code.value|http_code_group }}">{{ domain.http_code.value }}</span>
+                                    {% else %}
+                                    <span class="pip"></span>
+                                    {% endif %}
+                                    <a href="/app/domain/{{ domain.domain_id }}"><span class="icofont-globe"></span> {{ domain.name }}</a>
+                                </td>
+                                <td>
+                                {% if domain.html_title %}
+                                {{ domain.html_title.value }}
+                                {% endif %}
+                                </td>
+                                <td>
+                                {% if domain.http_certificate_issuer %}
+                                    {% if domain.http_certificate_issuer_country %}
+                                    <i class="flag-icon flag-icon-{{ domain.http_certificate_issuer_country.value|lower }}"></i>
+                                    {% endif %}
+                                    {{ domain.http_certificate_issuer.value }}
+                                {% endif %}
+                                </td>
+                                <td title="Last Checked">{% if domain.http_last_checked %}
+                                    <time datetime="{{ domain.http_last_checked.value }}"></time>
+                                    {% endif %}
+                                </td>
+                                <td>{% if domain.enabled %}<i class="icofont-toggle-on"></i>{% else %}<i class="icofont-toggle-off"></i>{% endif %}</td>
+                                {% if domain.dns_registered %}
+                                    {% if domain.dns_registered.value == '1' %}
+                                <td width="40px" title="Domain Name Registered"><i class="icofont-link icofont-green"></i></td>
+                                    {% else %}
+                                <td width="40px" title="Domain Name Not Registered{% if domain.dns_answer.value %} {{ domain.dns_answer.value }}{% endif %}"><i class="icofont-link-broken icofont-red"></i></td>
+                                    {% endif %}
+                                {% elif domain.dns_answer %}
+                                <td width="40px" title="{{ domain.dns_answer.value }}"><i class="icofont-hour-glass icofont-red"></i></td>
+                                {% else %}
+                                <td width="40px" title="DNS Unknown"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.app_verified %}
+                                    {% if domain.app_verified.value == '1' %}
+                                <td width="40px" title="Verified"><i class="icofont-safety icofont-green"></i></td>
+                                    {% else %}
+                                <td width="40px" title="Unverified - Please complete account DNS verification"><i class="icofont-shield icofont-red"></i></td>
+                                    {% endif %}
+                                {% else %}
+                                <td width="40px" title="Verification Unknown"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.http_protocol and domain.http_protocol.value in ['TLSv1.2', 'TLSv1.3'] %}
+                                <td width="40px" title="{{ domain.http_protocol.value }}"><i class="icofont-ui-lock icofont-green"></i></td>
+                                {% elif domain.http_protocol %}
+                                <td width="40px" title="Insecure Connection"><i class="icofont-ui-unlock icofont-red"></i></td>
+                                {% else %}
+                                <td width="40px" title="Connection Tests - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.http_certificate_expiry %}
+                                {% if 'valid' in  domain.http_certificate_expiry.data|lower %}
+                                <td width="40px" title="{{ domain.http_certificate_expiry.data }}">
+                                    <i class="icofont-ssl-security icofont-green"></i>
+                                </td>
+                                {% else %}
+                                <td width="40px" title="{{ domain.http_certificate_expiry.data }}">
+                                    <i class="icofont-certificate icofont-red"></i>
+                                </td>
+                                {% endif %}
+                                {% else %}
+                                <td width="40px" title="TLS Tests - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.phishtank %}
+                                <td width="40px" title="Fraud Check: {{ domain.phishtank.value }}"><i class="icofont-warning icofont-{% if domain.phishtank.value == 'Unclassified' %}green{% else %}red{% endif %}"></i></td>
+                                {% else %}
+                                <td width="40px" title="Fraud Checks - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.safe_browsing %}
+                                <td width="40px" title="Google Safe Browsing: {{ domain.safe_browsing.value }}"><i class="icofont-web icofont-{% if domain.safe_browsing.value == 'Safe' %}green{% else %}red{% endif %}"></i></td>
+                                {% else %}
+                                <td width="40px" title="Safe Browsing Check - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.honey_score %}
+                                <td width="40px" title="Honey Score {{ domain.honey_score.value }}"><i class="icofont-honey{% if domain.honey_score.value >= '0.5' %} icofont-yellow{% endif %}"></i></td>
+                                {% else %}
+                                <td width="40px" title="Honey Score Check - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                {% if domain.threat_type %}
+                                <td width="40px" title="Threat Score for {{ domain.threat_type.value }} {{ domain.threat_score.value }}/255"><i class="icofont-bomb{% if domain.threat_score.value|int > 15 %} icofont-yellow{% elif domain.threat_score.value|int > 100 %} icofont-red{% endif %}"></i></td>
+                                {% else %}
+                                <td width="40px" title="Threat Score Check - No Data"><i class="icofont-eye-blocked"></i></td>
+                                {% endif %}
+                                <td width="10px"><i class="icofont-curved-right"></i></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% include 'app/pagination.html.j2' %}
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/app/project.js')|autoversion }}"></script>
+{% endblock %}

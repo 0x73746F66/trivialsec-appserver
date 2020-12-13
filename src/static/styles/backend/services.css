@@ -1,0 +1,72 @@
+.service-list {
+    display: inline-block;
+    width: 90%;
+    padding: 0 1%;
+}
+
+.service-item-outer {
+    width: 30%;
+    float: left;
+    border-right: solid 2px #c7cccb;
+    border-bottom: solid 2px #c7cccb;
+    border-radius: 10px;
+    margin: 0.5em 0.2em;
+}
+
+.service-item-header {
+    background: #2A5454;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    padding: .5em 0;
+    color: #fff;
+}
+
+.service-name,
+.service-status {
+    display: inline-block;
+}
+
+.service-name {
+    font-size: 18px;
+    margin-left: 2%;
+}
+
+.service-status {
+    font-size: 14px;
+    padding: 1px 0;
+    position: relative;
+    bottom: 2px;
+    right: 10px;
+    float: right;
+    color: #fff;
+    border-radius: 10px;
+    width: 100px;
+    text-align: center;
+}
+
+.service-status-offline {
+    background: #DF5C5C;
+    border: solid 1px#b50000;
+}
+
+.service-status-idle {
+    background: #6C6C6C;
+    border: solid 1px#808080;
+}
+
+.service-status-connecting {
+    background: #1276a6;
+    border: solid 1px #3264c4;
+}
+
+.service-status-active {
+    background: #1ABB9C;
+    border: solid 1px #1ABB9C;
+}
+
+.service-item-body {
+    padding: 1em 1em;
+    background: #fff;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}

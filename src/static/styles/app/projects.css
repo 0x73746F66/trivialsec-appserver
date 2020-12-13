@@ -1,0 +1,117 @@
+.create_project_form {
+    width: 90%;
+}
+
+.create_project_form input {
+    padding: 12px 0 12px 15px;
+    margin: 0 0 0 30px;
+    width: 40%;
+    border: 0;
+    background: #EDEDED;
+    color: #73879C;
+    font-size: 18px;
+}
+
+#create_project_input {
+    padding: 12px 0;
+    margin: 0 0 0 1%;
+    width: 9%;
+    border: 0;
+    background: #1ABB9C;
+    color: #fff;
+    font-size: 18px;
+}
+.projects-container {
+    margin: 15px 0 0 15px;
+}
+section.fields {
+    width: 90%;
+    margin: 2% 10% 0 0;
+}
+.fields-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+}
+.label-column {
+    flex: 30%;
+}
+.label-column label {
+    margin: 20px 0 0 20px;
+}
+.input-column {
+    flex: 70%;
+}
+.fields td div {
+    line-height: 1;
+    font-size: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0 0 5px;
+}
+.fields td {
+    cursor: pointer;
+    padding: 0 0 0 10px;
+    line-height: 1;
+    vertical-align: middle;
+    height: 48px;
+}
+td i {
+    font-size: 28px;
+    color: #3f5367;
+    vertical-align: middle;
+}
+i.icofont-toggle-on,
+i.icofont-toggle-off {
+    font-size: 3rem;
+}
+
+.projects-list {
+    margin: 10px 0 0 0;
+}
+
+.metrics-list,
+.progress-bar .progress__label {
+    width: 100%;
+ }
+ 
+.metrics-list .gutter,
+.metrics-list .target-name {
+    width: 20%;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: 600;
+}
+.metrics-list .progress-bar {
+    width: 79%;
+    display: inline-block;
+}
+.progress-bar .progress,
+.progress-bar .progress__label {
+   display: inline-block;
+   margin: 0;
+   padding: 0;
+}
+.progress-bar .progress {
+    position: relative;
+    height: 10px;
+    border-right: #333 1px solid;
+    border-left: #333 1px solid;
+}
+.progress-bar .progress:nth-child(1) {
+   width: 5%;
+}
+.progress-bar .progress:nth-child(2) {
+   width: 19%;
+}
+.progress-bar .progress:nth-child(3),
+.progress-bar .progress:nth-child(4),
+.progress-bar .progress:nth-child(5) {
+   width: 24%;
+}

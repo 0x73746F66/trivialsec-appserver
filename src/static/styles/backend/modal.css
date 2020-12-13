@@ -1,0 +1,101 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    display: none;
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}
+
+i.close {
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.modal-open {
+    display: block;
+}
+
+i.close:hover,
+i.close:focus {
+    color: #11a789;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: #34495ef0;
+    color: white;
+}
+
+.modal-body {
+    padding: 0 0 0 1%;
+    width: 73%;
+    display: inline-block;
+    vertical-align: top;
+    overflow-wrap: break-word;
+    margin: 0;
+    border: none;
+}
+
+.modal-sidebar {
+    width: 25%;
+    display: inline-block;
+    vertical-align: top;
+    overflow-wrap: break-word;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #34495ef0;
+    color: white;
+    margin-top: 15px;
+    line-height: 35px;
+    width: 98%;
+}
+
+.modal-title,
+.modal-group .modal-label label,
+.modal-group .modal-input input {
+    line-height: 38px;
+    font-weight: 600;
+}
+.modal-content .actions {
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+}

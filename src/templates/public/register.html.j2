@@ -1,0 +1,56 @@
+{% extends 'public/layout.html.j2' %} 
+{% block body %}  
+    <div class="section">
+        <div id="app-messages">{% if error %}
+            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
+            {% endif %}{% if success %}
+            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
+            {% endif %}{% if info %}
+            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
+            {% endif %}{% if warning %}
+            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
+{% endif %}</div>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/register.css')|autoversion }}">
+    <section class="registration-wrapper">
+    <h2>Organisation Registration</h2>
+    <div class="content__wrapper">
+        <form id="register_form" method="POST" action="/register" class="flex-outer">
+            <input type="hidden" name="recaptcha_token" id="recaptcha_token" />
+            <div>
+                <label for="company_name">Company Name</label>
+                <div class="field-outer">
+                    <input type="text" id="company_name" name="company_name" value="{{ company_name | default('') }}" placeholder="Your company name (optional)">
+                    <span>Let us know how to address your company in communications (optional)</span>
+                </div>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <div class="field-outer">
+                    <input type="email" id="email" name="email" value="{{ email | default('') }}" placeholder="Your email address">
+                    <span>This will be your administrator account email address</span>
+                </div>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <div class="field-outer">
+                    <input type="password" id="password" name="password" placeholder="Enter your password">
+                    <span>Passwords must not already be registered, and be 16 characters or more</span>
+                </div>
+            </div>
+            <div>
+                <label for="password2">Confirm Password</label>
+                <div class="field-outer">
+                    <input type="password" id="password2" name="password" placeholder="Enter your password again">
+                </div>
+            </div>
+            <div>
+                <button class="wait_recaptcha" disabled type="submit">Register</button>
+            </div>
+            </ul>
+        </form>
+    </div>
+
+    </section>
+    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/public/register.js')|autoversion }}"></script>
+{% endblock %}

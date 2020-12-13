@@ -1,0 +1,36 @@
+{
+    "name": "Trivial Security",
+    "short_name": "TrivialSec",
+    "start_url": "https://www.trivialsec.com",
+    "display": "minimal-ui",
+    "lang": "en-US",
+    "orientation": "portrait-primary",
+    "screenshots" : [
+        {
+          "src": "https://s3.dualstack.ap-southeast-2.amazonaws.com/d2vi-assets/site/public/mock1.png",
+          "sizes": "1280x720",
+          "type": "image/png"
+        },
+        {
+          "src": "https://s3.dualstack.ap-southeast-2.amazonaws.com/d2vi-assets/site/public/mock4.png",
+          "sizes": "1280x720",
+          "type": "image/png"
+        }
+    ],
+    "description": "Information Security Threat Intelligence and Enterprise Attack Surface management service.",
+    "categories": ["security", "service", "hacking"],
+    "icons": [
+        {
+            "src": "images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff"
+}

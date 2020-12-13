@@ -1,0 +1,14 @@
+select {
+    height: 32px;
+}
+textarea {
+    height: 80px;
+    width: 91%;
+}
+
+input, select {
+    width: 90%;
+}
+.choices__list--dropdown {
+    width: 94% !important;
+}

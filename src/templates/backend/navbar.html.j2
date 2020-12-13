@@ -1,0 +1,130 @@
+<div class="navbar-row">
+    <nav role="navigation" class="navigation-top">
+      <a href="/" class="title-link-top">
+        <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+        <span>Trivial Security</span>
+      </a>
+      {% if account.is_authenticated %}
+      <div class="user-profile-wrapper">
+        <a href="javascript:void(0)" class="user-profile">
+          <span>{{ account.email }}</span>
+        </a>
+      </div>
+      {% endif %}
+
+    </nav>
+    <div class="toggle-sidenav"><i class="icofont-navigation-menu"></i></div>
+</div>
+<div class="sidebar-column">
+  <div class="navigation-bar">
+    <a href="/" class="title-link-side">
+      <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+      <span>Trivial Security</span>
+    </a>
+    <div class="menu-opener">
+      <i class="icofont-rounded-double-right"></i>
+    </div>
+    <nav role="navigation" class="navigation-menu">
+      {% if account.is_authenticated %}
+      <ul>
+        <li class="nav-application">
+          <a href="/app">
+            <i class="icofont-arrow-right"></i>
+            <span>Back to Application</span>
+          </a>
+        </li>
+        <li class="{% if page == 'accounts' %}active {% endif %}nav-accounts">
+          <a href="/backend/accounts">
+            <i class="icofont-ui-user-group"></i>
+            <span>Accounts</span>
+          </a>
+        </li>
+        <li class="{% if page == 'users' %}active {% endif %}nav-users">
+          <a href="/backend/users">
+            <i class="icofont-ui-user"></i>
+            <span>Users</span>
+          </a>
+        </li>
+        <li class="{% if page == 'subscribers' %}active {% endif %}nav-subscribers">
+          <a href="/backend/subscribers">
+            <i class="icofont-users-social"></i>
+            <span>Subscribers</span>
+          </a>
+        </li>
+        <li class="{% if page == 'invitations' %}active {% endif %}nav-invitations">
+          <a href="/backend/invitations">
+            <i class="icofont-share-alt"></i>
+            <span>Invitations</span>
+          </a>
+        </li>
+        <li class="{% if page == 'domains' %}active {% endif %}nav-domains">
+          <a href="/backend/domains">
+            <i class="icofont-globe"></i>
+            <span>Domains</span>
+          </a>
+        </li>
+        <li class="{% if page == 'feeds' %}active {% endif %}nav-feeds">
+          <a href="/backend/feeds">
+            <i class="icofont-rss-feed"></i>
+            <span>Data Sources</span>
+          </a>
+        </li>
+        <li class="{% if page == 'keyvalues' %}active {% endif %}nav-keyvalues">
+          <a href="/backend/keyvalues">
+            <i class="icofont-ui-copy"></i>
+            <span>Public Content</span>
+          </a>
+        </li>
+        <li class="{% if page == 'links' %}active {% endif %}nav-links">
+          <a href="/backend/links">
+            <i class="icofont-link"></i>
+            <span>Links</span>
+          </a>
+        </li>
+        <li class="{% if page == 'recommendations' %}active {% endif %}nav-recommendations">
+          <a href="/backend/recommendations">
+            <i class="icofont-light-bulb"></i>
+            <span>Recommendations</span>
+          </a>
+        </li>
+        <li class="{% if page == 'services' %}active {% endif %}nav-services">
+          <a href="/backend/services">
+            <i class="icofont-automation"></i>
+            <span>Services</span>
+          </a>
+        </li>
+      </ul>
+
+      {% endif %}
+    </nav>
+  </div>
+  <div class="sidebar-footer">
+    {% if account.is_authenticated %}
+    <a data-toggle="tooltip" href="/backend" title="Backend">
+      <i class="icofont-home"></i>
+    </a>
+    <a data-toggle="tooltip" href="/backend/help" title="Help Manager">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/backend/settings" title="Global Settings">
+      <i class="icofont-options"></i>
+    </a>
+    <a data-toggle="tooltip" href="/logout" title="Logout">
+      <i class="icofont-logout"></i>
+    </a>
+    {% else %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/contact" title="Contact">
+      <i class="icofont-headphone-alt-2"></i>
+    </a>
+    <a data-toggle="tooltip" href="/register" title="Register">
+      <i class="icofont-sign-out"></i>
+    </a>
+    <a data-toggle="tooltip" href="/login" title="Login">
+      <i class="icofont-sign-in"></i>
+    </a>
+    {% endif %}
+  </div>
+</div>

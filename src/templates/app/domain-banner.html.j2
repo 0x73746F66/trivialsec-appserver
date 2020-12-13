@@ -1,0 +1,110 @@
+<script type=text/javascript>
+trackingIds = [{% for job in job_runs %}'{{ job.tracking_id }}',{% endfor %}];
+{% if domain.findings_count > 0 %}
+findings_chart_config = {{ domain.findings_severity }};
+{% endif %}
+</script>
+{% if domain.app_verified %}
+{% if domain.app_verified.value != '1' %}
+<div class="alert alert-warning verification"><i class="icofont-warning"></i> To verify your domain add a TXT record to your DNS server with value: <strong>{{ domain.verification_hash }}</strong><i class="icofont-close"></i></div>
+{% endif %}
+{% endif %}
+<div class="banner-area">
+    <input type="hidden" id="project-id" value="{{ domain.project.project_id }}">
+    <input type="hidden" id="project-tracking-id" value="{{ domain.project.tracking_id }}">
+    <input type="hidden" id="domain-id" value="{{ domain.domain_id }}">
+    <div class="banner-sections">
+        <div class="heading-area">
+            <div class="heading">
+                <i class="icofont-globe"></i> {{ domain.name }} {% if domain.http_code %}<span class="pip http-{{ domain.http_code.value|http_code_group }}"{% if domain.http_code.data %} title="{{ domain.http_code.data }}"{% endif %}>{{ domain.http_code.value }}</span>{% else %}<span class="pip"></span>{% endif %}
+            </div>
+            <div class="sub-heading">Source: {{ domain.source }}{% if domain.dns_registered and domain.dns_registered.value %} | Domain Registered{% else %} | Domain Unregistered{% endif %}</div>
+        </div>        
+        {% if domain.http_last_checked %}
+        <div class="last-checked">Last Checked <time datetime="{{ domain.http_last_checked.value }}"></time></div>
+        {% endif %} 
+        <div class="domain-actions">
+            {% if domain.enabled %}
+            <div id="toggle-domain" title="Disable domain monitoring"><i class="icofont-toggle-on"></i></div>
+            {% else %}
+            <div id="toggle-domain" title="Enable domain monitoring"><i class="icofont-toggle-off"></i></div>
+            {% endif %}
+            <div id="delete-domain" title="Delete domain record"><i class="icofont-trash"></i></div>
+        </div>
+        <div class="banner-section scan-actions">
+            <div class="title">Scanners</div>
+            <select id="scan-action">
+                <option value="domain-metadata"><i class="icofont-eye"></i> Metadata</option>
+                <option value="domain-subdomains"><i class="icofont-web"></i> Subdomains</option>
+                <option value="domain-dns"><i class="icofont-globe"></i> DNS</option>
+                <option value="domain-tls"><i class="icofont-ssl-security"></i> TLS</option>
+            </select>
+            <button id="run-action" name="run-action">Run</button>
+        </div>
+        <div class="banner-section encryption">
+            <div class="title">Encryption</div>
+            <ul>
+            {% if domain.http_certificate_expiry %}
+            <li><i class="icofont-ssl-security icofont-{% if 'valid' in domain.http_certificate_expiry.data|lower %}green{% else %}red{% endif %}"></i> {{ domain.http_certificate_expiry.data }}</li>
+            {% else %}
+            <li><i class="icofont-eye-blocked"></i> TLS Tests</li>
+            {% endif %}
+            {% if domain.http_protocol %}
+            <li><i class="icofont-ui-lock icofont-{% if domain.http_protocol and domain.http_protocol.value in ['TLSv1.2', 'TLSv1.3'] %}green{% else %}red{% endif %}"></i> {{ domain.http_protocol.value }}</li>
+            {% endif %}
+            {% if domain.http_certificate_issuer %}
+            <li title="Certificate Issuer">
+                {% if domain.http_certificate_issuer_country %}<i class="flag-icon flag-icon-{{ domain.http_certificate_issuer_country.value|lower }}"></i>{% endif %}
+                {{ domain.http_certificate_issuer.value }}
+            </li>
+            {% endif %}
+            {% if domain.http_certificate_issued %}
+            <li title="Certificate Issued" title="{{ domain.http_certificate_issued.value }}"><i class="icofont-certificate"></i> {{ domain.http_certificate_issued.data }}</li>
+            {% endif %}
+            </ul>
+        </div>
+        <div class="banner-section status">
+            <div class="title">Status</div>
+            <ul>
+            {% if domain.app_verified %}
+            {% if domain.app_verified.value == '1' %}
+            <li><i class="icofont-safety icofont-green"></i> Verified</li>
+            {% else %}
+            <li title="Please complete account DNS verification"><i class="icofont-shield icofont-red"></i> Unverified</li>
+            {% endif %}
+            {% else %}
+            <li><i class="icofont-eye-blocked"></i> Verification Unknown</li>
+            {% endif %}
+            {% if domain.phishtank %}
+            <li title="Fraud report check"><i class="icofont-warning icofont-{% if domain.phishtank.value == 'Unclassified' %}green{% else %}red{% endif %}"></i> {{ domain.phishtank.value }}</li> 
+            {% else %}
+            <li><i class="icofont-eye-blocked"></i> Fraud Checks</li> 
+            {% endif %}
+            {% if domain.safe_browsing %}
+            <li title="Google Safe Browsing"><i class="icofont-web icofont-{% if domain.safe_browsing.value == 'Safe' %}green{% else %}red{% endif %}"></i> {{ domain.safe_browsing.value }}</li>
+            {% else %}
+            <li><i class="icofont-eye-blocked"></i> Safe Browsing Check<li>
+            {% endif %}
+            {% if domain.honey_score %}
+            <li title="Honeypot Score"><i class="icofont-honey icofont-yellow"></i> {{ domain.honey_score.value|float }}</li>
+            {% endif %}
+            {% if domain.threat_type %}
+            <li title="Threat Actor"><i class="icofont-bomb"></i> {{ domain.threat_type.value }}</li>
+            {% endif %}
+            {% if domain.threat_score %}
+            <li title="Threat Score"><i class="icofont-warning-alt{% if domain.threat_score.value|int > 15 %} icofont-yellow{% elif domain.threat_score.value|int > 100 %} icofont-red{% endif %}"></i> {{ domain.threat_score.value }}/255</li>
+            {% endif %}
+            </ul>
+        </div>
+        <div class="banner-section findings">
+            <div class="title">Findings</div>
+            {% if domain.findings_count > 0 %}
+            <div class="bar-canvas" data-domain-id="{{ domain.domain_id }}">
+                <canvas width="100" height="20"></canvas>
+            </div>
+            {% else %}
+            No Findings
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,250 @@
+{% extends 'account/layout.html.j2' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/integrations.css')|autoversion }}">
+
+    <section class="fields">
+        <h2>Source Code Repositories</h2>
+        <p>
+            Trivial Security can use code composition and static analysis methods to produce security findings for your source repositories.
+        </p>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="github_key"><img width="24" height="24" src="https://github.com/favicon.ico"/> <a href="https://github.blog/2013-05-16-personal-api-tokens/" target="_blank">Github</a> Token</label>
+            </div>
+            <div class="input-column column">
+                <input id="github_key" type="text" name="github_key" placeholder="Github api key" value="{{ account_config.github_key if account_config.github_key }}">
+            </div>
+            <div class="label-column column">
+                <label for="github_user"><img width="24" height="24" src="https://github.com/favicon.ico"/> Github Username</label>
+            </div>
+            <div class="input-column column">
+                <input id="github_user" type="text" name="github_user" placeholder="Github username" value="{{ account_config.github_user if account_config.github_user }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="gitlab"><img width="24" height="24" src="https://gitlab.com/favicon.ico"/> <a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html" target="_blank">Gitlab</a> Token</label>
+            </div>
+            <div class="input-column column">
+                <input id="gitlab" type="text" name="gitlab" placeholder="Gitlab api key" value="{{ account_config.gitlab if account_config.gitlab }}">
+                <button id="source-code-button" type="button">Save</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="fields">
+        <h2>Subdomains</h2>
+        <p>
+            Trivial Security can enrich your findings with data provided by your vendors.
+        </p>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="urlscan"><img width="24" height="24" src="https://urlscan.io/img/urlscan_256.png"/> <a href="https://urlscan.io/about-api/" target="_blank">URLScan</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="urlscan" type="text" name="urlscan" placeholder="URLScan api key" value="{{ account_config.urlscan if account_config.urlscan }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="alienvault"><img width="24" height="24" src="https://avatars3.githubusercontent.com/u/25514665?s=400&v=4"/> <a href="https://otx.alienvault.com/" target="_blank">AlienVault</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="alienvault" type="text" name="alienvault" placeholder="AlienVault api key" value="{{ account_config.alienvault if account_config.alienvault }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="binaryedge"><img width="24" height="24" src="https://www.binaryedge.io/img/logo.png"/> <a href="https://docs.binaryedge.io/" target="_blank">BinaryEdge</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="binaryedge" type="text" name="binaryedge" placeholder="BinaryEdge api key" value="{{ account_config.binaryedge if account_config.binaryedge }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="c99"><img width="24" height="24" src="https://api.c99.nl/favicon.ico"/> C99's <a href="https://api.c99.nl/" target="_blank">CloudFlare Resolver</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="c99" type="text" name="c99" placeholder="C99 api key" value="{{ account_config.c99 if account_config.c99 }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="censys_key"><img width="24" height="24" src="https://censys.io/assets/favicon.png"/> <a href="https://censys.io/api" target="_blank">Censys</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="censys_key" type="text" name="censys_key" placeholder="Censys api key" value="{{ account_config.censys_key if account_config.censys_key }}">
+            </div>
+            <div class="label-column column">
+                <label for="censys_secret"><img width="24" height="24" src="https://censys.io/assets/favicon.png"/> Censys Secret</label>
+            </div>
+            <div class="input-column column">
+                <input id="censys_secret" type="password" name="censys_secret" placeholder="Censys secret" value="{{ account_config.censys_secret if account_config.censys_secret }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="cloudflare"><img width="24" height="24" src="https://theme.zdassets.com/theme_assets/184946/c275ec67186d1fb48fa795cefd107f32f91b3e21.png"/> <a href="https://api.cloudflare.com/" target="_blank">Cloudflare</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="cloudflare" type="text" name="cloudflare" placeholder="cloudflare api key" value="{{ account_config.cloudflare if account_config.cloudflare }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="chaos"><img width="24" height="24" src="https://chaos.projectdiscovery.io/fevicon.png"/> <a href="https://chaos.projectdiscovery.io/#/docs" target="_blank">Chaos</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="chaos" type="text" name="chaos" placeholder="Chaos api key" value="{{ account_config.chaos if account_config.chaos }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="circl_user"><img width="24" height="24" src="https://www.circl.lu/assets/images/circl-logo.png"/> <a href="https://cve.circl.lu/" target="_blank">Circl</a> Username</label>
+            </div>
+            <div class="input-column column">
+                <input id="circl_user" type="text" name="circl_user" placeholder="circl username" value="{{ account_config.circl_user if account_config.circl_user }}">
+            </div>
+            <div class="label-column column">
+                <label for="circl_pass"><img width="24" height="24" src="https://www.circl.lu/assets/images/circl-logo.png"/> Circl Password</label>
+            </div>
+            <div class="input-column column">
+                <input id="circl_pass" type="password" name="circl_pass" placeholder="circl password" value="{{ account_config.circl_pass if account_config.circl_pass }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="dnsdb"><img width="24" height="24" src="https://www.farsightsecurity.com/favicon.ico"/> <a href="https://docs.dnsdb.info/" target="_blank">DNSDB</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="dnsdb" type="text" name="dnsdb" placeholder="DNSDB api key" value="{{ account_config.dnsdb if account_config.dnsdb }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="facebookct_key"><img width="24" height="24" src="https://facebook.com/favicon.ico"/> <a href="https://developers.facebook.com/docs/certificate-transparency-api/" target="_blank">Facebook Certificate Transparency</a> Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="facebookct_key" type="text" name="facebookct_key" placeholder="facebookct key" value="{{ account_config.facebookct_key if account_config.facebookct_key }}">
+            </div>
+            <div class="label-column column">
+                <label for="facebookct_secret"><img width="24" height="24" src="https://facebook.com/favicon.ico"/> Facebook Certificate Transparency Secret</label>
+            </div>
+            <div class="input-column column">
+                <input id="facebookct_secret" type="password" name="facebookct_secret" placeholder="facebookct secret" value="{{ account_config.facebookct_secret if account_config.facebookct_secret }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="networksdb"><img width="24" height="24" src="https://networksdb.io/favicon.ico"/> <a href="https://networksdb.io/api/docs" target="_blank">NetworksDB</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="networksdb" type="text" name="networksdb" placeholder="networksdb api key" value="{{ account_config.networksdb if account_config.networksdb }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="recondev_free"><a href="https://recon.dev/api/docs" target="_blank">Recon.Dev</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="recondev_free" type="text" name="recondev_free" placeholder="recon.dev free api key" value="{{ account_config.recondev_free if account_config.recondev_free }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="passivetotal_key"><img width="24" height="24" src="https://community.riskiq.com/static/assets/favicon.png"/> <a href="https://api.passivetotal.org/index.html" target="_blank">RiskIQ</a> PassiveTotal API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="passivetotal_key" type="text" name="passivetotal_key" placeholder="passivetotal key" value="{{ account_config.passivetotal_key if account_config.passivetotal_key }}">
+            </div>
+            <div class="label-column column">
+                <label for="passivetotal_user"><img width="24" height="24" src="https://community.riskiq.com/static/assets/favicon.png"/> RiskIQ PassiveTotal User</label>
+            </div>
+            <div class="input-column column">
+                <input id="passivetotal_user" type="text" name="passivetotal_user" placeholder="facebookct secret" value="{{ account_config.passivetotal_user if account_config.passivetotal_user }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="securitytrails"><img width="24" height="24" src="https://securitytrails.com/user/themes/twentytwenty/favicon/favicon.ico"/> <a href="https://securitytrails.com/corp/api" target="_blank">SecurityTrails</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="securitytrails" type="text" name="securitytrails" placeholder="SecurityTrails api key" value="{{ account_config.securitytrails if account_config.securitytrails }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="shodan"><img width="24" height="24" src="https://static.shodan.io/shodan/img/favicon.png"/> <a href="https://developer.shodan.io/api" target="_blank">Shodan</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="shodan" type="text" name="shodan" placeholder="shodan api key" value="{{ account_config.shodan if account_config.shodan }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="spyse"><img width="24" height="24" src="https://spyse.com/favicon.ico"/> <a href="https://spyse.com/docs/api" target="_blank">Spyse</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="spyse" type="text" name="spyse" placeholder="spyse api key" value="{{ account_config.spyse if account_config.spyse }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="twitter_key"><img width="24" height="24" src="https://abs.twimg.com/favicons/favicon.ico"/> <a href="https://developer.twitter.com/en/docs/api-reference-index" target="_blank">Twitter</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="twitter_key" type="text" name="twitter_key" placeholder="twitter key" value="{{ account_config.twitter_key if account_config.twitter_key }}">
+            </div>
+            <div class="label-column column">
+                <label for="twitter_secret"><img width="24" height="24" src="https://abs.twimg.com/favicons/favicon.ico"/> Twitter Secret</label>
+            </div>
+            <div class="input-column column">
+                <input id="twitter_secret" type="password" name="twitter_secret" placeholder="twitter secret" value="{{ account_config.twitter_secret if account_config.twitter_secret }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="umbrella"><img width="24" height="24" src="https://files.readme.io/d261efe-favicon.ico"/> <a href="https://docs.umbrella.com/investigate-api/docs/introduction-to-cisco-investigate" target="_blank">Cisco</a> Umbrella API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="umbrella" type="text" name="umbrella" placeholder="umbrella api key" value="{{ account_config.umbrella if account_config.umbrella }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="virustotal"><img width="24" height="24" src="https://www.virustotal.com/gui/images/favicon.png"/> <a href="https://developers.virustotal.com/v3.0/reference" target="_blank">VirusTotal</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="virustotal" type="text" name="virustotal" placeholder="virustotal api key" value="{{ account_config.virustotal if account_config.virustotal }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="whoisxml"><img width="24" height="24" src="https://main.whoisxmlapi.com/images/fav.png"/> <a href="https://whois-history.whoisxmlapi.com/api" target="_blank">WhoisXMLAPI</a> Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="whoisxml" type="text" name="whoisxml" placeholder="whoisxml api key" value="{{ account_config.whoisxml if account_config.whoisxml }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="zetalytics"><img width="24" height="24" src="https://zetalytics.com/favicon.ico"/> <a href="https://mailchi.mp/zetalytics/trial-access-request" target="_blank">Zetalytics</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="zetalytics" type="text" name="zetalytics" placeholder="zetalytics api key" value="{{ account_config.zetalytics if account_config.zetalytics }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="zoomeye"><img width="24" height="24" src="https://www.zoomeye.org/favicon.ico"/> <a href="https://www.zoomeye.org/" target="_blank">ZoomEye Search</a> API Key</label>
+            </div>
+            <div class="input-column column">
+                <input id="zoomeye" type="text" name="zoomeye" placeholder="zoomeye api key" value="{{ account_config.zoomeye if account_config.zoomeye }}">
+                <button id="subdomains-button" type="button">Save</button>
+            </div>
+        </div>
+    </section>
+
+<script type=text/javascript src="{{url_for('static', filename='js/account/integrations.js')|autoversion }}"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+<ul class="pagination">
+    {% if pagination.current_page != 1 %}
+    <li><a href="/account/{{ page }}/1"><i class="icofont-swoosh-left"></i></a></li>
+    {% endif %}
+    {% for page_num in pagination.pages %}
+    <li{% if page_num == pagination.current_page %} class="active"{% endif %}>
+    <a href="/account/{{ page }}/{{ page_num }}">{{ page_num }}</a>
+    </li>
+    {% endfor %}
+    {% if pagination.last_page != pagination.current_page %}
+    <li><a href="/account/{{ page }}/{{ pagination.last_page }}"><i class="icofont-swoosh-right"></i></a></li>
+    {% endif %}
+</ul>
