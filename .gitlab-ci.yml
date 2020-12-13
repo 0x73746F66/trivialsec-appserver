@@ -33,7 +33,7 @@ deploy:
   script:
     - COUNT=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo ${COUNT}
-    - bash -c "./scripts/deploy/launch-appservers.sh ${COUNT}"
+    - bash -c "./deploy/launch-appservers.sh ${COUNT}"
   only:
     refs:
       - master
