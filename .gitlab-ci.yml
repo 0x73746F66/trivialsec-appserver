@@ -13,7 +13,7 @@ lint:
     - python
   stage: test
   script:
-    - pip install -q -U pylint
+    - pip install -q -r docker/requirements.txt
     - make lint
   only:
     refs:
