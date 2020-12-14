@@ -43,7 +43,7 @@ function setup_centos() {
     yum update -q -y
     yum install -q -y deltarpm
     yum groupinstall -q -y "Development Tools"
-    yum install -q -y pcre-devel ca-certificates epel-release
+    yum install -q -y pcre-devel ca-certificates curl epel-release
     update-ca-trust force-enable
     proxy_off
 }
@@ -110,13 +110,16 @@ function cleanup() {
     yum -y clean all
     rm -rf /tmp/trivialsec
 }
+function do_release() {
+    setup_centos
+    setup_logging
+    install_python
+    install_mysql_client
+    install_appserver_deps
+    deploy_appserver
+    configure_appserver
+    cleanup
+}
 
-setup_centos
-setup_logging
-install_python
-install_mysql_client
-install_appserver_deps
-deploy_appserver
-configure_appserver
-cleanup
-echo completed
+time do_release
+echo $(date +'%F') > /home/ec2-user/.deployed
