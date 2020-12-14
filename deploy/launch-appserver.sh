@@ -9,6 +9,9 @@ if [[ ! -d src ]]; then
     exit 1
 fi
 
+if [[ -f .env ]]; then
+    source .env
+fi
 readonly ami_name=app-$(date +'%F')
 readonly baker_script=deploy/user-data/baker.sh
 readonly userdata_script=deploy/user-data/appserver.sh
@@ -75,7 +78,7 @@ instanceId=$(aws ec2 run-instances \
     --subnet-id ${SUBNET_ID} \
     --security-group-ids ${SECURITY_GROUP_IDS} \
     --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=Baker-${app}},{Key=appserver,Value=baking},{Key=cost-center,Value=${COST_CENTER}}]" "ResourceType=volume,Tags=[{Key=cost-center,Value=${COST_CENTER}}]" \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=Baker-app},{Key=appserver,Value=baking},{Key=cost-center,Value=${COST_CENTER}}]" "ResourceType=volume,Tags=[{Key=cost-center,Value=${COST_CENTER}}]" \
     --user-data file://${baker_script} \
     --query 'Instances[].InstanceId' \
     --output text)
@@ -93,11 +96,11 @@ if [[ "${existingImageId}" == ami-* ]]; then
     aws ec2 deregister-image --image-id ${existingImageId}
     sleep 3
 fi
-while ! [ $(ssh -o 'StrictHostKeyChecking no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
+while ! [ $(ssh -o 'StrictHostKeyChecking no' -o 'CheckHostIP no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
 do
     sleep 2
 done
-scp -o 'StrictHostKeyChecking no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp}:/var/log/user-data.log .
+scp -o 'StrictHostKeyChecking no' -o 'CheckHostIP no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp}:/var/log/user-data.log .
 cat user-data.log
 readonly image_id=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
 sleep 60
