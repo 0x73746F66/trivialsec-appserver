@@ -101,7 +101,7 @@ EOF
     chown -R ec2-user: /srv/app /var/log/uwsgi /var/log/nginx /var/lib/nginx /var/cache/nginx
     proxy_persist
     runuser -l ec2-user -c 'python3.8 -m pip install -U --user pip setuptools wheel'
-    runuser -l ec2-user -c "CFLAGS='-O0' STATICBUILD=true python3.8 -m pip install -q --user --no-cache-dir --find-links=/srv/app/common/build/wheel --no-index /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl"
+    runuser -l ec2-user -c "CFLAGS='-O0' STATICBUILD=true python3.8 -m pip install -q --user --no-cache-dir --find-links=/srv/app/build/wheel --no-index /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl"
     runuser -l ec2-user -c 'CFLAGS="-O0" STATICBUILD=true python3.8 -m pip install -q -U --user --no-cache-dir --isolated -r /srv/app/requirements.txt'
 }
 function cleanup() {
