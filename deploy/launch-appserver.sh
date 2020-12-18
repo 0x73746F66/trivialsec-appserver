@@ -54,12 +54,12 @@ if [[ -z "${DEFAULT_INSTANCE_TYPE}" ]]; then
     DEFAULT_INSTANCE_TYPE=t2.micro
 fi
 
-mkdir -p ~/.ssh
-aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
-chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
+mkdir -p /root/.ssh
+aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem /root/.ssh/${PRIV_KEY_NAME}.pem
+chmod 400 /root/.ssh/${PRIV_KEY_NAME}.pem
 eval $(ssh-agent -s)
-ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
-ssh-keyscan -H proxy.trivialsec.com >> ~/.ssh/known_hosts
+ssh-add /root/.ssh/${PRIV_KEY_NAME}.pem
+ssh-keyscan -H proxy.trivialsec.com >> /root/.ssh/known_hosts
 
 declare -a old_instances_query=\($(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[].Target.Id' --output text)\)
 old_targets=''

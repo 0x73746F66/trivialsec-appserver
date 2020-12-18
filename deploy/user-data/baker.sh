@@ -105,14 +105,14 @@ EOF
     runuser -l ec2-user -c 'CFLAGS="-O0" STATICBUILD=true python3.8 -m pip install -q -U --user --no-cache-dir --isolated -r /srv/app/requirements.txt'
 }
 function cleanup() {
-    chown -R ec2-user: /srv/app /tmp/application.log
+    chown -R ec2-user: /srv/app /tmp/application.log /var/log/user-data.log
     yum groupremove -q -y "Development Tools"
     yum -y clean all
-    rm -rf /tmp/trivialsec
+    rm -rf /tmp/trivialsec /var/cache/yum
 }
 function do_release() {
-    setup_centos
     setup_logging
+    setup_centos
     install_python
     install_mysql_client
     install_appserver_deps
