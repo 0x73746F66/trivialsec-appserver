@@ -12,6 +12,7 @@ fi
 if [[ -f .env ]]; then
     source .env
 fi
+readonly proxy_host=proxy.trivialsec.com
 readonly ami_name=app-$(date +'%F')
 readonly baker_script=deploy/user-data/baker.sh
 readonly userdata_script=deploy/user-data/appserver.sh
@@ -54,12 +55,15 @@ if [[ -z "${DEFAULT_INSTANCE_TYPE}" ]]; then
     DEFAULT_INSTANCE_TYPE=t2.micro
 fi
 
-mkdir -p ~/.ssh
-aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
-chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
-ssh-keyscan -H proxy.trivialsec.com >> ~/.ssh/known_hosts
+function setup_ssh() {
+    mkdir -p ~/.ssh
+    ssh-keygen -R ${proxy_host}
+    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
+    chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
+    ssh-keyscan -H ${proxy_host} >> ~/.ssh/known_hosts
+}
 
 declare -a old_instances_query=\($(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[].Target.Id' --output text)\)
 old_targets=''
@@ -96,6 +100,7 @@ if [[ "${existingImageId}" == ami-* ]]; then
     aws ec2 deregister-image --image-id ${existingImageId}
     sleep 3
 fi
+setup_ssh
 while ! [ $(ssh -o 'StrictHostKeyChecking no' -o 'CheckHostIP no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
 do
     sleep 2
