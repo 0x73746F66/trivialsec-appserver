@@ -1,4 +1,5 @@
 before_script:
+  - mknod -m 666 /dev/tty c 5 0
   - python3 --version
   - pylint --version
   - aws --version
