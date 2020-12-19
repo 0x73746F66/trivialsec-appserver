@@ -1,5 +1,4 @@
 before_script:
-  - mknod -m 666 /dev/tty c 5 0
   - python3 --version
   - pylint --version
   - aws --version
@@ -7,6 +6,7 @@ before_script:
 stages:
   - test
   - deploy
+  - teardown
 
 lint:
   retry: 2
@@ -40,7 +40,16 @@ deploy:
   script:
     - NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
-    - ./deploy/launch-appserver.sh
+    - ./deploy/launch.sh
   only:
     refs:
       - master
+
+teardown:
+  stage: teardown
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  script:
+    - ./deploy/teardown.sh

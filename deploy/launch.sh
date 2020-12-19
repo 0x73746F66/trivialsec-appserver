@@ -24,6 +24,10 @@ if [[ ! -f ${userdata_script} ]]; then
     echo "couldn't locate userdata script [${userdata_script}]"
     exit 1
 fi
+if [[ -z "${TARGET_GROUP_ARN}" ]]; then
+    echo "TARGET_GROUP_ARN missing"
+    exit 1
+fi
 if [[ -z "${BASE_AMI}" ]]; then
     echo "BASE_AMI missing"
     exit 1
@@ -60,9 +64,16 @@ function setup_ssh() {
     ssh-keygen -R ${proxy_host}
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
     chmod 400 ~/.ssh/${PRIV_KEY_NAME}.pem
-    eval $(ssh-agent -s)
-    ssh-add ~/.ssh/${PRIV_KEY_NAME}.pem
     ssh-keyscan -H ${proxy_host} >> ~/.ssh/known_hosts
+    cat > ~/.ssh/config << EOF
+Host proxy
+  CheckHostIP no
+  StrictHostKeyChecking no
+  HostName ${proxy_host}
+  IdentityFile ~/.ssh/${PRIV_KEY_NAME}.pem
+  User ec2-user
+
+EOF
 }
 
 declare -a old_instances_query=\($(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[].Target.Id' --output text)\)
@@ -101,11 +112,11 @@ if [[ "${existingImageId}" == ami-* ]]; then
     sleep 3
 fi
 setup_ssh
-while ! [ $(ssh -o 'StrictHostKeyChecking no' -o 'CheckHostIP no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
+while ! [ $(ssh -i ~/.ssh/${PRIV_KEY_NAME}.pem -4 -J proxy ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
 do
     sleep 2
 done
-scp -o 'StrictHostKeyChecking no' -o 'CheckHostIP no' -4 -J ec2-user@proxy.trivialsec.com ec2-user@${privateIp}:/var/log/user-data.log .
+scp -i ~/.ssh/${PRIV_KEY_NAME}.pem -4 -J proxy ec2-user@${privateIp}:/var/log/user-data.log .
 cat user-data.log
 readonly image_id=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
 sleep 60
