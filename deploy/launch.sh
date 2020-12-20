@@ -60,6 +60,7 @@ if [[ -z "${DEFAULT_INSTANCE_TYPE}" ]]; then
 fi
 
 function setup_ssh() {
+    local ip_address=$1
     mkdir -p ~/.ssh
     ssh-keygen -R ${proxy_host}
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-keys/${PRIV_KEY_NAME}.pem ~/.ssh/${PRIV_KEY_NAME}.pem
@@ -72,6 +73,14 @@ Host proxy
   HostName ${proxy_host}
   IdentityFile ~/.ssh/${PRIV_KEY_NAME}.pem
   User ec2-user
+
+Host ec2
+  CheckHostIP no
+  StrictHostKeyChecking no
+  Hostname ${ip_address}
+  IdentityFile ~/.ssh/${PRIV_KEY_NAME}.pem
+  User ec2-user
+  ProxyCommand ssh -W %h:%p proxy
 
 EOF
 }
@@ -111,12 +120,12 @@ if [[ "${existingImageId}" == ami-* ]]; then
     aws ec2 deregister-image --image-id ${existingImageId}
     sleep 3
 fi
-setup_ssh
-while ! [ $(ssh -i ~/.ssh/${PRIV_KEY_NAME}.pem -4 -J proxy ec2-user@${privateIp} 'echo `[ -f .deployed ]` $?') -eq 0 ]
+setup_ssh ${privateIp}
+while ! [ $(ssh -4 ec2 'echo `[ -f .deployed ]` $?' || echo 1) -eq 0 ]
 do
     sleep 2
 done
-scp -i ~/.ssh/${PRIV_KEY_NAME}.pem -4 -J proxy ec2-user@${privateIp}:/var/log/user-data.log .
+scp -4 ec2:/var/log/user-data.log .
 cat user-data.log
 readonly image_id=$(aws ec2 create-image --instance-id ${instanceId} --name ${ami_name} --description "Baked $(date +'%F %T')" --query 'ImageId' --output text)
 sleep 60
