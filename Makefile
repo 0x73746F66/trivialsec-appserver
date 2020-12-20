@@ -35,20 +35,20 @@ common: prep
 lint:
 	pylint --jobs=0 --persistent=y --errors-only src/**/*.py
 
-build: prep package-dev
+build: prep package-dev ## Build compressed container
 	docker-compose build --compress
 
-buildnc: prep package-dev
+buildnc: prep package-dev ## Clean build docker
 	docker-compose build --no-cache --compress
 
-rebuild: down build run
+rebuild: down build
 
-docker-clean:
+docker-clean: ## Fixes some issues with docker
 	docker rmi $(docker images -qaf "dangling=true")
 	yes | docker system prune
 	sudo service docker restart
 
-docker-purge:
+docker-purge: ## tries to compeltely remove all docker files and start clean
 	docker rmi $(docker images -qa)
 	yes | docker system prune
 	sudo service docker stop
@@ -57,13 +57,13 @@ docker-purge:
 	sudo rm -rf /var/lib/docker
 	sudo service docker start
 
-up: prep
+up: prep ## Start the app
 	docker-compose up -d $(APP_NAME)
 
 run: prep
 	docker-compose run -d --rm -p "5000:5000" --name $(APP_NAME) --entrypoint python3.8 $(APP_NAME) run.py
 
-down:
+down: ## Stop the app
 	@docker-compose down
 
 restart: down run

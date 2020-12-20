@@ -12,10 +12,20 @@ fi
 if [[ -f .env ]]; then
     source .env
 fi
+if [[ -z "${APP_NAME}" ]]; then
+    APP_NAME=appserver
+fi
+if [[ -z "${TAG_ENV}" ]]; then
+    TAG_ENV=Dev
+fi
+if [[ -z "${TAG_PURPOSE}" ]]; then
+    TAG_PURPOSE=Testing
+fi
+
 readonly proxy_host=proxy.trivialsec.com
-readonly ami_name=app-$(date +'%F')
+readonly ami_name=${APP_NAME}-$(date +'%F')
 readonly baker_script=deploy/user-data/baker.sh
-readonly userdata_script=deploy/user-data/appserver.sh
+readonly userdata_script=deploy/user-data/${APP_NAME}.sh
 if [[ ! -f ${baker_script} ]]; then
     echo "couldn't locate baker script [${baker_script}]"
     exit 1
@@ -50,10 +60,10 @@ if [[ -z "${COST_CENTER}" ]]; then
     COST_CENTER=randd
 fi
 if [[ -z "${PRIV_KEY_NAME}" ]]; then
-    PRIV_KEY_NAME=trivialsec-dev
+    PRIV_KEY_NAME=trivialsec-baker
 fi
 if [[ -z "${SECURITY_GROUP_IDS}" ]]; then
-    SECURITY_GROUP_IDS='sg-04a8dac724adcad3c sg-01bbdeecc61359d59'
+    SECURITY_GROUP_IDS='sg-0652a48752a2da5a8 sg-01bbdeecc61359d59'
 fi
 if [[ -z "${DEFAULT_INSTANCE_TYPE}" ]]; then
     DEFAULT_INSTANCE_TYPE=t2.micro
@@ -93,6 +103,7 @@ for old_instance_id in "${old_instances_query[@]}"; do
     old_instances="${old_instances} ${old_instance_id}"
 done
 
+readonly baker_tags="[{Key=Name,Value=Baker-${APP_NAME}},{Key=Environment,Value=${TAG_ENV}},{Key=Purpose,Value=${TAG_PURPOSE}},{Key=cost-center,Value=${COST_CENTER}}]"
 instanceId=$(aws ec2 run-instances \
     --no-associate-public-ip-address \
     --image-id ${BASE_AMI} \
@@ -102,7 +113,7 @@ instanceId=$(aws ec2 run-instances \
     --subnet-id ${SUBNET_ID} \
     --security-group-ids ${SECURITY_GROUP_IDS} \
     --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=Baker-app},{Key=appserver,Value=baking},{Key=cost-center,Value=${COST_CENTER}}]" "ResourceType=volume,Tags=[{Key=cost-center,Value=${COST_CENTER}}]" \
+    --tag-specifications "ResourceType=instance,Tags=${baker_tags}" "ResourceType=volume,Tags=${baker_tags}" \
     --user-data file://${baker_script} \
     --query 'Instances[].InstanceId' \
     --output text)
@@ -118,7 +129,6 @@ readonly privateIp=$(aws ec2 describe-instances --instance-ids ${instanceId} --q
 readonly existingImageId=$(aws ec2 describe-images --owners self --filters "Name=name,Values=${ami_name}" --query 'Images[].ImageId' --output text)
 if [[ "${existingImageId}" == ami-* ]]; then
     aws ec2 deregister-image --image-id ${existingImageId}
-    sleep 3
 fi
 setup_ssh ${privateIp}
 while ! [ $(ssh -4 ec2 'echo `[ -f .deployed ]` $?' || echo 1) -eq 0 ]
@@ -135,6 +145,7 @@ if [[ ${image_id} != ami-* ]]; then
     echo AMI baking failed
     exit 1
 fi
+readonly app_tags="[{Key=Name,Value=App},{Key=Environment,Value=${TAG_ENV}},{Key=Purpose,Value=${TAG_PURPOSE}},{Key=cost-center,Value=${COST_CENTER}}]"
 declare -a results=\($(aws ec2 run-instances \
     --no-associate-public-ip-address \
     --image-id ${image_id} \
@@ -144,7 +155,7 @@ declare -a results=\($(aws ec2 run-instances \
     --subnet-id ${SUBNET_ID} \
     --security-group-ids ${SECURITY_GROUP_IDS} \
     --iam-instance-profile Name=${IAM_INSTANCE_PROFILE} \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=App},{Key=appserver,Value=production},{Key=cost-center,Value=${COST_CENTER}}]" "ResourceType=volume,Tags=[{Key=cost-center,Value=${COST_CENTER}}]" \
+    --tag-specifications "ResourceType=instance,Tags=${app_tags}" "ResourceType=volume,Tags=${app_tags}" \
     --user-data file://${userdata_script} \
     --query 'Instances[].InstanceId' --output text)\)
 
