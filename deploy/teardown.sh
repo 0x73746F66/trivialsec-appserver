@@ -11,7 +11,10 @@ fi
 if [[ -f .env ]]; then
     source .env
 fi
-readonly instanceId="$(aws ec2 describe-instances --filters 'Name=tag:Name,Values=Baker-app' --query 'Reservations[].Instances[].InstanceId' --output text)"
+if [[ -z "${APP_NAME}" ]]; then
+    APP_NAME=appserver
+fi
+readonly instanceId="$(aws ec2 describe-instances --filters 'Name=tag:Name,Values=Baker-${APP_NAME}' --query 'Reservations[].Instances[].InstanceId' --output text)"
 if [[ ${instanceId} != i-* ]]; then
     echo No baker instances to terminate
     exit 0
