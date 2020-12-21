@@ -14,6 +14,7 @@ variables:
   COST_CENTER: saas
   PRIV_KEY_NAME: trivialsec-prod
   SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
+  NUM_INSTANCES: $(aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod/fcf5cd3c70ceb857 --query 'TargetHealthDescriptions[]' | jq '. | length')
 
 before_script:
   - aws --version
@@ -68,7 +69,6 @@ deploy:
     - python
   stage: deploy
   script:
-    - NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
     - ./deploy/launch.sh
   only:
