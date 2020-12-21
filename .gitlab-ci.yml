@@ -1,3 +1,20 @@
+variables:
+  COMMON_VERSION: 0.1.5
+  APP_NAME: appserver
+  TAG_ENV: Prod
+  TAG_PURPOSE: Deploy
+  TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod/fcf5cd3c70ceb857
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+  BASE_AMI: ami-09f765d333a8ebb4b
+  SUBNET_ID: subnet-8b05e8c3
+  DEFAULT_INSTANCE_TYPE: t3a.medium
+  IAM_INSTANCE_PROFILE: EC2-TrivialSec
+  COST_CENTER: saas
+  PRIV_KEY_NAME: trivialsec-prod
+  SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
+
 before_script:
   - aws --version
   - pylint --version
@@ -14,8 +31,6 @@ lint:
   tags:
     - python
   stage: test
-  variables:
-    COMMON_VERSION: 0.1.4
   script:
     - make common
     - pip install -q -r docker/requirements.txt
@@ -30,8 +45,6 @@ build:
   tags:
     - python
   stage: build
-  variables:
-    COMMON_VERSION: 0.1.4
   script:
     - make package
   only:
@@ -43,11 +56,6 @@ build-upload:
   tags:
     - python
   stage: build
-  variables:
-    COMMON_VERSION: 0.1.4
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   script:
     - make package-upload
   only:
@@ -59,21 +67,6 @@ deploy:
   tags:
     - python
   stage: deploy
-  variables:
-    APP_NAME: appserver
-    TAG_ENV: Prod
-    TAG_PURPOSE: Deploy
-    TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod/fcf5cd3c70ceb857
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-    BASE_AMI: ami-09f765d333a8ebb4b
-    SUBNET_ID: subnet-8b05e8c3
-    DEFAULT_INSTANCE_TYPE: t3a.medium
-    IAM_INSTANCE_PROFILE: EC2-TrivialSec
-    COST_CENTER: saas
-    PRIV_KEY_NAME: trivialsec-prod
-    SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
   script:
     - NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
@@ -85,10 +78,6 @@ deploy:
 teardown:
   retry: 2
   stage: teardown
-  variables:
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-    AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
   script:
     - ./deploy/teardown.sh
   only:
