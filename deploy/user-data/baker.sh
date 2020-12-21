@@ -71,7 +71,7 @@ function install_mysql_client() {
 function install_appserver_deps() {
     proxy_on
     amazon-linux-extras enable nginx1
-    yum install -q -y jq curl PyYAML nginx
+    yum install -q -y jq PyYAML nginx
     mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.example
     systemctl enable nginx
     setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx
