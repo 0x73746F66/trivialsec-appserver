@@ -46,10 +46,17 @@ RUN mkdir -p /var/log/uwsgi /var/cache/nginx && \
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl \
         /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl && \
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/build-${COMMON_VERSION}.zip /tmp/trivialsec/build.zip && \
-    unzip -q /tmp/trivialsec/build.zip -d /srv/app && \
+    unzip -qo /tmp/trivialsec/build.zip -d /srv/app && \
     unzip -qo /tmp/trivialsec/app.zip -d /tmp/trivialsec && \
     cp -nr /tmp/trivialsec/src/* /srv/app/ && \
-    chown -R ec2-user: /srv/app /var/log/uwsgi /var/log/nginx /var/lib/nginx /var/cache/nginx /tmp/trivialsec /tmp/application.log && \
+    chown -R ec2-user: \
+        /srv/app \
+        /var/log/uwsgi \
+        /var/log/nginx \
+        /var/lib/nginx \
+        /var/cache/nginx \
+        /tmp/trivialsec \
+        /tmp/application.log && \
     rm -rf /tmp/trivialsec
 
 USER ec2-user

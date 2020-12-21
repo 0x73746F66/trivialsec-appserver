@@ -29,8 +29,12 @@ common: prep
 	yes | pip uninstall -q trivialsec-common
 	aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
 	aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/build-${COMMON_VERSION}.zip build.zip
-	unzip -q build.zip
+	unzip -qo build.zip
 	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
+
+install-dev:
+	pip install -q -U pip setuptools pylint wheel awscli
+	pip install -q -U --no-cache-dir --isolated -r ./docker/requirements.txt
 
 lint:
 	pylint --jobs=0 --persistent=y --errors-only src/**/*.py
