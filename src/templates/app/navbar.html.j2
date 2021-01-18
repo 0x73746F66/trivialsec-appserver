@@ -15,8 +15,14 @@
           <li><a href="/app">Dashboard</a></li>
           {% if page == 'projects' and not project %}
           <li>Projects</li>
-          {% elif page == 'domains' and not domain %}
-          <li>Domains</li>
+          {% elif page == 'tasks' and not task %}
+          <li>Task List</li>
+          {% elif page == 'inventory' %}
+          <li>Inventory</li>
+          {% elif page == 'reports' %}
+          <li>Reports</li>
+          {% elif page == 'findings' and not finding %}
+          <li>Findings</li>
           {% endif %}
           {% if project %}
           <li><a href="/app/projects">Projects</a></li>
@@ -26,7 +32,9 @@
           <li><a href="/app/projects">Projects</a></li>
           <li><a href="/app/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
           {% if domain %}
-          <li><a href="/app/domains">Domains</a></li>
+          {% if domain.parent_domain_id %}
+          <li><a href="/app/domain/{{ domain.parent_domain_id }}">{{ domain.parent.name }}</a></li>
+          {% endif %}
           <li>{{ domain.name }}</li>
           {% endif %}
           {% endif %}
@@ -66,18 +74,18 @@
             <span>Projects</span>
           </a>
         </li>
-        <li class="{% if page == 'domains' %}active {% endif %}nav-domains">
-          <a href="/app/domains">
-            <i class="icofont-globe"></i>
-            <span>Domains</span>
+        <li class="{% if page == 'tasks' %}active {% endif %}nav-tasks">
+          <a href="/app/tasks">
+            <i class="icofont-tasks"></i>
+            <span>Task List</span>
           </a>
         </li>
-        <li class="{% if page == 'repositories' %}active {% endif %}nav-repositories">
+        {# <li class="{% if page == 'repositories' %}active {% endif %}nav-repositories">
           <a href="/app/repositories">
             <i class="icofont-code"></i>
             <span>Repositories</span>
           </a>
-        </li>
+        </li> #}
         <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
           <a href="/app/inventory">
             <i class="icofont-clip-board"></i>
@@ -96,12 +104,12 @@
             <span>Reports</span>
           </a>
         </li>
-        <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
+        {# <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
           <a href="/app/feed">
             <i class="icofont-rss-feed"></i>
             <span>Feed</span>
           </a>
-        </li>
+        </li> #}
       </ul>
 
       {% endif %}
@@ -118,7 +126,7 @@
     <a data-toggle="tooltip" href="/app/notifications" title="Notifications">
       <i class="icofont-notification"></i>
     </a>
-    <a data-toggle="tooltip" href="/logout" title="Logout">
+    <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
       <i class="icofont-logout"></i>
     </a>
     {% else %}

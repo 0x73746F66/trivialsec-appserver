@@ -7,7 +7,7 @@ const setupActions = async(event) => {
         saveFields(event, [{
             prop: 'alias',
             value: document.querySelector('[name="account_alias"]').value
-        }], '/api/account')
+        }], '/v1/account')
         saveFields(event, [{
             prop: 'default_role_id',
             value: document.querySelector('[name="default_role_id"]').value
@@ -150,7 +150,7 @@ const setupActions = async(event) => {
             appMessage('error', `Domain [${domain_name}] verification check failed`)
             verificationEl.textContent = 'Error'
         }, 10000)
-        Api.get(`/api/domain-verify/${domain_name}`).then(json => {
+        Api.get(`/v1/domain-verify/${domain_name}`).then(json => {
             clearTimeout(timeout)
             if (!json.registered) {
                 appMessage('warning', `Unregistered Domain ${domain_name}`)
@@ -174,7 +174,7 @@ const setupActions = async(event) => {
         const invite_role_id = document.getElementById('invite_role_id').value
         const invite_message = document.getElementById('invite_message').value
         const invitationList = document.getElementById('invitation_list')
-        const json = await Api.post_async('/api/invitation', {invite_email, invite_role_id, invite_message})
+        const json = await Api.post_async('/v1/invitation', {invite_email, invite_role_id, invite_message})
             .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))        
         appMessage(json.status, json.message)
         if (json.status == 'error') {
@@ -187,7 +187,7 @@ const setupActions = async(event) => {
         invitationList.insertAdjacentElement('beforeend', tr)
     }
 }
-const saveFields = async(event, data, uri='/api/account-config') => {
+const saveFields = async(event, data, uri='/v1/account-config') => {
     const json = await Api.post_async(uri, data).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json.status, json.message)
     if (json.status == 'error') {
@@ -221,7 +221,7 @@ const skipSection = event => {
     }
     
     setTimeout(()=>{window.location.href = `/account/setup/${nextStep}`}, 2000)
-    // Api.post('/api/account', [{prop: 'is_setup', value: 1}]).then(json => {
+    // Api.post('/v1/account', [{prop: 'is_setup', value: 1}]).then(json => {
     //     if (json.status == 'error') {
     //         console.log(json)
     //     }

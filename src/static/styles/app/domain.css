@@ -132,10 +132,23 @@ body {
     margin: 0 0 0 5px;
 }
 #domains-list td {
-    cursor: pointer;
     line-height: 1;
     vertical-align: middle;
     font-size: 14px;
+    cursor: pointer;
+}
+#domains-list td a {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3f5367;
+}
+#domains-list th:nth-child(2) {
+    text-align: left;
+}
+#domains-list td:nth-child(2),
+#domains-list td:nth-child(3) {
+    font-weight: bold;
+    text-align: left;
 }
 #domains-list i.icofont-toggle-on,
 #domains-list i.icofont-toggle-off {
@@ -147,6 +160,15 @@ body {
 }
 #domains-list td i {
     font-size: 28px;
+}
+.disabled-events a,
+.disabled-events td,
+.disabled-events {
+    cursor: not-allowed !important;
+}
+.disabled-events a:active {
+    touch-action: none;
+    pointer-events: none;
 }
 .container-tabs > a .counter {
     border-radius: 5px;
@@ -186,8 +208,10 @@ i.icofont-eye-blocked {
     color: rgb(255, 116, 92);
 }
 #delete-domain:hover i {
+    cursor: pointer !important;
     color: rgb(255, 38, 0);
 }
+.toggle-monitoring .icofont-toggle-on,
 #toggle-domain .icofont-toggle-on {
     color: rgba(54, 204, 175, 1.0);
 }

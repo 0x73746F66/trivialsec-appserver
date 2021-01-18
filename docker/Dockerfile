@@ -28,6 +28,9 @@ ENV AWS_REGION ${AWS_REGION}
 ENV AWS_DEFAULT_REGION ${AWS_DEFAULT_REGION}
 ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
+ENV FLASK_RUN_PORT ${FLASK_RUN_PORT}
+ENV FLASK_DEBUG ${FLASK_DEBUG}
+ENV FLASK_ENV ${FLASK_ENV}
 ENV PATH ${PATH}:/home/ec2-user/.local/bin
 
 USER root
@@ -61,7 +64,7 @@ RUN mkdir -p /var/log/uwsgi /var/cache/nginx && \
 
 USER ec2-user
 COPY docker/nginx.conf /etc/nginx/nginx.conf
-COPY docker/.flaskenv /srv/app/.flaskenv
+COPY docker/app.ini /srv/app/app.ini
 COPY docker/requirements.txt /srv/app/requirements.txt
 RUN python3.8 -m pip install -q --user --no-cache-dir --find-links=/srv/app/build/wheel --no-index /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl && \
     python3.8 -m pip install -q -U --user --no-cache-dir --isolated -r /srv/app/requirements.txt

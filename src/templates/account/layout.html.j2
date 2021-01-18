@@ -25,6 +25,11 @@
                     id: '{{ account.account_id }}',
                     email: '{{ account.email }}',
                 },
+                api: {
+                    domain: '{{ api_domain }}',
+                    scheme: '{{ api_scheme }}',
+                    key: '{{ account.apikey.api_key }}'
+                },
                 stripe_publishable_key: '{{ stripe_publishable_key }}'{% endif %}
             }
         </script>
@@ -66,6 +71,7 @@
         <script type=text/javascript src="{{url_for('static', filename='js/vendor/socket.io.2.3.0.min.js') }}"></script>
         <script type=text/javascript src="{{url_for('static', filename='js/vendor/choices.9.0.1.min.js') }}"></script>
         <script type=text/javascript src="{{url_for('static', filename='js/vendor/ejs.3.0.2.min.js') }}"></script>
+        <script type=text/javascript src="{{url_for('static', filename='js/vendor/forge.0.10.0.min.js') }}"></script>
         {% endif %}
     </div>
     </body>

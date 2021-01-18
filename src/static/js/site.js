@@ -158,31 +158,65 @@ const htmlDecode = input => {
 }
 
 /* API */
+const hmac_headers = (http_method, path_uri, json) => {
+    const d = new Date
+    d.setMilliseconds(0)
+    const date = d.toISOString().replace(/.000Z/, "")
+    let signing_data = `${http_method}\n${path_uri}\n${date}`
+    if (json) {
+        signing_data = `${signing_data}\n${btoa(json)}`
+    }
+    const hmac = forge.hmac.create()
+    hmac.start('sha512', localStorage.getItem('hmac-secret'))
+    hmac.update(signing_data)
+    return {
+        'X-Digest': 'HMAC-SHA512',
+        'X-ApiKey': app.api.key,
+        'X-Date': date,
+        'X-Signature': hmac.digest().toHex()
+    }
+}
 const Api = Object.assign({
-    get_async: async(uri) => {
-        const response = await fetch(uri)
-        const json = await response.json()
-        return json
-    },
-    get: (uri) => {
-        return fetch(uri).then(response => response.json())
-    },
-    post_async: async(uri, data, headers) =>  {
-        const response = await fetch(uri, {
-            credentials: 'same-origin',
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
+    get_async: async(path_uri, headers) => {
+        const http_method = 'GET'
+        const url = `${app.api.scheme}${app.api.domain}${path_uri}`
+        const response = await fetch(url, {
+            credentials: 'omit',
+            method: http_method,
+            headers: Object.assign({}, hmac_headers(http_method, path_uri), headers)
         })
-        const json = await response.json()
-        return json
+        return await response.json()
     },
-    post: (uri, data, headers) => {
-        return fetch(uri, {
-            credentials: 'same-origin',
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
+    get: (path_uri, headers) => {
+        const http_method = 'GET'
+        const url = `${app.api.scheme}${app.api.domain}${path_uri}`
+        return fetch(url, {
+            credentials: 'omit',
+            method: http_method,
+            headers: Object.assign({}, hmac_headers(http_method, path_uri), headers)
+        }).then(response => response.json())
+    },
+    post_async: async(path_uri, data, headers) =>  {
+        const http_method = 'POST'
+        const url = `${app.api.scheme}${app.api.domain}${path_uri}`
+        const json = JSON.stringify(data)
+        const response = await fetch(url, {
+            credentials: 'omit',
+            method: http_method,
+            body: json,
+            headers: Object.assign({ 'Content-Type': 'application/json' }, hmac_headers(http_method, path_uri, json), headers),
+        })
+        return await response.json()
+    },
+    post: (path_uri, data, headers) => {
+        const http_method = 'POST'
+        const url = `${app.api.scheme}${app.api.domain}${path_uri}`
+        const json = JSON.stringify(data)
+        return fetch(url, {
+            credentials: 'omit',
+            method: http_method,
+            body: json,
+            headers: Object.assign({ 'Content-Type': 'application/json' }, hmac_headers(http_method, path_uri, json), headers),
         }).then(response => response.json())
     }
 })
@@ -197,9 +231,19 @@ const refresh_recaptcha_token = async(action) => {
     }
 
 }
+const logout_action = async(e) => {
+    e.preventDefault()
+    localStorage.removeItem('hmac-secret')
+    window.location.href = '/logout'
+}
 document.addEventListener('DOMContentLoaded', async() => {
     for (const closeEl of document.querySelectorAll('.alert .icofont-close')) {
         closeEl.addEventListener('click', event => event.currentTarget.parent('.alert').remove(), false)
         closeEl.addEventListener('touchstart', event => event.currentTarget.parent('.alert').remove(), supportsPassive ? { passive: true } : false)
+    }
+    const appLogoutAction = document.getElementById('app-logout-action')
+    if (appLogoutAction) {
+        appLogoutAction.addEventListener('click', logout_action, false)
+        appLogoutAction.addEventListener('touchstart', logout_action, supportsPassive ? { passive: true } : false)
     }
 }, false)

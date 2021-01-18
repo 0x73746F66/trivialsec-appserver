@@ -1,16 +1,19 @@
-from flask import request, render_template, Blueprint
+from flask import render_template, Blueprint
 from flask_login import current_user, login_required
+from trivialsec.decorators import internal_users
 from trivialsec.helpers.config import config
-from trivialsec import models
-import actions
+from trivialsec.helpers.datalists import namespaces, software_and_configuration_checks, ttps, effects, unusual_behaviors, sensitive_data_identifications, vulnerabilities, aws_security_best_practices, industry_and_regulatory_standards, methods, types, categories
+from trivialsec.models import Domains, Project, FindingDetails, Links, Subscribers, Invitations, Account, Member, Accounts, Plan, Plans, Members, KeyValues, Feeds
+from . import get_frontend_conf
+
 
 blueprint = Blueprint('backend', __name__)
 
 @blueprint.route('/', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def backend():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Backend'
     params['page'] = 'backend'
     params['account'] = current_user
@@ -20,9 +23,9 @@ def backend():
 @blueprint.route('/domains/<page>', methods=['GET'])
 @blueprint.route('/domains', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def domains_backend(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Domains'
     params['page'] = 'domains'
     params['account'] = current_user
@@ -31,11 +34,11 @@ def domains_backend(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Domains().pagination(page_size=page_size, page_num=page_num)
-    domains = models.Domains().load(limit=page_size, offset=offset)
+    params['pagination'] = Domains().pagination(page_size=page_size, page_num=page_num)
+    domains = Domains().load(limit=page_size, offset=offset)
 
     for domain in domains:
-        project = models.Project(project_id=domain.project_id)
+        project = Project(project_id=domain.project_id)
         project.hydrate()
         domains_arr.append({
             'id': domain.domain_id,
@@ -56,17 +59,11 @@ def domains_backend(page: int = 1):
     return render_template('backend/domains.html.j2', **params)
 
 @blueprint.route('/recommendations/<page>', methods=['GET'])
-@blueprint.route('/recommendations', methods=['GET', 'POST'])
+@blueprint.route('/recommendations', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def recommendations(page: int = 1):
-    params = actions.get_frontend_conf()
-    if request.method == 'POST':
-        body = actions.request_body()
-        params = {**params, **body}
-        if params['action'] == 'review_details':
-            actions.handle_update_recommendations_review(params, current_user)
-
+    params = get_frontend_conf()
     params['page_title'] = 'Recommendations'
     params['page'] = 'recommendations'
     params['account'] = current_user
@@ -74,129 +71,27 @@ def recommendations(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.FindingDetails().pagination(page_size=page_size, page_num=page_num)
-    params['finding_details'] = models.FindingDetails().load(limit=page_size, offset=offset, order_by=['created_at', 'DESC']).to_list()
-    params['datalists'] = [{
-        'name':
-        'namespaces',
-        'options': [
-            'Software and Configuration Checks',
-            'TTPs',
-            'Effects',
-            'Unusual Behaviors',
-            'Sensitive Data Identifications',
-        ]
-    }, {
-        'name':
-        'softwareandconfigurationchecks',
-        'options': [
-            'Vulnerabilities',
-            'AWS Security Best Practices',
-            'Industry and Regulatory Standards',
-        ]
-    }, {
-        'name':
-        'ttps',
-        'options': [
-            'Data Exposure',
-            'Data Exfiltration',
-            'Data Destruction',
-            'Denial of Service',
-            'Resource Consumption',
-        ]
-    }, {
-        'name':
-        'effects',
-        'options': [
-            'Initial Access',
-            'Execution',
-            'Persistence',
-            'Privilege Escalation',
-            'Defense Evasion',
-            'Credential Access',
-            'Discovery',
-            'Lateral Movement',
-            'Collection',
-            'Command and Control',
-        ]
-    }, {
-        'name':
-        'unusualbehaviors',
-        'options': [
-            'Application',
-            'Network Flow',
-            'IP address',
-            'User',
-            'VM',
-            'Container',
-            'Serverless',
-            'Process',
-            'Database',
-            'Data',
-        ]
-    }, {
-        'name':
-        'sensitivedataidentifications',
-        'options': [
-            'PII',
-            'Passwords',
-            'Legal',
-            'Financial',
-            'Security',
-            'Business',
-        ]
-    }, {
-        'name': 'vulnerabilities',
-        'options': [
-            'CVE',
-            'CWE',
-        ]
-    }, {
-        'name':
-        'awssecuritybestpractices',
-        'options': [
-            'Network Reachability',
-            'Runtime Behavior Analysis',
-        ]
-    }, {
-        'name':
-        'industryandregulatorystandards',
-        'options': [
-            'CIS Host Hardening Benchmarks',
-            'CIS AWS Foundations Benchmark',
-            'PCI-DSS Controls',
-            'Cloud Security Alliance Controls',
-            'ISO 90001 Controls',
-            'ISO 27001 Controls',
-            'ISO 27017 Controls',
-            'ISO 27018 Controls',
-            'SOC 1',
-            'SOC 2',
-            'HIPAA Controls (USA)',
-            'NIST 800-53 Controls (USA)',
-            'NIST CSF Controls (USA)',
-            'IRAP Controls (Australia)',
-            'K-ISMS Controls (Korea)',
-            'MTCS Controls (Singapore)',
-            'FISC Controls (Japan)',
-            'My Number Act Controls (Japan)',
-            'ENS Controls (Spain)',
-            'Cyber Essentials Plus Controls (UK)',
-            'G-Cloud Controls (UK)',
-            'C5 Controls (Germany)',
-            'IT-Grundschutz Controls (Germany)',
-            'GDPR Controls (Europe)',
-            'TISAX Controls (Europe)',
-        ]
-    }]
+    params['pagination'] = FindingDetails().pagination(page_size=page_size, page_num=page_num)
+    params['finding_details'] = FindingDetails().load(limit=page_size, offset=offset, order_by=['created_at', 'DESC']).to_list()
+    params['datalists'] = [
+        namespaces,
+        software_and_configuration_checks,
+        ttps,
+        effects,
+        unusual_behaviors,
+        sensitive_data_identifications,
+        vulnerabilities,
+        aws_security_best_practices,
+        industry_and_regulatory_standards
+    ]
 
     return render_template('backend/recommendations.html.j2', **params)
 
 @blueprint.route('/services', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def services():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Services'
     params['page'] = 'services'
     params['account'] = current_user
@@ -217,7 +112,7 @@ def services():
     # ]
     # for category, display_name in service_categories:
     #     default_data = {'status': 'connecting', 'category': category, 'name': display_name}
-    #     data = models.JobRuns().get_active(category=category)
+    #     data = JobRuns().get_active(category=category)
     #     params['services'].append({**default_data, **data})
 
     return render_template('backend/services.html.j2', **params)
@@ -225,9 +120,9 @@ def services():
 @blueprint.route('/links', methods=['GET'])
 @blueprint.route('/links/<page>', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def links_backend(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Links'
     params['page'] = 'links'
     params['account'] = current_user
@@ -236,8 +131,8 @@ def links_backend(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Links().pagination(page_size=page_size, page_num=page_num)
-    links = models.Links().load(limit=page_size, offset=offset)
+    params['pagination'] = Links().pagination(page_size=page_size, page_num=page_num)
+    links = Links().load(limit=page_size, offset=offset)
 
     for link in links:
         links_arr.append({
@@ -256,9 +151,9 @@ def links_backend(page: int = 1):
 @blueprint.route('/subscribers', methods=['GET'])
 @blueprint.route('/subscribers/<page>', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def subscribers_backend(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Subscribers'
     params['page'] = 'subscribers'
     params['account'] = current_user
@@ -267,8 +162,8 @@ def subscribers_backend(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Subscribers().pagination(page_size=page_size, page_num=page_num)
-    subscribers = models.Subscribers().load(limit=page_size, offset=offset)
+    params['pagination'] = Subscribers().pagination(page_size=page_size, page_num=page_num)
+    subscribers = Subscribers().load(limit=page_size, offset=offset)
 
     for subscriber in subscribers:
         subscribers_arr.append({
@@ -285,9 +180,9 @@ def subscribers_backend(page: int = 1):
 @blueprint.route('/invitations/<page>', methods=['GET'])
 @blueprint.route('/invitations', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def invitations_backend(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Invitations'
     params['page'] = 'invitations'
     params['account'] = current_user
@@ -296,11 +191,11 @@ def invitations_backend(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Invitations().pagination(page_size=page_size, page_num=page_num)
-    invitations = models.Invitations().load(limit=page_size, offset=offset)
+    params['pagination'] = Invitations().pagination(page_size=page_size, page_num=page_num)
+    invitations = Invitations().load(limit=page_size, offset=offset)
     for invitation in invitations:
-        account = models.Account(account_id=invitation.account_id)
-        member = models.Member(member_id=invitation.member_id)
+        account = Account(account_id=invitation.account_id)
+        member = Member(member_id=invitation.member_id)
         invitations_arr.append({
             'id': invitation.invitation_id,
             'account': account,
@@ -318,9 +213,9 @@ def invitations_backend(page: int = 1):
 @blueprint.route('/accounts/<page>', methods=['GET'])
 @blueprint.route('/accounts', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def accounts_backend(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Accounts'
     params['page'] = 'accounts'
     params['account'] = current_user
@@ -329,13 +224,13 @@ def accounts_backend(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Accounts().pagination(page_size=page_size, page_num=page_num)
-    accounts = models.Accounts().load(order_by=['registered', 'DESC'], limit=page_size, offset=offset)
-    plans = models.Plans().load(order_by=['name'])
+    params['pagination'] = Accounts().pagination(page_size=page_size, page_num=page_num)
+    accounts = Accounts().load(order_by=['registered', 'DESC'], limit=page_size, offset=offset)
+    plans = Plans().load(order_by=['name'])
     params['plans'] = plans
 
     for account in accounts:
-        plan = models.Plan(plan_id=account.plan_id)
+        plan = Plan(plan_id=account.plan_id)
         plan.hydrate()
         accounts_arr.append({
             'id': account.account_id,
@@ -352,9 +247,9 @@ def accounts_backend(page: int = 1):
 @blueprint.route('/users/<page>', methods=['GET'])
 @blueprint.route('/users', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def users(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Users'
     params['page'] = 'users'
     params['account'] = current_user
@@ -363,10 +258,10 @@ def users(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Members().pagination(page_size=page_size, page_num=page_num)
-    members = models.Members().load(limit=page_size, offset=offset)
+    params['pagination'] = Members().pagination(page_size=page_size, page_num=page_num)
+    members = Members().load(limit=page_size, offset=offset)
     for member in members:
-        account = models.Account(account_id=member.account_id)
+        account = Account(account_id=member.account_id)
         account.hydrate()
         member.get_roles()
         members_arr.append({
@@ -382,17 +277,11 @@ def users(page: int = 1):
     return render_template('backend/users.html.j2', **params)
 
 @blueprint.route('/keyvalues/<page>', methods=['GET'])
-@blueprint.route('/keyvalues', methods=['GET', 'POST'])
+@blueprint.route('/keyvalues', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def keyvalues(page: int = 1):
-    params = actions.get_frontend_conf()
-    if request.method == 'POST':
-        body = actions.request_body()
-        params = {**params, **body}
-        actions.handle_upsert_keyvalues(params, current_user)
-
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Public Content'
     params['page'] = 'keyvalues'
     params['account'] = current_user
@@ -401,8 +290,8 @@ def keyvalues(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.KeyValues().pagination(page_size=page_size, page_num=page_num)
-    key_values = models.KeyValues().load(limit=page_size, offset=offset)
+    params['pagination'] = KeyValues().pagination(page_size=page_size, page_num=page_num)
+    key_values = KeyValues().load(limit=page_size, offset=offset)
     for kv in key_values:
         kv_arr.append({
             'id': kv.key_value_id,
@@ -418,40 +307,26 @@ def keyvalues(page: int = 1):
 
     return render_template('backend/keyvalues.html.j2', **params)
 
-@blueprint.route('/feeds', methods=['GET', 'POST'])
 @blueprint.route('/feeds/<page>', methods=['GET'])
+@blueprint.route('/feeds', methods=['GET'])
 @login_required
-@actions.internal_users
+@internal_users
 def feeds_backend(page: int = 1):
-    params = actions.get_frontend_conf()
-    if request.method == 'POST':
-        body = actions.request_body()
-        params = {**params, **body}
-        actions.handle_upsert_feeds(params, current_user)
-
+    params = get_frontend_conf()
     params['page_title'] = 'Data Sources'
     params['page'] = 'feeds'
     params['account'] = current_user
     params['schedule_opts'] = [
         'hourly', 'daily', 'monthly'
     ]
-    params['datalists'] = [{
-        'name': 'methods',
-        'options': ['http', 'ftp']
-    }, {
-        'name': 'types',
-        'options': models.Feeds().distinct('type')
-    }, {
-        'name': 'categories',
-        'options': models.Feeds().distinct('category')
-    }]
+    params['datalists'] = [methods, types, categories]
     feeds_arr = []
     page_size = 15
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Feeds().pagination(page_size=page_size, page_num=page_num)
-    feeds = models.Feeds().load(limit=page_size, offset=offset)
+    params['pagination'] = Feeds().pagination(page_size=page_size, page_num=page_num)
+    feeds = Feeds().load(limit=page_size, offset=offset)
 
     for feed in feeds:
         feeds_arr.append({

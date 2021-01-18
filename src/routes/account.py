@@ -1,7 +1,8 @@
-from flask import render_template, Blueprint, redirect, url_for
+from flask import render_template, Blueprint, redirect, url_for, request
 from flask_login import current_user, login_required
 from trivialsec import models
-import actions
+from trivialsec.helpers import messages
+from . import get_frontend_conf
 
 
 blueprint = Blueprint('account', __name__)
@@ -10,7 +11,7 @@ blueprint = Blueprint('account', __name__)
 @blueprint.route('/preferences', methods=['GET'])
 @login_required
 def account_preferences():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
     params['account'] = current_user
@@ -24,7 +25,7 @@ def account_preferences():
 @blueprint.route('/organisation', methods=['GET'])
 @login_required
 def account_organisation(page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
     params['account'] = current_user
@@ -77,7 +78,7 @@ def account_organisation(page: int = 1):
 @blueprint.route('/member/<member_id>', methods=['GET'])
 @login_required
 def account_member(member_id: int, page: int = 1):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
     params['account'] = current_user
@@ -112,7 +113,7 @@ def account_member(member_id: int, page: int = 1):
 @blueprint.route('/subscription', methods=['GET'])
 @login_required
 def account_subscription():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Subscription'
     params['page'] = 'subscription'
     params['account'] = current_user
@@ -125,12 +126,12 @@ def account_subscription():
 @blueprint.route('/integrations', methods=['GET'])
 @login_required
 def account_integrations():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Integrations'
     params['page'] = 'integrations'
     params['account'] = current_user
     account_config = models.AccountConfig(account_id=current_user.account_id)
-    if account_config.hydrate():
+    if account_config.hydrate(no_cache=True):
         params['account_config'] = account_config
 
     return render_template('account/integrations.html.j2', **params)
@@ -138,7 +139,7 @@ def account_integrations():
 @blueprint.route('/notifications', methods=['GET'])
 @login_required
 def account_notifications():
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
     params['account'] = current_user
@@ -151,18 +152,16 @@ def account_notifications():
 @blueprint.route('/setup/<step>', methods=['GET'])
 @login_required
 def account_setup(step: int):
-    params = actions.get_frontend_conf()
+    params = get_frontend_conf()
     params['page'] = 'setup'
     params['step'] = step
     params['page_title'] = 'Account Setup'
     params['account'] = current_user
-    body = actions.request_body()
-    params = {**params, **body}
 
     account_config = models.AccountConfig(account_id=current_user.account_id)
     plan = models.Plan(account_id=current_user.account_id)
     if not account_config.hydrate() or not plan.hydrate('account_id'):
-        params['error'] = actions.app_messages.ERR_LOGIN_FAILED
+        params['error'] = messages.ERR_LOGIN_FAILED
         return render_template('public/login.html.j2', **params)
 
     if current_user.account.is_setup:

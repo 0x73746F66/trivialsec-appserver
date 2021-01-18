@@ -15,7 +15,7 @@ const createProject = async event => {
     iconEl.classList.remove('icofont-ui-add')
     iconEl.classList.add('icofont-spinner-alt-2')
     iconEl.classList.add('rotate')
-    const json = await Api.post_async('/api/create-project', {
+    const json = await Api.post_async('/v1/create-project', {
         project_tracking_id,
         project_name,
         domain_name

@@ -61,7 +61,6 @@ table th {
 
 table td:first-child {
     font-weight: bold;
-    text-align: left;
 }
 
 table tr:nth-child(even) td {

@@ -8,7 +8,7 @@ const bulkAction = async() => {
         if (invite_email.length === 0) {
             continue
         }
-        const json = await Api.post_async('/api/invitation', {
+        const json = await Api.post_async('/v1/invitation', {
             invite_message,
             invite_email,
             invite_role_id: default_role_id
@@ -24,11 +24,11 @@ const bulkAction = async() => {
     }
 }
 const settingsAction = async() => {
-    const json1 = await Api.post_async('/api/account', [{
+    const json1 = await Api.post_async('/v1/account', [{
         prop: 'alias',
         value: document.getElementById('alias').value
     }]).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))        
-    const json2 = await Api.post_async('/api/account-config', [{
+    const json2 = await Api.post_async('/v1/account-config', [{
         prop: 'permit_domains',
         value: document.getElementById('permit_domains').value
     }]).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))        
@@ -52,7 +52,7 @@ const memberAction = async(event) => {
 const scannerLists = async() => {
     const nameservers = document.getElementById('nameservers').value
     const ignore_list = document.getElementById('ignore_list').value
-    const json = await Api.post_async('/api/account-config', [{
+    const json = await Api.post_async('/v1/account-config', [{
         prop: 'nameservers',
         value: nameservers
     },{

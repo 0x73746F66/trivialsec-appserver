@@ -2,6 +2,7 @@ SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
 APP_NAME = app
+LOCAL_CACHE = /tmp/trivialsec
 
 .PHONY: help
 
@@ -29,6 +30,13 @@ common: prep
 	yes | pip uninstall -q trivialsec-common
 	aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
 	aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/build-${COMMON_VERSION}.zip build.zip
+	unzip -qo build.zip
+	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
+
+common-dev: prep ## Install trivialsec_common lib from local build
+	yes | pip uninstall -q trivialsec-common
+	cp -fu $(LOCAL_CACHE)/build.zip build.zip
+	cp -fu $(LOCAL_CACHE)/trivialsec_common-$(COMMON_VERSION)-py2.py3-none-any.whl trivialsec_common-$(COMMON_VERSION)-py2.py3-none-any.whl
 	unzip -qo build.zip
 	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
 
@@ -81,4 +89,5 @@ package-upload: package
 	$(CMD_AWS) s3 cp --only-show-errors deploy/nginx.conf s3://cloudformation-trivialsec/deploy-packages/nginx.conf
 
 package-dev: common package
+	zip -d $(APP_NAME).zip src/.flaskenv
 	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://cloudformation-trivialsec/deploy-packages/$(APP_NAME)-dev-$(COMMON_VERSION).zip

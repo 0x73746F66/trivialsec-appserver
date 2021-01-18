@@ -6,7 +6,7 @@ const buttonActions = async(event) => {
         return;
     }
     
-    const json = await Api.post_async('/api/checkout', {
+    const json = await Api.post_async('/v1/checkout', {
         selection: event.currentTarget.id
     }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     if (json.status != 'success') {
@@ -15,7 +15,7 @@ const buttonActions = async(event) => {
         return;
     }
     if (!json.result || !json.result.hasOwnProperty('id')) {
-        console.log(json.result)
+        console.log(json)
         appMessage('error', 'Failed to start Checkout with Stripe.com')
         return;
     }

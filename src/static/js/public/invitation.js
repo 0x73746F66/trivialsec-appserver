@@ -7,7 +7,7 @@ const saveFields = async() => {
         appMessage('error', 'Passwords do not match')
         return;
     }
-    const json = await Api.post_async('/api/confirm-password', {
+    const json = await Api.post_async('/v1/confirm-password', {
         recaptcha_token,
         confirmation_url,
         password1,

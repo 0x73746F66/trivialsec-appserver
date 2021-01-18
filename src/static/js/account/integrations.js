@@ -1,5 +1,5 @@
 const subdomainsAction = async() => {
-    const json = await Api.post_async('/api/account-config', [{
+    const json = await Api.post_async('/v1/account-config', [{
         prop: 'alienvault',
         value: document.querySelector('[name="alienvault"]').value
     },{
@@ -87,7 +87,7 @@ const subdomainsAction = async() => {
     }
 }
 const reposAction = async() => {
-    const json = await Api.post_async('/api/account-config', [{
+    const json = await Api.post_async('/v1/account-config', [{
         prop: 'github_key',
         value: document.querySelector('[name="github_key"]').value
     },{

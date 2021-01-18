@@ -14,7 +14,7 @@ const showCardError = event => {
 
 const createSubscription = (paymentMethodId, priceId) => {
     return (
-    Api.post('/api/create-subscription', {
+    Api.post('/v1/create-subscription', {
         paymentMethodId: paymentMethodId,
         priceId: priceId,
     }).then(json => {
@@ -57,7 +57,7 @@ const createSubscription = (paymentMethodId, priceId) => {
 }
 function retryInvoiceWithNewPaymentMethod(paymentMethodId, invoiceId, priceId) {
     return (
-        Api.post('/api/retry-invoice', {
+        Api.post('/v1/retry-invoice', {
             paymentMethodId: paymentMethodId,
             invoiceId: invoiceId,
             priceId: priceId,
@@ -93,7 +93,7 @@ const onSubscriptionComplete = result => {
         (result.hasOwnProperty('invoice') && result.invoice.payment_intent.status === 'succeeded')||
         (result.hasOwnProperty('subscription') && result.subscription.status === 'active')
     ) {
-        Api.post('/api/account', [{prop: 'is_setup', value: 1}]).then(json => {
+        Api.post('/v1/account', [{prop: 'is_setup', value: 1}]).then(json => {
             if (json.status == 'error') {
                 console.log(json)
             }

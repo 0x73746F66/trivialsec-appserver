@@ -1,46 +1,62 @@
 const project_tracking_id = document.getElementById('project-tracking-id').value
 const project_id = document.getElementById('project-id').value
-const domain_id = document.getElementById('domain-id').value
+const page_domain_id = document.getElementById('domain-id').value
 let socket, socketio_token, findings_chart;
 const subdomainsAction = async event => {
     const id = event.currentTarget.parent('tr').getAttribute('data-domain-id')
     location.href = `/app/domain/${id}`
 }
-const toggleDomainAction = async() => {
-    const toggleEl = document.getElementById('toggle-domain')
+const toggleDomain = async toggleEl => {
     const toggleIconEl = toggleEl.querySelector('i')
+    const domain_id = toggleEl.parent('tr').getAttribute('data-domain-id')
     let action = 'enable-domain'
     let classNameAlt = 'icofont-toggle-on'
     if (toggleIconEl.classList.contains('icofont-toggle-on')) {
         classNameAlt = 'icofont-toggle-off'
         action = 'disable-domain'
     }
-    const json = await Api.post_async(`/api/${action}`, {
-        domain_id,
-        project_tracking_id,
-        project_id
+    const json = await Api.post_async(`/v1/${action}`, {
+        domain_id
     }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     if (json.status != 'success') {
         appMessage(json.status, json.message)
-        return false
+        return json
     }
     toggleIconEl.classList.remove(toggleIconEl.className)
     toggleIconEl.classList.add(classNameAlt)
+    toggleEl.title = action == 'disable-domain' ? 'Enable domain monitoring' : 'Disable domain monitoring'
+    return json
 }
-const deleteDomainAction = async event => {
-    const json = await Api.post_async(`/api/delete-domain`, {
-        domain_id,
-        project_tracking_id,
-        project_id
+const deleteDomain = async domain_id => {
+    const json = await Api.post_async(`/v1/delete-domain`, {
+        domain_id
     }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json.status, json.message)
+    return json
 }
+const toggleDomainAction = async() => {
+    await toggleDomain(document.getElementById('toggle-domain'))
+}
+const toggleDomainRowAction = async event => {
+    await toggleDomain(event.currentTarget)
+}
+const deleteDomainAction = async() => {
+    await deleteDomain(page_domain_id)
+}
+const deleteDomainRowAction = async event => {
+    const domainRow = event.currentTarget.parent('tr')
+    const domain_id = domainRow.getAttribute('data-domain-id')
+    const json = await deleteDomain(domain_id)
+    if (json.status != 'success') {
+        return;
+    }
+    domainRow.remove()
+}
+
 const runDomainAction = async event => {
     const action = document.getElementById('scan-action').value
-    const json = await Api.post_async(`/api/${action}`, {
-        domain_id,
-        project_tracking_id,
-        project_id
+    const json = await Api.post_async(`/v1/${action}`, {
+        domain_id: page_domain_id
     }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json.status, json.message)
 }
@@ -99,8 +115,19 @@ document.addEventListener('DOMContentLoaded', async() => {
     const runActionEl = document.getElementById('run-action')
     runActionEl.addEventListener('click', runDomainAction, false)
     runActionEl.addEventListener('touchstart', runDomainAction, supportsPassive ? { passive: true } : false)
-    for await(const domainEl of document.querySelectorAll('.domains-list td')) {
+    for await(const domainEl of document.querySelectorAll('.domains-list td.click-through')) {
+        const disabled = domainEl.parent('.disabled-events')
+        if (disabled) continue
         domainEl.addEventListener('click', subdomainsAction, false)
         domainEl.addEventListener('touchstart', subdomainsAction, supportsPassive ? { passive: true } : false)
     }
+    for await(const domainEl of document.querySelectorAll('.domains-list td.toggle-monitoring')) {
+        domainEl.addEventListener('click', toggleDomainRowAction, false)
+        domainEl.addEventListener('touchstart', toggleDomainRowAction, supportsPassive ? { passive: true } : false)
+    }
+    for await(const domainEl of document.querySelectorAll('.domains-list td.delete-domain')) {
+        domainEl.addEventListener('click', deleteDomainRowAction, false)
+        domainEl.addEventListener('touchstart', deleteDomainRowAction, supportsPassive ? { passive: true } : false)
+    }
+
 }, false)

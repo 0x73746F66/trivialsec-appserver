@@ -32,7 +32,7 @@
                             <input type="password" id="password" name="password" placeholder="Enter your password">
                         </li>
                         <li>
-                            <button class="wait_recaptcha" disabled type="submit">Login</button>
+                            <button class="wait_recaptcha" disabled id="login_btn">Login</button>
                         </li>
                         </ul>
                     </form>
@@ -47,7 +47,7 @@
                             <input type="email" id="email" name="email" value="{{ email | default('') }}" placeholder="Enter your email here">
                         </li>
                         <li>
-                            <button class="wait_recaptcha" disabled type="submit">Request Reset</button>
+                            <button class="wait_recaptcha" disabled type="button">Request Reset</button>
                         </li>
                         </ul>
                     </form>

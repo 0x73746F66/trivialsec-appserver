@@ -1,14 +1,14 @@
 
 import json
 from trivialsec.models import Finding
-import actions
+from trivialsec.services.findings import aggregate_sum
 
 def findings_severity_horizontal_bar(findings: list):
-    info = actions.aggregate_sum(findings, Finding.RATING_INFO, 'severity_normalized', 'score_to_rating')
-    low = actions.aggregate_sum(findings, Finding.RATING_LOW, 'severity_normalized', 'score_to_rating')
-    medium = actions.aggregate_sum(findings, Finding.RATING_MEDIUM, 'severity_normalized', 'score_to_rating')
-    high = actions.aggregate_sum(findings, Finding.RATING_HIGH, 'severity_normalized', 'score_to_rating')
-    critical = actions.aggregate_sum(findings, Finding.RATING_CRITICAL, 'severity_normalized', 'score_to_rating')
+    info = aggregate_sum(findings, Finding.RATING_INFO, 'severity_normalized', 'score_to_rating')
+    low = aggregate_sum(findings, Finding.RATING_LOW, 'severity_normalized', 'score_to_rating')
+    medium = aggregate_sum(findings, Finding.RATING_MEDIUM, 'severity_normalized', 'score_to_rating')
+    high = aggregate_sum(findings, Finding.RATING_HIGH, 'severity_normalized', 'score_to_rating')
+    critical = aggregate_sum(findings, Finding.RATING_CRITICAL, 'severity_normalized', 'score_to_rating')
     data = []
     background_color = []
     labels = []
@@ -64,11 +64,11 @@ def findings_severity_donut(findings: list):
                 f"rgba({', '.join(map(str, Finding.SEVERITY_CRITICAL_RGB))}, 0.5)",
             ],
             'data': [
-                actions.aggregate_sum(findings, Finding.RATING_INFO, 'severity_normalized', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_LOW, 'severity_normalized', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_MEDIUM, 'severity_normalized', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_HIGH, 'severity_normalized', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_CRITICAL, 'severity_normalized', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_INFO, 'severity_normalized', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_LOW, 'severity_normalized', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_MEDIUM, 'severity_normalized', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_HIGH, 'severity_normalized', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_CRITICAL, 'severity_normalized', 'score_to_rating'),
             ]
         }],
         'labels': [
@@ -98,11 +98,11 @@ def findings_criticality_donut(findings: list):
                 f"rgba({', '.join(map(str, Finding.CRITICALITY_CRITICAL_RGB))}, 0.5)",
             ],
             'data': [
-                actions.aggregate_sum(findings, Finding.RATING_INFO, 'detail_criticality', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_LOW, 'detail_criticality', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_MEDIUM, 'detail_criticality', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_HIGH, 'detail_criticality', 'score_to_rating'),
-                actions.aggregate_sum(findings, Finding.RATING_CRITICAL, 'detail_criticality', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_INFO, 'detail_criticality', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_LOW, 'detail_criticality', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_MEDIUM, 'detail_criticality', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_HIGH, 'detail_criticality', 'score_to_rating'),
+                aggregate_sum(findings, Finding.RATING_CRITICAL, 'detail_criticality', 'score_to_rating'),
             ]
         }],
         'labels': [
@@ -128,9 +128,9 @@ def findings_confidence_donut(findings: list):
                 f"rgba({', '.join(map(str, Finding.CONFIDENCE_LOW_RGB))}, 0.5)",
             ],
             'data': [
-                actions.aggregate_sum(findings, Finding.CONFIDENCE_HIGH, 'detail_confidence', 'score_to_confidence'),
-                actions.aggregate_sum(findings, Finding.CONFIDENCE_MEDIUM, 'detail_confidence', 'score_to_confidence'),
-                actions.aggregate_sum(findings, Finding.CONFIDENCE_LOW, 'detail_confidence', 'score_to_confidence'),
+                aggregate_sum(findings, Finding.CONFIDENCE_HIGH, 'detail_confidence', 'score_to_confidence'),
+                aggregate_sum(findings, Finding.CONFIDENCE_MEDIUM, 'detail_confidence', 'score_to_confidence'),
+                aggregate_sum(findings, Finding.CONFIDENCE_LOW, 'detail_confidence', 'score_to_confidence'),
             ]
         }],
         'labels': [

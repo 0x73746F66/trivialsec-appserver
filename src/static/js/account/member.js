@@ -4,7 +4,7 @@ const memberAction = async() => {
     if (!(cid in choices_rendered)) {
         appMessage('error', 'Problem encountered gathering assigned roles, please try refreshing the page')
     }
-    const json = await Api.post_async('/api/organisation/member', {
+    const json = await Api.post_async('/v1/organisation/member', {
         member_id: document.querySelector('section[data-member-id]').getAttribute('data-member-id'),
         email: document.getElementById('member_email').value,
         roles: choices_rendered[cid].getValue().map(i=>i.value)

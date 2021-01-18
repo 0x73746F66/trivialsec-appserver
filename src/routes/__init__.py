@@ -1,11 +1,30 @@
 import json
-from os import path
-from flask import jsonify, send_from_directory, current_app as app
-from flask_login import LoginManager
-from trivialsec import models
+from datetime import date
+from flask import send_from_directory, abort, current_app as app
+from flask_login import LoginManager, current_user
+from trivialsec.models import Member, Account, Plan, ApiKey
 from trivialsec.helpers.config import config
+from trivialsec.services.roles import is_internal_member, is_audit_member, is_billing_member, is_owner_member, is_support_member, is_readonly_member
 
 
+def get_frontend_conf() -> dict:
+    conf = {
+        'app_version': config.app_version,
+        'recaptcha_site_key': config.recaptcha_site_key,
+        'public_bucket': config.aws.get('public_bucket'),
+        'public_object_prefix': config.aws.get('public_object_prefix'),
+        'stripe_publishable_key': config.stripe_publishable_key,
+        'year': date.today().year,
+        'roles': {
+            'is_internal_member': is_internal_member(current_user),
+            'is_support_member': is_support_member(current_user),
+            'is_billing_member': is_billing_member(current_user),
+            'is_audit_member': is_audit_member(current_user),
+            'is_owner_member': is_owner_member(current_user),
+            'is_readonly_member': is_readonly_member(current_user),
+        }
+    }
+    return {**conf, **config.get_app()}
 @app.teardown_request
 def teardown_request_func(error: Exception = None):
     if error:
@@ -42,15 +61,26 @@ login_manager.init_app(app)
 login_manager.login_view = 'public.login'
 
 @login_manager.user_loader
-def load_user(user_id: int) -> models.Member:
-    member = models.Member(member_id=user_id)
-    member.hydrate()
+def load_user(user_id: int) -> Member:
+    member = Member(member_id=user_id)
+    member.hydrate(ttl_seconds=30)
+    if not isinstance(member, Member):
+        return abort(401)
     member.get_roles()
-    account = models.Account(account_id=member.account_id)
+    apikey = ApiKey(member_id=member.member_id, comment='public-api')
+    apikey.hydrate(['member_id', 'comment'])
+    if apikey.api_key_secret is None or apikey.active is not True:
+        return abort(401)
+    account = Account(account_id=member.account_id)
     account.hydrate()
-    plan = models.Plan(plan_id=account.plan_id)
+    if not isinstance(account, Account):
+        return abort(401)
+    plan = Plan(plan_id=account.plan_id)
     plan.hydrate()
+    if not isinstance(plan, Plan):
+        return abort(401)
     setattr(account, 'plan', plan)
     setattr(member, 'account', account)
+    setattr(member, 'apikey', apikey)
 
     return member

@@ -1,7 +1,7 @@
 const saveNewEmail = async() => {
     const email = document.getElementById('email').value
     const password = document.getElementById('password').value
-    const json = await Api.post_async('/api/update-email', {email, password})
+    const json = await Api.post_async('/v1/update-email', {email, password})
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json.status, json.message)
 }
@@ -13,7 +13,7 @@ const changePassword = async() => {
         appMessage('error', 'Passwords do not match')
         return;
     }
-    const json = await Api.post_async('/api/change-password', {old_password, new_password, repeat_password})
+    const json = await Api.post_async('/v1/change-password', {old_password, new_password, repeat_password})
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json.status, json.message)
 }
