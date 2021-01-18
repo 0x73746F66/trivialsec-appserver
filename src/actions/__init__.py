@@ -1,29 +1,20 @@
 from functools import wraps
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from urllib.parse import parse_qs
 from urllib.parse import urlencode
 from urllib import request as urlrequest
 import json
-import time
-import base64
-import os
 import uuid
 import re
 import socket
 import requests
-import boto3
-from passlib.hash import pbkdf2_sha256
 from flask import request, abort, redirect, url_for
 from flask_login import current_user
-from requests.status_codes import _codes
-from requests.exceptions import ReadTimeout, ConnectTimeout
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 from trivialsec.helpers.config import config
 from trivialsec.helpers.log_manager import logger
 from trivialsec import models
 from trivialsec import helpers
-from . import app_messages
 
 
 EOL = "\r\n"
@@ -135,8 +126,8 @@ def check_password_policy(passwd: str) -> bool:
         return False
     return True
 
-def check_email_rules(email: str) -> bool:
-    parts = email.split('@')
+def check_email_rules(email_addr: str) -> bool:
+    parts = email_addr.split('@')
     if len(parts) != 2:
         logger.info('check_email_rules: invalid format')
         return False
@@ -146,13 +137,13 @@ def check_email_rules(email: str) -> bool:
         logger.info('check_email_rules: invalid domain')
         return False
 
-    if not is_valid_email(email):
+    if not is_valid_email(email_addr):
         logger.info('check_email_rules: validation error')
         return False
 
     return True
 
-def check_domain_rules(domain: str) -> bool:
+def check_domain_rules(domain_name: str) -> bool:
     # TODO implement
     return True
 
@@ -354,11 +345,12 @@ def handle_finding_actions(params: dict, member: models.Member) -> models.Findin
     if action == 'unassign':
         finding = models.Finding(finding_id=finding_id)
         finding.hydrate()
+        old_assignee_id = finding.assignee_id
         finding.assignee_id = None
         finding.workflow_state = finding.WORKFLOW_NEW
         finding.updated_at = datetime.utcnow()
         finding.persist()
-        models.ActivityLog(member_id=member.member_id, action='unassigned_finding', description=assignee_id).persist()
+        models.ActivityLog(member_id=member.member_id, action='unassigned_finding', description=old_assignee_id).persist()
         return finding
 
     if action == 'resolve':
@@ -399,21 +391,21 @@ def handle_finding_actions(params: dict, member: models.Member) -> models.Findin
 
     return None
 
-def register_action(email: str, passwd: str, selected_plan: dict, alias=None, verified=False, account_id=None, role_id=models.Role.ROLE_OWNER_ID) -> models.Member:
-    res = check_email_rules(email)
+def register_action(email_addr: str, passwd: str, selected_plan: dict, alias=None, verified=False, account_id=None, role_id=models.Role.ROLE_OWNER_ID) -> models.Member:
+    res = check_email_rules(email_addr)
     if not res:
         return None
 
-    member = models.Member(email=email)
+    member = models.Member(email=email_addr)
     if member.exists(['email']):
         return None
 
     account = models.Account(
-        billing_email=email,
+        billing_email=email_addr,
         account_id=account_id,
-        alias=alias or email,
-        verification_hash=helpers.make_hash(email),
-        socket_key=str(uuid.uuid5(uuid.NAMESPACE_URL, email))
+        alias=alias or email_addr,
+        verification_hash=helpers.make_hash(email_addr),
+        socket_key=str(uuid.uuid5(uuid.NAMESPACE_URL, email_addr))
     )
     if account_id is not None:
         account.hydrate()
@@ -438,12 +430,12 @@ def register_action(email: str, passwd: str, selected_plan: dict, alias=None, ve
 
     return member
 
-def handle_login(email: str, password: str) -> models.Member:
-    res = check_email_rules(email)
+def handle_login(email_addr: str, password: str) -> models.Member:
+    res = check_email_rules(email_addr)
     if not res:
         return None
 
-    member = models.Member(email=email)
+    member = models.Member(email=email_addr)
     if not member.exists(['email']):
         return None
     member.hydrate('email')
