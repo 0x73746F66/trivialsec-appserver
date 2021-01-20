@@ -7,8 +7,6 @@ const handleSocket = async data => {
     console.debug(data)
 }
 const createProject = async event => {
-    const project_tracking_id = ''.random()
-    document.getElementById('project-tracking-id').value = project_tracking_id
     const project_name = document.getElementById('project_name_input').value
     const domain_name = document.getElementById('domain_name_input').value
     const iconEl = event.currentTarget.querySelector('i')
@@ -16,7 +14,6 @@ const createProject = async event => {
     iconEl.classList.add('icofont-spinner-alt-2')
     iconEl.classList.add('rotate')
     const json = await Api.post_async('/v1/create-project', {
-        project_tracking_id,
         project_name,
         domain_name
     }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))

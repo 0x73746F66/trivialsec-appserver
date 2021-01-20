@@ -1,4 +1,3 @@
-const project_tracking_id = document.getElementById('project-tracking-id').value
 const project_id = document.getElementById('project-id').value
 const page_domain_id = document.getElementById('domain-id').value
 let socket, socketio_token, findings_chart;
@@ -72,9 +71,6 @@ document.addEventListener('DOMContentLoaded', async() => {
     socket.on('connect', () => {
         console.debug('Connected')
         socket.emit('checkin', socketio_token)
-        for (const tracking_id of trackingIds) {
-            socket.emit('checkin', tracking_id)
-        }
     })
     socket.on('update_job_state', handleSocket)
     socket.on('dns_changes', handleSocket)

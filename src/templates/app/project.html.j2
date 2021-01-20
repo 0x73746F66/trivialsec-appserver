@@ -4,12 +4,6 @@
 {% if project.domains|length == 1 and not project.domains[0].http_last_checked %}
 <div class="alert alert-warning loading-project"><i class="icofont-warning"></i> Loading, please allow a moment to prepare the new project<i class="icofont-close"></i></div>
 {% endif %}
-<script type=text/javascript>
-trackingIds = [
-    {% for job in processing_jobs %}'{{ job.tracking_id }}',{% endfor %}
-    {% for job in queued_jobs %}'{{ job.tracking_id }}',{% endfor %}
-];
-</script>
 {% include 'app/project-banner.html.j2' %}
 <div class="project-container">
     <div class="container-tabs">

@@ -229,24 +229,27 @@ def login_post():
 
     member = handle_login(params.get('email'), params.get('password'))
     if not isinstance(member, Member):
+        logger.debug(f'No user for {params.get("email")}')
         params['status'] = 'error'
         params['message'] = messages.ERR_LOGIN_FAILED
         return jsonify(params)
 
     apikey = ApiKey(member_id=member.member_id, comment='public-api')
-    apikey.hydrate(['member_id', 'comment'])
-    if apikey.api_key_secret is None or apikey.active is not True:
+    if not apikey.hydrate(['member_id', 'comment']):
+        logger.debug(f'inactive public-api key for user {member.member_id}')
         params['status'] = 'error'
         params['message'] = messages.ERR_LOGIN_FAILED
         return jsonify(params)
 
     if not member.verified:
+        logger.debug(f'unverified user {member.member_id}')
         params['status'] = 'error'
         params['message'] = messages.ERR_MEMBER_VERIFICATION
         return jsonify(params)
 
     account = Account(account_id=member.account_id)
     if not account.hydrate():
+        logger.debug(f'unverified user {member.member_id}')
         params['status'] = 'error'
         params['message'] = messages.ERR_LOGIN_FAILED
         return jsonify(params)
@@ -261,6 +264,11 @@ def login_post():
         member_id=member.member_id,
         action=ActivityLog.ACTION_USER_LOGIN,
         description=f'{remote_addr}\t{request.user_agent}'
+    ).persist()
+    ActivityLog(
+        member_id=member.member_id,
+        action=ActivityLog.ACTION_USER_KEY_ROTATE,
+        description=f'login action triggered {apikey.api_key} secret key rotation'
     ).persist()
     session.permanent = True
     session.session_start = datetime.utcnow().isoformat()
@@ -277,7 +285,6 @@ def login_post():
 def logout():
     if hasattr(current_user, 'member_id'):
         member_id = current_user.member_id
-        api_key = current_user.apikey.api_key
         if 'session_start' in session:
             session_end = datetime.utcnow()
             session_start = datetime.fromisoformat(session['session_start'])
@@ -290,11 +297,9 @@ def logout():
                 action=ActivityLog.ACTION_USER_LOGOUT,
                 description=f'Session duration {session_duration.days}d {remainder_hours}h {remainder_minutes}m {remainder_seconds}s'
             ).persist()
-        if api_key:
-            apikey = ApiKey(api_key=api_key)
-            apikey.hydrate()
-            apikey.active = False
-            apikey.persist()
+        if isinstance(current_user.apikey, ApiKey):
+            current_user.apikey.active = False
+            current_user.apikey.persist()
 
     try:
         logout_user()

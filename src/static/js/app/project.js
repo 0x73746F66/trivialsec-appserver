@@ -65,9 +65,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     socket.on('connect', () => {
         console.debug('Connected')
         socket.emit('checkin', socketio_token)
-        for (const tracking_id of trackingIds) {
-            socket.emit('checkin', tracking_id)
-        }
+
     })
     socket.on('update_job_state', handleSocket)
     socket.on('dns_changes', handleSocket)

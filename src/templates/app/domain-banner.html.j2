@@ -1,5 +1,4 @@
 <script type=text/javascript>
-trackingIds = [{% for job in job_runs %}'{{ job.tracking_id }}',{% endfor %}];
 {% if domain.findings_count > 0 %}
 findings_chart_config = {{ domain.findings_severity }};
 {% endif %}
@@ -11,7 +10,6 @@ findings_chart_config = {{ domain.findings_severity }};
 {% endif %}
 <div class="banner-area">
     <input type="hidden" id="project-id" value="{{ domain.project.project_id }}">
-    <input type="hidden" id="project-tracking-id" value="{{ domain.project.tracking_id }}">
     <input type="hidden" id="domain-id" value="{{ domain.domain_id }}">
     <div class="banner-sections">
         <div class="heading-area">

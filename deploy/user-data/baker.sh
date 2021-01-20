@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-export COMMON_VERSION=0.1.7
+export COMMON_VERSION=0.2.0
 
 function proxy_on() {
     local proxyPrivateAddr=proxy.trivialsec.local
@@ -78,7 +78,7 @@ function install_appserver_deps() {
     proxy_off
 }
 function deploy_appserver() {
-    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/nginx.conf /etc/nginx/nginx.conf
+    aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/app-nginx.conf /etc/nginx/nginx.conf
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/app-${COMMON_VERSION}.zip /tmp/trivialsec/app.zip
     aws s3 cp --only-show-errors s3://cloudformation-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl \
         /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl

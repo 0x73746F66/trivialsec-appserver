@@ -89,8 +89,7 @@ def page_domain(domain_id):
     project.hydrate()
     domain_dict['project'] = {
         'project_id': project.project_id,
-        'name': project.name,
-        'tracking_id': project.tracking_id,
+        'name': project.name
     }
     if domain.parent_domain_id:
         parent_domain = Domain(domain_id=domain.parent_domain_id)
@@ -169,6 +168,13 @@ def page_domain_jobs(domain_id):
         'project_id': project.project_id,
         'name': project.name,
     }
+    if domain.parent_domain_id:
+        parent_domain = Domain(domain_id=domain.parent_domain_id)
+        parent_domain.hydrate()
+        parent_dict = {}
+        for pcol in parent_domain.cols():
+            parent_dict[pcol] = getattr(parent_domain, pcol)
+        domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
     params['jobs_count'] = len(JobRuns().query_json([
         ('state', ['queued', 'starting', 'processing', 'finalising']),
@@ -232,6 +238,13 @@ def page_domain_findings(domain_id):
         'project_id': project.project_id,
         'name': project.name,
     }
+    if domain.parent_domain_id:
+        parent_domain = Domain(domain_id=domain.parent_domain_id)
+        parent_domain.hydrate()
+        parent_dict = {}
+        for pcol in parent_domain.cols():
+            parent_dict[pcol] = getattr(parent_domain, pcol)
+        domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
     params['findings'] = Findings().find_by([
         ('domain_id', domain.domain_id),
@@ -299,6 +312,13 @@ def page_domain_inventory(domain_id):
         'project_id': project.project_id,
         'name': project.name,
     }
+    if domain.parent_domain_id:
+        parent_domain = Domain(domain_id=domain.parent_domain_id)
+        parent_domain.hydrate()
+        parent_dict = {}
+        for pcol in parent_domain.cols():
+            parent_dict[pcol] = getattr(parent_domain, pcol)
+        domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
     params['programs'] = Programs().find_by([
         ('domain_id', domain.domain_id),
@@ -406,6 +426,13 @@ def page_domain_subdomains(domain_id, page=1):
                     }
         domain_dict['subdomains'].append(subdomain_dict)
 
+    if domain.parent_domain_id:
+        parent_domain = Domain(domain_id=domain.parent_domain_id)
+        parent_domain.hydrate()
+        parent_dict = {}
+        for pcol in parent_domain.cols():
+            parent_dict[pcol] = getattr(parent_domain, pcol)
+        domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
     params['jobs_count'] = len(JobRuns().query_json([
         ('state', ['queued', 'starting', 'processing', 'finalising']),
