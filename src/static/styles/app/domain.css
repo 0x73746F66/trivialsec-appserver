@@ -147,8 +147,10 @@ body {
 }
 #domains-list td:nth-child(2),
 #domains-list td:nth-child(3) {
-    font-weight: bold;
     text-align: left;
+}
+#domains-list td:nth-child(2) {
+    font-weight: bold;
 }
 #domains-list i.icofont-toggle-on,
 #domains-list i.icofont-toggle-off {
