@@ -1,6 +1,6 @@
 
 import json
-from trivialsec.models import Finding
+from trivialsec.models.finding import Finding
 from trivialsec.services.findings import aggregate_sum
 
 def findings_severity_horizontal_bar(findings: list):

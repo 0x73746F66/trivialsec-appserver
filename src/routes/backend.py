@@ -3,7 +3,17 @@ from flask_login import current_user, login_required
 from trivialsec.decorators import internal_users
 from trivialsec.helpers.config import config
 from trivialsec.helpers.datalists import namespaces, software_and_configuration_checks, ttps, effects, unusual_behaviors, sensitive_data_identifications, vulnerabilities, aws_security_best_practices, industry_and_regulatory_standards, methods, types, categories
-from trivialsec.models import Domains, Project, FindingDetails, Links, Subscribers, Invitations, Account, Member, Accounts, Plan, Plans, Members, KeyValues, Feeds
+from trivialsec.models.domain import Domains
+from trivialsec.models.project import Project
+from trivialsec.models.finding import FindingDetails
+from trivialsec.models.link import Links
+from trivialsec.models.subscriber import Subscribers
+from trivialsec.models.invitation import Invitations
+from trivialsec.models.account import Account, Accounts
+from trivialsec.models.plan import Plan, Plans
+from trivialsec.models.member import Members
+from trivialsec.models.key_value import KeyValues
+from trivialsec.models.feed import Feeds
 from . import get_frontend_conf
 
 

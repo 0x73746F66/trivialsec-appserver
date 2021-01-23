@@ -2,7 +2,10 @@ import json
 from datetime import date
 from flask import send_from_directory, abort, current_app as app
 from flask_login import LoginManager, current_user
-from trivialsec.models import Member, Account, Plan, ApiKey
+from trivialsec.models.member import Member
+from trivialsec.models.account import Account
+from trivialsec.models.plan import Plan
+from trivialsec.models.apikey import ApiKey
 from trivialsec.helpers.config import config
 from trivialsec.services.roles import is_internal_member, is_audit_member, is_billing_member, is_owner_member, is_support_member, is_readonly_member
 

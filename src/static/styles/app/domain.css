@@ -121,9 +121,6 @@ body {
     margin: 20px 0 10px 0;
     flex: 100%;
 }
-#httpheaders-list table td {
-    text-align: start;
-}
 #domains-list td div {
     line-height: 1;
     font-size: 24px;
@@ -230,4 +227,9 @@ i.icofont-eye-blocked {
 }
 #run-action {
   width: calc(25% - 5%) !important;
+}
+.httpheaders-list td:nth-child(1),
+.dnsrecords-list td:nth-child(1),
+.knownips-list td:nth-child(1) {
+    text-align: start;
 }

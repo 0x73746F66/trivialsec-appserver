@@ -1,6 +1,11 @@
-from flask import render_template, Blueprint, redirect, url_for, request
+from flask import render_template, Blueprint, redirect, url_for
 from flask_login import current_user, login_required
-from trivialsec import models
+from trivialsec.models.account import AccountConfig
+from trivialsec.models.activity_log import ActivityLogs
+from trivialsec.models.member import Member, Members
+from trivialsec.models.role import Role, Roles
+from trivialsec.models.invitation import Invitations
+from trivialsec.models.plan import Plan
 from trivialsec.helpers import messages
 from . import get_frontend_conf
 
@@ -15,7 +20,7 @@ def account_preferences():
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
     params['account'] = current_user
-    account_config = models.AccountConfig(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
 
@@ -29,18 +34,18 @@ def account_organisation(page: int = 1):
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
     params['account'] = current_user
-    account_config = models.AccountConfig(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
 
-    members = models.Members()
+    members = Members()
     members_arr = []
     for member in members.find_by([('account_id', current_user.account_id)], limit=1000):
         member.get_roles()
         members_arr.append(member)
     params['members'] = members_arr
 
-    roles = models.Roles()
+    roles = Roles()
     roles_arr = []
     for role in roles.load():
         if role.internal_only is False:
@@ -51,22 +56,22 @@ def account_organisation(page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.Invitations().pagination(
+    params['pagination'] = Invitations().pagination(
         search_filter=[
             ('account_id', current_user.account_id)
         ],
         page_size=page_size,
         page_num=page_num
     )
-    invitations = models.Invitations()
+    invitations = Invitations()
     invitations_arr = []
     for invitation in invitations.find_by([('account_id', current_user.account_id)], limit=page_size, offset=offset):
         if invitation.deleted is True or invitation.member_id is not None:
             continue
-        invited_by = models.Member(member_id=invitation.invited_by_member_id)
+        invited_by = Member(member_id=invitation.invited_by_member_id)
         invited_by.hydrate()
         setattr(invitation, 'invited_by', invited_by)
-        invitation_role = models.Role(role_id=invitation.role_id)
+        invitation_role = Role(role_id=invitation.role_id)
         invitation_role.hydrate()
         setattr(invitation, 'role', invitation_role)
         invitations_arr.append(invitation)
@@ -83,7 +88,7 @@ def account_member(member_id: int, page: int = 1):
     params['page'] = 'organisation'
     params['account'] = current_user
 
-    member = models.Member(member_id=member_id, account_id=current_user.account_id)
+    member = Member(member_id=member_id, account_id=current_user.account_id)
     member.hydrate(['member_id', 'account_id'])
     member.get_roles()
     params['member'] = member
@@ -92,16 +97,16 @@ def account_member(member_id: int, page: int = 1):
     page = int(page)
     page_num = max(1, page)
     offset = max(0, page-1) * page_size
-    params['pagination'] = models.ActivityLogs().pagination(
+    params['pagination'] = ActivityLogs().pagination(
         search_filter=[
             ('member_id', member_id)
         ],
         page_size=page_size,
         page_num=page_num
     )
-    params['activity_logs'] = models.ActivityLogs().load(limit=page_size, offset=offset)
+    params['activity_logs'] = ActivityLogs().load(limit=page_size, offset=offset)
 
-    roles = models.Roles()
+    roles = Roles()
     roles_arr = []
     for role in roles.load():
         if role.internal_only is False:
@@ -117,7 +122,7 @@ def account_subscription():
     params['page_title'] = 'Subscription'
     params['page'] = 'subscription'
     params['account'] = current_user
-    account_config = models.AccountConfig(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
 
@@ -130,7 +135,7 @@ def account_integrations():
     params['page_title'] = 'Integrations'
     params['page'] = 'integrations'
     params['account'] = current_user
-    account_config = models.AccountConfig(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate(no_cache=True):
         params['account_config'] = account_config
 
@@ -143,7 +148,7 @@ def account_notifications():
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
     params['account'] = current_user
-    account_config = models.AccountConfig(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
 
@@ -158,8 +163,8 @@ def account_setup(step: int):
     params['page_title'] = 'Account Setup'
     params['account'] = current_user
 
-    account_config = models.AccountConfig(account_id=current_user.account_id)
-    plan = models.Plan(account_id=current_user.account_id)
+    account_config = AccountConfig(account_id=current_user.account_id)
+    plan = Plan(account_id=current_user.account_id)
     if not account_config.hydrate() or not plan.hydrate('account_id'):
         params['error'] = messages.ERR_LOGIN_FAILED
         return render_template('public/login.html.j2', **params)
@@ -168,7 +173,7 @@ def account_setup(step: int):
         return redirect(url_for('app.dashboard'))
     params['account_config'] = account_config
     params['plan'] = plan
-    roles = models.Roles()
+    roles = Roles()
     roles_arr = []
     for role in roles.load():
         if role.internal_only == 0:

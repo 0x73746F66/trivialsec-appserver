@@ -7,7 +7,13 @@ from trivialsec.helpers.log_manager import logger
 from trivialsec.helpers.payments import create_customer
 from trivialsec.helpers.sendgrid import send_email
 from trivialsec.decorators import control_timing_attacks, require_recaptcha
-from trivialsec.models import ApiKey, ActivityLog, KeyValues, Account, Member, Invitation, Plan
+from trivialsec.models.apikey import ApiKey
+from trivialsec.models.activity_log import ActivityLog
+from trivialsec.models.key_value import KeyValues
+from trivialsec.models.account import Account
+from trivialsec.models.member import Member
+from trivialsec.models.invitation import Invitation
+from trivialsec.models.plan import Plan
 from trivialsec.services.accounts import register, generate_api_key_secret
 from trivialsec.services.member import handle_login
 from . import get_frontend_conf

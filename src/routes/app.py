@@ -2,7 +2,15 @@ from datetime import datetime
 from flask import render_template, Blueprint, abort
 from flask_login import current_user, login_required
 from trivialsec.helpers.config import config
-from trivialsec.models import Domains, Domain, Findings, DnsRecords, KnownIps, Project, JobRuns, Programs, Projects, Notifications, Finding, Members
+from trivialsec.models.domain import Domains, Domain
+from trivialsec.models.finding import Findings
+from trivialsec.models.dns_record import DnsRecords
+from trivialsec.models.known_ip import KnownIps
+from trivialsec.models.program import Project
+from trivialsec.models.job_run import JobRuns
+from trivialsec.models.program import Programs
+from trivialsec.models.project import Projects
+from trivialsec.models.notification import Notifications
 from actions import charts
 from . import get_frontend_conf
 
