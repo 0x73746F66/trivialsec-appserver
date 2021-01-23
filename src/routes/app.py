@@ -6,10 +6,9 @@ from trivialsec.models.domain import Domains, Domain
 from trivialsec.models.finding import Findings
 from trivialsec.models.dns_record import DnsRecords
 from trivialsec.models.known_ip import KnownIps
-from trivialsec.models.program import Project
 from trivialsec.models.job_run import JobRuns
 from trivialsec.models.program import Programs
-from trivialsec.models.project import Projects
+from trivialsec.models.project import Project, Projects
 from trivialsec.models.notification import Notifications
 from actions import charts
 from . import get_frontend_conf
