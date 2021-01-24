@@ -11,7 +11,7 @@ from trivialsec.models.subscriber import Subscribers
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.account import Account, Accounts
 from trivialsec.models.plan import Plan, Plans
-from trivialsec.models.member import Members
+from trivialsec.models.member import Member, Members
 from trivialsec.models.key_value import KeyValues
 from trivialsec.models.feed import Feeds
 from . import get_frontend_conf

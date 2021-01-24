@@ -1,5 +1,5 @@
-import redis
 from os import environ
+import redis
 from flask import Flask
 from flask_sessionstore import Session
 from trivialsec.helpers.log_manager import logger
