@@ -51,7 +51,7 @@ def page_domain(domain_id):
     params['page'] = 'domains'
     params['account'] = current_user
     domain = Domain(domain_id=int(domain_id))
-    if not domain.hydrate() or domain.account_id != current_user.account_id:
+    if not domain.hydrate() or domain.account_id != current_user.account_id or domain.deleted:
         return abort(404)
 
     params['page_title'] = domain.name
@@ -65,18 +65,11 @@ def page_domain(domain_id):
         ('archived', 0),
         ('domain_id', domain.domain_id)
     ], limit=1000).load_details().to_list()
-    domain_dict = {
-        'findings_severity': charts.findings_severity_horizontal_bar(findings_arr),
-        'findings_count': len(findings_arr),
-    }
+    domain_dict = {'findings_severity': charts.findings_severity_horizontal_bar(findings_arr)}
     dns_arr = DnsRecords().find_by([
         ('domain_id', domain.domain_id),
     ], limit=1000).to_list()
     params['dns_records'] = dns_arr
-    known_ip_arr = KnownIps().find_by([
-        ('domain_id', domain.domain_id),
-    ], limit=1000).to_list()
-    params['known_ips'] = known_ip_arr
 
     for col in domain.cols():
         domain_dict[col] = getattr(domain, col)
@@ -107,21 +100,7 @@ def page_domain(domain_id):
         domain_dict['parent'] = parent_dict
 
     params['domain'] = domain_dict
-    params['jobs_count'] = len(JobRuns().query_json([
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-        ('$.target', domain.name),
-    ]))
-    params['programs_count'] = Programs().count([
-        ('domain_id', domain.domain_id),
-    ])
-    params['subdomains_count'] = Domains().count([
-        ('deleted', 0),
-        ('parent_domain_id', domain.domain_id),
-    ])
-    params['findings_count'] = Findings().count([
-        ('domain_id', domain.domain_id),
-        ('archived', 0),
-    ])
+
     return render_template('app/domain.html.j2', **params)
 
 @blueprint.route('/domain/<domain_id>/jobs', methods=['GET'])
@@ -145,10 +124,7 @@ def page_domain_jobs(domain_id):
         ('archived', 0),
         ('domain_id', domain.domain_id)
     ], limit=1000).load_details().to_list()
-    domain_dict = {
-        'findings_severity': charts.findings_severity_horizontal_bar(findings_arr),
-        'findings_count': len(findings_arr),
-    }
+    domain_dict = {'findings_severity': charts.findings_severity_horizontal_bar(findings_arr)}
     job_runs_arr = []
     for job_run in JobRuns().query_json([('$.target', domain.name)], limit=1000):
         if job_run.project_id == domain.project_id:
@@ -183,21 +159,7 @@ def page_domain_jobs(domain_id):
             parent_dict[pcol] = getattr(parent_domain, pcol)
         domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
-    params['jobs_count'] = len(JobRuns().query_json([
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-        ('$.target', domain.name),
-    ]))
-    params['programs_count'] = Programs().count([
-        ('domain_id', domain.domain_id),
-    ])
-    params['subdomains_count'] = Domains().count([
-        ('deleted', 0),
-        ('parent_domain_id', domain.domain_id),
-    ])
-    params['findings_count'] = Findings().count([
-        ('domain_id', domain.domain_id),
-        ('archived', 0),
-    ])
+
     return render_template('app/domain-jobs.html.j2', **params)
 
 @blueprint.route('/domain/<domain_id>/findings', methods=['GET'])
@@ -221,10 +183,7 @@ def page_domain_findings(domain_id):
         ('archived', 0),
         ('domain_id', domain.domain_id)
     ], limit=1000).load_details().to_list()
-    domain_dict = {
-        'findings_severity': charts.findings_severity_horizontal_bar(findings_arr),
-        'findings_count': len(findings_arr),
-    }
+    domain_dict = {'findings_severity': charts.findings_severity_horizontal_bar(findings_arr)}
     for col in domain.cols():
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/{config.aws.get("public_object_prefix")}{domain.name}-render-320x240.jpeg' if domain.screenshot else None
@@ -257,21 +216,6 @@ def page_domain_findings(domain_id):
         ('domain_id', domain.domain_id),
     ]).load_details()
 
-    params['jobs_count'] = len(JobRuns().query_json([
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-        ('$.target', domain.name),
-    ]))
-    params['programs_count'] = Programs().count([
-        ('domain_id', domain.domain_id),
-    ])
-    params['subdomains_count'] = Domains().count([
-        ('deleted', 0),
-        ('parent_domain_id', domain.domain_id),
-    ])
-    params['findings_count'] = Findings().count([
-        ('domain_id', domain.domain_id),
-        ('archived', 0),
-    ])
     return render_template('app/domain-findings.html.j2', **params)
 
 @blueprint.route('/domain/<domain_id>/inventory', methods=['GET'])
@@ -295,10 +239,7 @@ def page_domain_inventory(domain_id):
         ('archived', 0),
         ('domain_id', domain.domain_id)
     ], limit=1000).load_details().to_list()
-    domain_dict = {
-        'findings_severity': charts.findings_severity_horizontal_bar(findings_arr),
-        'findings_count': len(findings_arr),
-    }
+    domain_dict = {'findings_severity': charts.findings_severity_horizontal_bar(findings_arr)}
     for col in domain.cols():
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/{config.aws.get("public_object_prefix")}{domain.name}-render-320x240.jpeg' if domain.screenshot else None
@@ -330,22 +271,11 @@ def page_domain_inventory(domain_id):
     params['programs'] = Programs().find_by([
         ('domain_id', domain.domain_id),
     ])
+    known_ip_arr = KnownIps().find_by([
+        ('domain_id', domain.domain_id),
+    ], limit=1000).to_list()
+    params['known_ips'] = known_ip_arr
 
-    params['jobs_count'] = len(JobRuns().query_json([
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-        ('$.target', domain.name),
-    ]))
-    params['programs_count'] = Programs().count([
-        ('domain_id', domain.domain_id),
-    ])
-    params['subdomains_count'] = Domains().count([
-        ('deleted', 0),
-        ('parent_domain_id', domain.domain_id),
-    ])
-    params['findings_count'] = Findings().count([
-        ('domain_id', domain.domain_id),
-        ('archived', 0),
-    ])
     return render_template('app/domain-inventory.html.j2', **params)
 
 @blueprint.route('/domain/<domain_id>/subdomains/<page>', methods=['GET'])
@@ -374,7 +304,6 @@ def page_domain_subdomains(domain_id, page=1):
     domain_dict = {
         'subdomains': [],
         'findings_severity': charts.findings_severity_horizontal_bar(findings_arr),
-        'findings_count': len(findings_arr),
     }
     for col in domain.cols():
         domain_dict[col] = getattr(domain, col)
@@ -441,21 +370,7 @@ def page_domain_subdomains(domain_id, page=1):
             parent_dict[pcol] = getattr(parent_domain, pcol)
         domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
-    params['jobs_count'] = len(JobRuns().query_json([
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-        ('$.target', domain.name),
-    ]))
-    params['programs_count'] = Programs().count([
-        ('domain_id', domain.domain_id),
-    ])
-    params['subdomains_count'] = Domains().count([
-        ('deleted', 0),
-        ('parent_domain_id', domain.domain_id),
-    ])
-    params['findings_count'] = Findings().count([
-        ('domain_id', domain.domain_id),
-        ('archived', 0),
-    ])
+
     return render_template('app/domain-subdomains.html.j2', **params)
 
 @blueprint.route('/projects', methods=['GET'])
@@ -530,11 +445,6 @@ def page_project(project_id, page: int = 1):
     )
     params['pagination']['page_id'] = project_id
     params['pagination']['sub_page'] = 'domains'
-    params['jobs_count'] = JobRuns().count([
-        ('project_id', project.project_id),
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-    ])
-    params['reports_count'] = 0
 
     project_dict = {'domains': []}
     for col in project.cols():
@@ -559,7 +469,6 @@ def page_project(project_id, page: int = 1):
                     }
         project_dict['domains'].append(domain_dict)
 
-    params['domains_count'] = len(project_dict['domains'])
     params['project'] = project_dict
 
     return render_template('app/project.html.j2', **params)
@@ -596,17 +505,6 @@ def page_project_jobs(project_id, page: int = 1):
     for col in project.cols():
         project_dict[col] = getattr(project, col)
 
-    params['domains_count'] = Domains().count([
-        ('account_id', current_user.account_id),
-        ('project_id', project.project_id),
-        ('deleted', 0),
-        ('parent_domain_id', None),
-    ])
-    params['jobs_count'] = JobRuns().count([
-        ('project_id', project.project_id),
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-    ])
-    params['reports_count'] = 0
     params['project'] = project_dict
     params['error_jobs'] = JobRuns().find_by([
         ('project_id', project.project_id),
@@ -642,18 +540,6 @@ def page_project_reports(project_id, page: int = 1):
     params['page_title'] = project.name
     page_size = 10
     page = int(page)
-
-    params['domains_count'] = Domains().count([
-        ('account_id', current_user.account_id),
-        ('project_id', project.project_id),
-        ('deleted', 0),
-        ('parent_domain_id', None),
-    ])
-    params['jobs_count'] = JobRuns().count([
-        ('project_id', project.project_id),
-        ('state', ['queued', 'starting', 'processing', 'finalising']),
-    ])
-    params['reports_count'] = 0
     project_dict = {'reports': []}
     for col in project.cols():
         project_dict[col] = getattr(project, col)

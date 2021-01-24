@@ -7,9 +7,9 @@
 {% include 'app/project-banner.html.j2' %}
 <div class="project-container">
     <div class="container-tabs">
-        <a href="/app/project/{{ project.project_id }}" class="active">Domains <span class="counter">{{ domains_count }}</span></a>
-        <a href="/app/project/{{ project.project_id }}/jobs">Jobs <span class="counter">{{ jobs_count }}</span></a>
-        <a href="/app/project/{{ project.project_id }}/reports">Reports <span class="counter">{{ reports_count }}</span></a>
+        <a href="/app/project/{{ project.project_id }}" class="active">Domains</a>
+        <a href="/app/project/{{ project.project_id }}/jobs">Jobs</a>
+        <a href="/app/project/{{ project.project_id }}/reports">Reports</a>
     </div>
     <div class="project-body">
         <section class="fields" id="domains-list"{% if not project.domains %} style="display: none;"{% endif %}>

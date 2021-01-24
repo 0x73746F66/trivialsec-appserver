@@ -7,7 +7,7 @@ const subdomainsAction = async event => {
 }
 const toggleDomain = async toggleEl => {
     const toggleIconEl = toggleEl.querySelector('i')
-    const domain_id = toggleEl.parent('tr').getAttribute('data-domain-id')
+    const domain_id = toggleEl.id == 'toggle-domain' ? document.getElementById('domain-id').value : toggleEl.parent('tr').getAttribute('data-domain-id')
     let action = 'enable-domain'
     let classNameAlt = 'icofont-toggle-on'
     if (toggleIconEl.classList.contains('icofont-toggle-on')) {

@@ -5,10 +5,10 @@
 <div class="domain-container">
     <div class="container-tabs">
         <a href="/app/domain/{{ domain.domain_id }}">Details</a>
-        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs <span class="counter">{{ jobs_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory <span class="counter">{{ programs_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains <span class="counter">{{ subdomains_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/findings" class="active">Findings <span class="counter">{{ findings_count }}</span></a>
+        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs</a>
+        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory</a>
+        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains</a>
+        <a href="/app/domain/{{ domain.domain_id }}/findings" class="active">Findings</a>
     </div>
     <div class="domain-body">
         <div class="fields" id="finding-list"{% if not findings %} style="display: none;"{% endif %}>

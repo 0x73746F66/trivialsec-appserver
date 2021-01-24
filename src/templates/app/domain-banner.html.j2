@@ -1,5 +1,5 @@
 <script type=text/javascript>
-{% if domain.findings_count > 0 %}
+{% if domain.findings_severity %}
 findings_chart_config = {{ domain.findings_severity }};
 {% endif %}
 </script>
@@ -96,7 +96,7 @@ findings_chart_config = {{ domain.findings_severity }};
         </div>
         <div class="banner-section findings">
             <div class="title">Findings</div>
-            {% if domain.findings_count > 0 %}
+            {% if domain.findings_severity %}
             <div class="bar-canvas" data-domain-id="{{ domain.domain_id }}">
                 <canvas width="100" height="20"></canvas>
             </div>

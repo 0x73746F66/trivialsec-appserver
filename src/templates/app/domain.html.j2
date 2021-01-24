@@ -5,39 +5,12 @@
 <div class="domain-container">
     <div class="container-tabs">
         <a href="/app/domain/{{ domain.domain_id }}" class="active">Details</a>
-        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs <span class="counter">{{ jobs_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory <span class="counter">{{ programs_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains <span class="counter">{{ subdomains_count }}</span></a>
-        <a href="/app/domain/{{ domain.domain_id }}/findings">Findings <span class="counter">{{ findings_count }}</span></a>
+        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs</a>
+        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory</a>
+        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains</a>
+        <a href="/app/domain/{{ domain.domain_id }}/findings">Findings</a>
     </div>
     <div class="domain-body">
-        <div class="fields" id="knownips-list"{% if not known_ips %} style="display: none;"{% endif %}>
-            <div class="fields-row">
-                <div class="input-column column">
-                    <div class="knownips-list">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>IP Address</th>
-                                <th>Source</th>
-                                <th>Last Checked</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for known_ip in known_ips %}
-                            <tr data-knownip-id="{{ known_ip.known_ip_id }}">
-                                <td>{{ known_ip.ip_address }}</td>
-                                <td>{{ known_ip.source }}</td>
-                                <td><time datetime="{{ known_ip.updated_at }}"></time></td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
         <div class="fields" id="dnsrecords-list"{% if not dns_records %} style="display: none;"{% endif %}>
             <div class="fields-row">
                 <div class="input-column column">
