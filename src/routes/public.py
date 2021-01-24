@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import session, request, redirect, url_for, render_template, abort, jsonify, Blueprint
+from flask import session, request, redirect, url_for, render_template, abort, jsonify, Blueprint, current_app as app
 from flask_login import current_user, logout_user, login_user
 from trivialsec.helpers import messages, check_password_policy
 from trivialsec.helpers.config import config
@@ -306,6 +306,8 @@ def logout():
         if isinstance(current_user.apikey, ApiKey):
             current_user.apikey.active = False
             current_user.apikey.persist()
+        app.redis.delete(f'members/member_id/{member_id}')
+        app.redis.delete(f'comment|public-api/member_id|{member_id}/table|api_keys')
 
     try:
         logout_user()

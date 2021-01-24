@@ -1,6 +1,6 @@
 import json
 from datetime import date
-from flask import send_from_directory, abort, current_app as app
+from flask import send_from_directory, request, abort, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.account import Account
@@ -65,21 +65,23 @@ login_manager.login_view = 'public.login'
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
+    if request.path in ['/', '/faq', '/login', '/logout', '/register']:
+        return None
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)
     if not isinstance(member, Member):
         return abort(401)
     member.get_roles()
     apikey = ApiKey(member_id=member.member_id, comment='public-api')
-    apikey.hydrate(['member_id', 'comment'])
+    apikey.hydrate(['member_id', 'comment'], ttl_seconds=10)
     if apikey.api_key_secret is None or apikey.active is not True:
         return abort(401)
     account = Account(account_id=member.account_id)
-    account.hydrate()
+    account.hydrate(ttl_seconds=30)
     if not isinstance(account, Account):
         return abort(401)
     plan = Plan(plan_id=account.plan_id)
-    plan.hydrate()
+    plan.hydrate(ttl_seconds=30)
     if not isinstance(plan, Plan):
         return abort(401)
     setattr(account, 'plan', plan)
