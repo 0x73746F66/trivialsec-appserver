@@ -25,7 +25,9 @@ with app.app_context():
     from routes.account import blueprint as account_blueprint
     from routes.app import blueprint as app_blueprint
     from routes.backend import blueprint as backend_blueprint
+    from routes.webhook import blueprint as webhook_blueprint
     app.register_blueprint(public_blueprint)
     app.register_blueprint(account_blueprint, url_prefix='/account')
     app.register_blueprint(app_blueprint, url_prefix='/app')
     app.register_blueprint(backend_blueprint, url_prefix='/backend')
+    app.register_blueprint(webhook_blueprint, url_prefix='/webhook')
