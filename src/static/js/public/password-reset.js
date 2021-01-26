@@ -7,19 +7,29 @@ const saveFields = async() => {
         appMessage('error', 'Passwords do not match')
         return;
     }
-    const json = await Api.post_async('/v1/change-password', {
-        recaptcha_token,
-        confirmation_url,
-        password1,
-        password2
-    }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
-    appMessage(json.status, json.message)
-    if (json.status == 'error') {
+    const response = await fetch('/change-password', {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            recaptcha_token,
+            confirmation_url,
+            password1,
+            password2
+        })
+    }).catch(err => {
+        appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.')
+        console.log(err)
+    })
+    const json = await response.json()
+    if (json.status && json.status == 'error') {
+        appMessage(json.status, json.message)
         console.log(json)
         refresh_recaptcha_token('password_reset_action')
     }
-    if (json.status == 'success') {
-        setTimeout(()=>{window.location.href = '/app'}, 5000)
+    if (json.status && json.status == 'success') {
+        appMessage(json.status, json.message)
+        setTimeout(()=>{window.location.href = '/login'}, 5000)
     }
 }
 if (recaptcha_site_key) {
@@ -28,8 +38,8 @@ if (recaptcha_site_key) {
     })
 }
 document.addEventListener('DOMContentLoaded', () => {
-    if (location.pathname != '/change-password') {
-        history.pushState({}, document.title, '/change-password')
+    if (location.pathname != '/password-reset') {
+        history.pushState({}, document.title, '/password-reset')
     }
     const el = document.getElementById('save_password')
     el.addEventListener('click', saveFields, false)

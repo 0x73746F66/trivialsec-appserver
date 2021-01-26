@@ -38,9 +38,40 @@ if (recaptcha_site_key) {
         refresh_recaptcha_token('login_action')
     })
 }
-const login_action = async(e, retry_count=0) => {
+const password_reset_action = async(event, retry_count=0) => {
     if (retry_count === 0) {
-        e.preventDefault()
+        event.preventDefault()
+    }
+    const token = document.getElementById('recaptcha_token').value
+    const response = await fetch('/password-reset', {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            recaptcha_token: token,
+            email: document.getElementById('email').value,
+        })
+    }).catch(err => {
+        appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.')
+        console.log(err)
+    })
+    const json = await response.json()
+    if (!!json) {
+        appMessage(json.status, json.message)
+        if (json.status == 'retry') {
+            refresh_recaptcha_token('login_action')
+            await password_reset_action(event, ++retry_count)
+            return;
+        } else if (json.status == 'success') {
+            document.querySelector('[data-tab="login"]').click()
+            document.getElementById('login_email').value = json.email
+        }
+    }
+    refresh_recaptcha_token('login_action')
+}
+const login_action = async(event, retry_count=0) => {
+    if (retry_count === 0) {
+        event.preventDefault()
     }
     const login_email = document.getElementById('login_email').value
     const login_password = document.getElementById('password').value
@@ -66,7 +97,7 @@ const login_action = async(e, retry_count=0) => {
         appMessage(json.status, json.message)
         if (json.status == 'retry') {
             refresh_recaptcha_token('login_action')
-            await login_action(e, ++retry_count)
+            await login_action(event, ++retry_count)
             return;
         } else if (json.status == 'success') {
             localStorage.setItem('hmac-secret', json.hmac_secret)
@@ -88,24 +119,16 @@ document.addEventListener('DOMContentLoaded', async() => {
         el.addEventListener("click", eventTabSwitch, false)
         el.addEventListener("touchstart", eventTabSwitch, supportsPassive ? { passive: true } : false)
     }
-    document.getElementById('password_reset_form').addEventListener('submit', async(e) => {
-        e.preventDefault()
-        const token = document.getElementById('recaptcha_token').value
-        const json = await Api.post_async('/v1/password-reset', {
-            email: e.currentTarget.querySelector('#email').value,
-            recaptcha_token: token
-        }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
-        appMessage(json.status, json.message)
-        refresh_recaptcha_token('login_action')
-        if (json.status == 'success') {
-            document.querySelector('[data-tab="login"]').click()
-            document.getElementById('login_email').value = json.email
-        }
-    }, false)
+
     const appLoginAction = document.getElementById('login_btn')
     if (appLoginAction) {
         appLoginAction.addEventListener('click', login_action, false)
         appLoginAction.addEventListener('touchstart', login_action, supportsPassive ? { passive: true } : false)
+    }
+    const passwordResetAction = document.getElementById('reset_btn')
+    if (passwordResetAction) {
+        passwordResetAction.addEventListener('click', password_reset_action, false)
+        passwordResetAction.addEventListener('touchstart', password_reset_action, supportsPassive ? { passive: true } : false)
     }
 
 }, false)

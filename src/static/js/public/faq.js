@@ -23,10 +23,19 @@ document.addEventListener('DOMContentLoaded', async() => {
     document.getElementById('subscribe_form').addEventListener('submit', async(e) => {
         e.preventDefault()
         const token = document.getElementById('recaptcha_token').value
-        const json = await Api.post_async('/v1/subscribe', {
-            email: e.currentTarget.querySelector('#email').value,
-            recaptcha_token: token
-        }).catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
+        const response = await fetch('/subscribe', {
+            credentials: 'same-origin',
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                recaptcha_token: token,
+                email: document.getElementById('email').value,
+            })
+        }).catch(err => {
+            appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.')
+            console.log(err)
+        })
+        const json = await response.json()
         appMessage(json.status, json.message)
         refresh_recaptcha_token('subscribe_action')
     }, false)
