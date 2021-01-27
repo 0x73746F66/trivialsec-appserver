@@ -1,25 +1,79 @@
 {% extends 'account/layout.html.j2' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/subscription.css')|autoversion }}">
-
-    <section class="fields">
-        <h2>Update Billing Email</h2>
-        <div class="fields-row">
-            <div class="label-column column">
-                <label for="billing_email">Billing Email</label>
-            </div>
-            <div class="input-column column">
-                <input id="billing_email" type="email" name="billing_email" placeholder="Enter your billing email here" value="{{ account.account.billing_email }}">
-            </div>
-            <div class="label-column column">
-                <label for="billing_password">Current Password</label>
-            </div>
-            <div class="input-column column">
-                <input id="billing_password" type="password" name="password" placeholder="Enter your current password here">
-                <button id="billing-email-button" type="button">Update</button>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/subscription.css')|autoversion }}">
+<script type=text/javascript>
+charts_data = {
+    domains: {
+        used: {{ monitored_domains }},
+        total: {{ account.account.plan.domains_monitored }},
+    },
+    scans: {
+        used: {{ on_demand_active + on_demand_passive }},
+        total: {{ account.account.plan.on_demand_passive_daily + account.account.plan.on_demand_active_daily }},
+    },
+}
+</script>
+<section>
+    <div class="billing-details">
+        <div class="billing-general">
+            <h2>General Details</h2>
+        </div>
+        <div class="col-20" title="Enter your billing email here">
+            <label class="field-label field-heading" for="billing_email">Billing Email</label>
+        </div>
+        <div class="col-80" title="Enter your billing email here">
+            <input id="billing_email" type="email" name="billing_email" placeholder="Enter your billing email here" value="{{ account.account.billing_email }}">
+        </div>
+        <div class="col-20" title="How long should we retain your scan data?">
+            <label class="field-label field-heading" for="retention_days">Data Retention</label>
+        </div>
+        <div class="col-80" title="How long should we retain your scan data?">
+            <input id="retention_days" type="number" step="1" min="5" max="2555" name="retention_days" placeholder="How long should we retain your scan data?" value="{{ account.account.plan.retention_days }}">
+        </div>
+        <div class="col-20">
+            <div class="field-label field-heading">Plan</div>
+        </div>
+        <div class="col-80">
+            <div class="field-label">{{ account.account.plan.name }}</div>
+        </div>
+    </div>
+    <div class="billing-quota">
+        <div class="col-50">
+            <div class="field-label field-heading">Monitored Domains</div>
+            <div class="chart half-doughnut">
+                <canvas data-key="domains" width="250" height="250"></canvas>
             </div>
         </div>
-    </section>
+        <div class="col-50">
+            <div class="field-label field-heading">On-Demand Scans</div>
+            <div class="chart half-doughnut">
+                <canvas data-key="scans" width="250" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="invoices">
+    <h3>Invoices</h3>
+    <table>
+    <thead>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Invoice Total</th>
+        <th>PDF</th>
+    </thead>
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+        <td title="{{ invoice.due_date }}">{{ invoice.due_date.strftime('%A %d %b %Y') }}, <time datetime="{{ invoice.due_date }}"></time></td>
+        <td><span class="pip {{ invoice.status }}">{{ invoice.status }}</span></td>
+        <td>{{ invoice.currency }} {{ invoice.cost }} / {{ invoice.interval }}</td>
+        <td><a href="{{ invoice.hosted_invoice_url }}">Download</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
 
+<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
 <script type=text/javascript src="{{url_for('static', filename='js/account/subscription.js')|autoversion }}"></script>
 {% endblock %}

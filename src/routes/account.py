@@ -1,11 +1,12 @@
 from flask import render_template, Blueprint, redirect, url_for
 from flask_login import current_user, login_required
 from trivialsec.models.account import AccountConfig
-from trivialsec.models.activity_log import ActivityLogs
+from trivialsec.models.activity_log import ActivityLog, ActivityLogs
+from trivialsec.models.domain import Domains
 from trivialsec.models.member import Member, Members
 from trivialsec.models.role import Role, Roles
 from trivialsec.models.invitation import Invitations
-from trivialsec.models.plan import Plan
+from trivialsec.models.plan import Plan, PlanInvoices
 from trivialsec.helpers import messages
 from . import get_frontend_conf
 
@@ -125,6 +126,22 @@ def account_subscription():
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
+    params['invoices'] = PlanInvoices().find_by([('plan_id', current_user.account.plan.plan_id)])
+    params['monitored_domains'] = Domains().count([
+        ('account_id', current_user.account_id),
+        ('enabled', True)
+    ])
+    members = set()
+    for member in Members().find_by([('account_id', current_user.account_id)], limit=1000):
+        members.add(member.member_id)
+    params['on_demand_active'] = ActivityLogs().count([
+        ('member_id', list(members)),
+        ('action', ActivityLog.ACTION_ON_DEMAND_ACTIVE_SCAN)
+    ])
+    params['on_demand_passive'] = ActivityLogs().count([
+        ('member_id', list(members)),
+        ('action', ActivityLog.ACTION_ON_DEMAND_PASSIVE_SCAN)
+    ])
 
     return render_template('account/subscription.html.j2', **params)
 
@@ -170,7 +187,7 @@ def account_setup(step: int):
         return render_template('public/login.html.j2', **params)
 
     if current_user.account.is_setup:
-        return redirect(url_for('app.dashboard'))
+        return redirect(url_for('app.page_dashboard'))
     params['account_config'] = account_config
     params['plan'] = plan
     roles = Roles()

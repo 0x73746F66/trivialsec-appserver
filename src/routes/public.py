@@ -108,24 +108,8 @@ def api_register():
         member = register(
             email_addr=params.get('email'),
             passwd=params.get('password'),
-            alias=params.get('alias'),
-            selected_plan={
-                'name': 'Starter',
-                'cost': '2.99',
-                'currency': 'AUD',
-                'active_daily': 1,
-                'scheduled_active_daily': 0,
-                'passive_daily': 10,
-                'scheduled_passive_daily': 0,
-                'git_integration_daily': 0,
-                'source_code_daily': 0,
-                'dependency_support_rating': 0,
-                'alert_email': False,
-                'alert_integrations': False,
-                'threatintel': True,
-                'compromise_indicators': False,
-                'typosquatting': False
-            }
+            alias=params.get('alias', params.get('email')),
+            selected_plan={'name': 'Pending'}
         )
         if not isinstance(member, Member):
             errors.append(messages.ERR_VALIDATION_EMAIL_RULES)
@@ -457,23 +441,7 @@ def api_invitation_confirm_password():
             email_addr=invitee.email,
             passwd=params.get('password1'),
             verified=True,
-            selected_plan={
-                'name': 'Pending',
-                'cost': '0.00',
-                'currency': 'AUD',
-                'active_daily': 0,
-                'scheduled_active_daily': 0,
-                'passive_daily': 0,
-                'scheduled_passive_daily': 0,
-                'git_integration_daily': 0,
-                'source_code_daily': 0,
-                'dependency_support_rating': 0,
-                'alert_email': False,
-                'alert_integrations': False,
-                'threatintel': False,
-                'compromise_indicators': False,
-                'typosquatting': False
-            }
+            selected_plan={'name': 'Pending'}
         )
         if not isinstance(member, Member):
             errors.append(messages.ERR_ACCOUNT_UPDATE)

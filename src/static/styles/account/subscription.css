@@ -2,27 +2,114 @@ h2 {
     color: #666;
     margin: 0 0 20px 0 !important;
 }
-section.fields {
-    width: 90%;
-    margin: 2% 10% 0 0;
+section {
+    display: flex;
 }
-.fields-row {
+.invoices {
+    margin: 2rem 0 0 1%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    flex: 0 1 99%;
+    height: fit-content;
 }
-.column {
+.billing-general {
+    width: 100%;
+    height: fit-content;
+}
+.billing-details {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 1% 1% 0 1%;
+    flex: 0 1 48%;
+    height: fit-content;
+}
+.field-heading {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+.field-label {
+    margin: 20px 0 0 0;
+}
+.billing-quota {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 1% 1% 0 1%;
+    flex: 0 48%;
+    text-align: center;
+    max-height: 190px;
+    overflow: hidden;
+}
+.billing-quota canvas {
+    position: relative;
+    max-width: 250px;
+    max-height: 250px;
+    padding: 0;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.pip {
+    border-radius: 5px;
+    padding: 2px 8px;
+    color: #fff;
+    min-width: 20px;
+    display: inline-block;
+    font-size: 13px;
+    vertical-align: top;
+    background-color: #6d6d6d;
+}
+.pip.paid {
+    background-color: #1a8c27;
+}
+
+.col-10 {
     display: flex;
     flex-direction: column;
-    flex-basis: 100%;
-    flex: 1;
+    flex: 0 1 10%;
 }
-.label-column {
-    flex: 30%;
+.col-20 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 20%;
 }
-.label-column label {
-    margin: 20px 0 0 20px;
+.col-30 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 30%;
 }
-.input-column {
-    flex: 70%;
+.col-40 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 40%;
+}
+.col-50 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 50%;
+}
+.col-60 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 60%;
+}
+.col-70 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 70%;
+}
+.col-80 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 80%;
+}
+.col-90 {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 90%;
 }

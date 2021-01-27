@@ -11,5 +11,4 @@ document.addEventListener('DOMContentLoaded', async() => {
         el.addEventListener('click', toggler, false)
         el.addEventListener('touchstart', toggler, supportsPassive ? { passive: true } : false)
     }
-    Api.post('/v1/account', [{prop: 'is_setup', value: 1}]).then(json => json.status == 'error' ? console.log(json):undefined)
 }, false)

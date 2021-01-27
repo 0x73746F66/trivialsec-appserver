@@ -403,7 +403,12 @@ def page_projects():
         })
     params['projects'] = project_arr
     domains = Domains()
-    for domain in domains.find_by([('account_id', current_user.account_id)], order_by=['created_at', 'DESC'], limit=1000):
+    for domain in domains.find_by(
+        [('account_id', current_user.account_id)],
+        order_by=['created_at', 'DESC'],
+        limit=1000,
+        cache_key=f'page_projects/{current_user.account_id}'
+        ):
         domain_names.append(domain.name)
     params['datalists'] = [{
         'name': 'projects',

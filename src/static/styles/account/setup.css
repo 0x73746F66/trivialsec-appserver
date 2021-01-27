@@ -164,7 +164,9 @@ button.skip {
 .generic_content .generic_feature_list ul li{	
 	color: #a7a7a7;
 }
-
+.generic_content .generic_feature_list ul li{
+	border-left: 5px solid transparent;
+}
 .generic_content .generic_feature_list ul li span{
 	color: #414141;
 }

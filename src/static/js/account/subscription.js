@@ -27,8 +27,31 @@ document.addEventListener('DOMContentLoaded', async() => {
         el.addEventListener('click', toggler, false)
         el.addEventListener('touchstart', toggler, supportsPassive ? { passive: true } : false)
     }
-    const emailChangeEl = document.getElementById('billing-email-button')
-    emailChangeEl.addEventListener("click", saveBillingEmail, false)
-    emailChangeEl.addEventListener("touchstart", saveBillingEmail, supportsPassive ? { passive: true } : false)
+    const emailChangeEl = document.getElementById('billing_email')
+    emailChangeEl.addEventListener("change", saveBillingEmail, false)
+    for await(const ctx of document.querySelectorAll('.chart.half-doughnut canvas')) {
+        data = charts_data[ctx.getAttribute('data-key')]
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [`${data.used} Used`, `${data.total - data.used} Remain`],
+                datasets: [{
+                    data: [
+                        data.used,
+                        data.total - data.used,
+                        data.total,
+                    ],
+                    backgroundColor: [
+                        'rgb(42 63 84)',
+                        'rgb(26 187 156)',
+                        'transparent'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4,
+                    rotation: -90
+                }]
+            }
+        })
+    }
 
 }, false)
