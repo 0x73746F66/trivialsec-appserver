@@ -1,12 +1,12 @@
 {% extends 'account/layout.html.j2' %} 
 {% block body %}
-    <template id="tmpl-invitation-list">
-        <td><%= invite_email %></td>
-        <td><%= role_name %></td>
-        <td><a href="https://www.trivialsec.com<%= confirmation_url %>" target="_blank"><%= confirmation_url %></a></td>
-    </template>
-
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/setup.css')|autoversion }}">
+<template id="tmpl-invitation-list">
+    <td><%= invite_email %></td>
+    <td><%= role_name %></td>
+    <td><a href="https://www.trivialsec.com<%= confirmation_url %>" target="_blank"><%= confirmation_url %></a></td>
+</template>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/setup.css')|autoversion }}">
+<section class="wrapper">
     <ul class="steps">
         <li class="step-1 even current">
             <span>
@@ -50,6 +50,6 @@
             <button type="button" id="step1">Save</button>
         </div>
     </div>
-
-    <script type=text/javascript src="{{url_for('static', filename='js/account/setup-1.js')|autoversion }}"></script>
+</section>
+<script type=text/javascript src="{{url_for('static', filename='js/account/setup-1.js')|autoversion }}"></script>
 {% endblock %}

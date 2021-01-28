@@ -240,8 +240,8 @@ def accounts_backend(page: int = 1):
     params['plans'] = plans
 
     for account in accounts:
-        plan = Plan(plan_id=account.plan_id)
-        plan.hydrate()
+        plan = Plan(account_id=account.account_id)
+        plan.hydrate('account_id')
         accounts_arr.append({
             'id': account.account_id,
             'alias': account.alias,

@@ -80,8 +80,8 @@ def load_user(user_id: int) -> Member:
     account.hydrate(ttl_seconds=30)
     if not isinstance(account, Account):
         return abort(401)
-    plan = Plan(plan_id=account.plan_id)
-    plan.hydrate(ttl_seconds=30)
+    plan = Plan(account_id=account.account_id)
+    plan.hydrate('account_id', ttl_seconds=30)
     if not isinstance(plan, Plan):
         return abort(401)
     setattr(account, 'plan', plan)

@@ -126,7 +126,9 @@ def account_subscription():
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
         params['account_config'] = account_config
-    params['invoices'] = PlanInvoices().find_by([('plan_id', current_user.account.plan.plan_id)])
+    params['invoices'] = PlanInvoices().find_by([
+        ('plan_id', current_user.account.plan.plan_id)
+    ])
     params['monitored_domains'] = Domains().count([
         ('account_id', current_user.account_id),
         ('enabled', True)
