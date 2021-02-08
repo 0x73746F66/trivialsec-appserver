@@ -67,7 +67,14 @@ section {
 .pip.paid {
     background-color: #1a8c27;
 }
-
+.card-brand i {
+    font-size: 32px;
+    vertical-align: sub;
+}
+.card-brand .mask {
+    font-size: 14px;
+    vertical-align: middle;
+}
 .col-10 {
     display: flex;
     flex-direction: column;

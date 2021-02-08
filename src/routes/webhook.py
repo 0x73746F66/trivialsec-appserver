@@ -34,22 +34,20 @@ def wh_stripe():
         data = request_data['data']['object']
         event_type = request_data['type']
 
-    logger.info(f"[{event_type}]\n{data}")
+    logger.warning(f'[{event_type}]\n{data}')
+    return jsonify({'plan_id': webhook_received(event_type, data)})
 
-    webhook_received(event_type, data)
-    return jsonify({'status': 'success'})
-
-def webhook_received(event_type: str, stripe_data: dict):
+def webhook_received(event_type: str, stripe_data: dict) -> int:
     if event_type == 'payment_intent.succeeded':
-        payment_intent_succeeded(stripe_data.get('customer'), stripe_data['charges']['data'][0])
+        return payment_intent_succeeded(stripe_data.get('customer'), stripe_data['charges']['data'][0])
 
-    elif event_type == 'invoice.paid':
-        invoice_paid(stripe_data.get('customer'), stripe_data)
+    if event_type == 'invoice.paid':
+        return invoice_paid(stripe_data.get('customer'), stripe_data)
 
-    elif event_type == 'invoice.updated':
-        upsert_plan_invoice(stripe_data)
+    if event_type in ['invoice.updated', 'invoice.payment_succeeded']:
+        return upsert_plan_invoice(stripe_data)
 
-    elif event_type == 'invoice.payment_failed':
+    if event_type == 'invoice.payment_failed':
         plan = Plan(stripe_customer_id=stripe_data['customer'])
         plan.hydrate('stripe_customer_id')
         account = Account(account_id=plan.account_id)
@@ -57,8 +55,9 @@ def webhook_received(event_type: str, stripe_data: dict):
         if account.is_setup is True:
             account.is_setup = False
             account.persist()
+        return plan.plan_id
 
-    elif event_type == 'customer.subscription.deleted':
+    if event_type == 'customer.subscription.deleted':
         plan = Plan(stripe_customer_id=stripe_data['customer'])
         plan.hydrate('stripe_customer_id')
         account = Account(account_id=plan.account_id)
@@ -66,11 +65,14 @@ def webhook_received(event_type: str, stripe_data: dict):
         if account.is_setup is True:
             account.is_setup = False
             account.persist()
+        return plan.plan_id
 
-    elif event_type == 'customer.subscription.created':
-        subscription_created(
+    if event_type == 'customer.subscription.created':
+        return subscription_created(
             stripe_customer=stripe_data.get('customer'),
             stripe_subscription_id=stripe_data.get('id'),
             default_payment_method=stripe_data.get('default_payment_method'),
             stripe_plan_data=stripe_data['items']['data'][0]['plan']
         )
+
+    return None
