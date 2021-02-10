@@ -1,7 +1,7 @@
 {
     "name": "Trivial Security",
     "short_name": "TrivialSec",
-    "start_url": "https://www.trivialsec.com",
+    "start_url": "https://app.trivialsec.com",
     "display": "minimal-ui",
     "lang": "en-US",
     "orientation": "portrait-primary",

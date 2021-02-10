@@ -3,7 +3,7 @@
 <template id="tmpl-invitation-list">
     <td><%= invite_email %></td>
     <td><%= role_name %></td>
-    <td><a href="https://www.trivialsec.com<%= confirmation_url %>" target="_blank"><%= confirmation_url %></a></td>
+    <td><a href="{{ host_scheme }}{{ host_domain }}<%= confirmation_url %>" target="_blank"><%= confirmation_url %></a></td>
 </template>
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/setup.css')|autoversion }}">
 <section class="wrapper">
