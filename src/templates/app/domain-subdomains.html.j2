@@ -4,11 +4,11 @@
 {% include 'app/domain-banner.html.j2' %}
 <div class="domain-container">
     <div class="container-tabs">
-        <a href="/app/domain/{{ domain.domain_id }}">Details</a>
-        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs</a>
-        <a href="/app/domain/{{ domain.domain_id }}/inventory">Inventory</a>
-        <a href="/app/domain/{{ domain.domain_id }}/subdomains" class="active">Subdomains</a>
-        <a href="/app/domain/{{ domain.domain_id }}/findings">Findings</a>
+        <a href="/domain/{{ domain.domain_id }}">Details</a>
+        <a href="/domain/{{ domain.domain_id }}/jobs">Jobs</a>
+        <a href="/domain/{{ domain.domain_id }}/inventory">Inventory</a>
+        <a href="/domain/{{ domain.domain_id }}/subdomains" class="active">Subdomains</a>
+        <a href="/domain/{{ domain.domain_id }}/findings">Findings</a>
     </div>
     <div class="domain-body">
         <section class="fields" id="domains-list">
@@ -35,7 +35,7 @@
                                     <span class="pip"></span>
                                     {% endif %}
                                 </td>
-                                <td class="click-through"><a href="/app/domain/{{ domain.domain_id }}"><span class="icofont-globe"></span> {{ domain.name }}</a></td>
+                                <td class="click-through"><a href="/domain/{{ domain.domain_id }}"><span class="icofont-globe"></span> {{ domain.name }}</a></td>
                                 <td class="click-through">
                                 {% if domain.html_title %}
                                 {{ domain.html_title.value }}

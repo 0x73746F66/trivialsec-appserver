@@ -1,6 +1,6 @@
 <div class="navbar-row">
     <nav role="navigation" class="navigation-top">
-      <a href="/" class="title-link-top">
+      <a href="{{ host_scheme }}{{ host_domain }}" class="title-link-top">
         <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
         <span>Trivial Security</span>
       </a>
@@ -28,7 +28,7 @@
       {% if account.is_authenticated %}
       <ul>
         <li class="nav-application">
-          <a href="/app">
+          <a href="/dashboard">
             <i class="icofont-arrow-right"></i>
             <span>Back to Application</span>
           </a>

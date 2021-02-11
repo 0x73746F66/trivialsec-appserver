@@ -3,7 +3,7 @@ const page_domain_id = document.getElementById('domain-id').value
 let socket, socketio_token, findings_chart;
 const subdomainsAction = async event => {
     const id = event.currentTarget.parent('tr').getAttribute('data-domain-id')
-    location.href = `/app/domain/${id}`
+    location.href = `/domain/${id}`
 }
 const toggleDomain = async toggleEl => {
     const toggleIconEl = toggleEl.querySelector('i')
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     socket.on('check_domains_tld', handleSocket)
     const barCanvasEl = document.querySelector('.bar-canvas canvas')
     if (barCanvasEl) {
-        findings_chart = new Chart(document.querySelector('.bar-canvas canvas').getContext('2d'), {
+        findings_chart = new Chart(findingsCanvasEl.getContext('2d'), {
             type: 'bar',
             data: findings_chart_config,
             options: {

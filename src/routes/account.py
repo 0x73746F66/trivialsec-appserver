@@ -189,7 +189,7 @@ def account_setup(step: int):
         return render_template('public/login.html.j2', **params)
 
     if current_user.account.is_setup:
-        return redirect(url_for('app.page_dashboard'))
+        return redirect(url_for('dashboard.page_dashboard'))
     params['account_config'] = account_config
     params['plan'] = plan
     roles = Roles()

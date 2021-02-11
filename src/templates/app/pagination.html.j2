@@ -1,13 +1,13 @@
 <ul class="pagination">
     {% if pagination.current_page != 1 %}
-    <li><a href="/app/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/1"><i class="icofont-swoosh-left"></i></a></li>
+    <li><a href="/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/1"><i class="icofont-swoosh-left"></i></a></li>
     {% endif %}
     {% for page_num in pagination.pages %}
     <li{% if page_num == pagination.current_page %} class="active"{% endif %}>
-    <a href="/app/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/{{ page_num }}">{{ page_num }}</a>
+    <a href="/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/{{ page_num }}">{{ page_num }}</a>
     </li>
     {% endfor %}
     {% if pagination.last_page != pagination.current_page %}
-    <li><a href="/app/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/{{ pagination.last_page }}"><i class="icofont-swoosh-right"></i></a></li>
+    <li><a href="/{{ uri_page }}{% if pagination.page_id %}/{{ pagination.page_id }}{% endif %}{% if pagination.sub_page %}/{{ pagination.sub_page }}{% endif %}/{{ pagination.last_page }}"><i class="icofont-swoosh-right"></i></a></li>
     {% endif %}
 </ul>

@@ -1,6 +1,6 @@
 const domainsAction = async event => {
     const domain_id = event.currentTarget.parent('tr').getAttribute('data-domain-id')
-    location.href = `/app/domain/${domain_id}`
+    location.href = `/domain/${domain_id}`
 }
 const projectArchiveButton = async event => {
     document.body.insertAdjacentHTML('afterbegin', `<div class="loading"></div>`)
@@ -87,6 +87,64 @@ document.addEventListener('DOMContentLoaded', async() => {
     for await(const domainEl of document.querySelectorAll('.domains-list td.delete-domain')) {
         domainEl.addEventListener('click', deleteDomainAction, false)
         domainEl.addEventListener('touchstart', deleteDomainAction, supportsPassive ? { passive: true } : false)
+    }
+    const findingsCanvasEl = document.querySelector('.findings-canvas canvas')
+    if (findingsCanvasEl) {
+        new Chart(findingsCanvasEl.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [
+                    'Info', 'Low', 'Medium', 'High'
+                ],
+                datasets: [{
+                    borderWidth: 0,
+                    backgroundColor: [
+                        'rgb(40, 112, 204)',
+                        'rgb(26, 140, 39)',
+                        'rgb(255, 164, 56)',
+                        'rgb(255, 56, 56)'
+                    ],
+                    hoverBackgroundColor: [
+                        'rgba(40, 112, 204, 0.8)',
+                        'rgba(26, 140, 39, 0.8)',
+                        'rgba(255, 164, 56, 0.8)',
+                        'rgba(255, 56, 56, 0.8)'
+                    ],
+                    data: findings_data
+                }],
+            },
+            options: {
+                legend: {
+                    display: false
+                }
+            }
+        })
+    }
+    const jobsCanvasEl = document.querySelector('.jobs-canvas canvas')
+    if (jobsCanvasEl) {
+        new Chart(jobsCanvasEl.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: [`Complete`, `Pending`],
+                datasets: [{
+                    borderWidth: 0,
+                    backgroundColor: [
+                        'rgb(26 187 156)',
+                        'rgb(79 111 141)',
+                        'transparent'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4,
+                    rotation: -90,
+                    data: jobs_data
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                }
+            }
+        })
     }
 
 }, false)

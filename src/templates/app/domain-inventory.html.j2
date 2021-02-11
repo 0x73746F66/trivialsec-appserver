@@ -4,11 +4,11 @@
 {% include 'app/domain-banner.html.j2' %}
 <div class="domain-container">
     <div class="container-tabs">
-        <a href="/app/domain/{{ domain.domain_id }}">Details</a>
-        <a href="/app/domain/{{ domain.domain_id }}/jobs">Jobs</a>
-        <a href="/app/domain/{{ domain.domain_id }}/inventory" class="active">Inventory</a>
-        <a href="/app/domain/{{ domain.domain_id }}/subdomains">Subdomains</a>
-        <a href="/app/domain/{{ domain.domain_id }}/findings">Findings</a>
+        <a href="/domain/{{ domain.domain_id }}">Details</a>
+        <a href="/domain/{{ domain.domain_id }}/jobs">Jobs</a>
+        <a href="/domain/{{ domain.domain_id }}/inventory" class="active">Inventory</a>
+        <a href="/domain/{{ domain.domain_id }}/subdomains">Subdomains</a>
+        <a href="/domain/{{ domain.domain_id }}/findings">Findings</a>
     </div>
     <div class="domain-body">
         <div class="fields" id="program-list"{% if not programs %} style="display: none;"{% endif %}>

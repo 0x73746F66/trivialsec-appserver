@@ -1,7 +1,7 @@
 window.choices_rendered = {}
 const projectsAction = async event => {
     const project_id = event.currentTarget.parent('tr').getAttribute('data-project-id')
-    location.href = `/app/project/${project_id}`
+    location.href = `/project/${project_id}`
 }
 const handleSocket = async data => {
     console.debug(data)
@@ -34,9 +34,14 @@ const createProject = async event => {
             const row = document.createElement('tr')
             row.setAttribute('data-project-id', project_id)
             row.classList.add('highlight')
-            row.innerHTML = `<td>${json['project_name']}</td>
-                <td title="Domains"><i class="icofont-globe"></i><div>1</div></td>
-                <td width="10px"><i class="icofont-curved-right"></i></td>`
+            row.innerHTML = `<td width="5px"><div class="border info"></div></td>
+            <td>${json['project_name']}</td>
+            <td title="Domains"><i class="icofont-globe"></i><div>1</div></td>
+            <td width="65px"><span title="High Severity Findings" class="label high">0</span></td>
+            <td width="65px"><span title="Medium Severity Findings" class="label medium">0</span></td>
+            <td width="65px"><span title="Low Severity Findings" class="label low">0</span></td>
+            <td width="65px"><span title="Informational Findings" class="label info">0</span></td>
+            <td width="100px"><span class="details">Details</span><i class="icofont-curved-right"></i></td>`
             document.querySelector('.projects-list tbody').insertAdjacentElement("beforeend", row)
             row.addEventListener('click', projectsAction, false)
             row.addEventListener('touchstart', projectsAction, supportsPassive ? { passive: true } : false)

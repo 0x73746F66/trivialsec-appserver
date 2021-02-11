@@ -12,9 +12,11 @@ body {
     height: 10vh;
     color: #e6e6e6;
     padding: 10px 15px;
+    overflow: hidden;
+    z-index: 1;
 }
 .heading-area {
-    flex: 75%;
+    flex: 0 0 50%;
     height: fit-content;
 }
 .heading-area .heading {
@@ -30,13 +32,33 @@ body {
 }
 .project-header {
     display: flex;
-    width: 90%;
+    width: 95%;
 }
 .project-header h2 {
     flex: 1;
 }
+.project-header .banner-section.graphs {
+    flex: 0 0 20%;
+    margin: auto 0;
+    height: 200px;
+    overflow: hidden;
+}
+.jobs-canvas,
+.findings-canvas {
+    display: inline-block;
+}
+.jobs-title,
+.findings-title {
+    display: inline-block;
+    height: 100%;
+    vertical-align: top;
+    font-weight: 600;
+}
+.project-header .project-actions {
+    flex: 0 0 10%;
+}
 .project-actions > div {
-    justify-content: flex-end;
+    text-align: end;
 }
 .project-actions button {
     margin-bottom: 5px;;
@@ -87,6 +109,9 @@ body {
     font-size: 14px;
     vertical-align: super;
     background-color: #36ccaf;
+}
+.project-container {
+    z-index: 2;
 }
 .project-body {
     margin: 20px 0 10px 0;

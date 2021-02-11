@@ -65,7 +65,7 @@ login_manager.login_view = 'public.login'
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
-    if request.path in ['/', '/faq', '/login', '/logout', '/register']:
+    if request.path in ['/faq', '/login', '/logout', '/register']:
         return None
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)

@@ -25,7 +25,7 @@ async function archiveFinding(e) {
         el.style.backgroundColor = 'rgba(0,0,0,0.6)'
     }
 
-    const json = await Api.post_async('/app/findings', { 'action': 'archive', 'finding_id': finding_id })
+    const json = await Api.post_async('/findings', { 'action': 'archive', 'finding_id': finding_id })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     for await(const el of document.querySelectorAll(`tr[data-finding-id="${finding_id}"] td`)) {
@@ -41,7 +41,7 @@ async function resolveFinding(e) {
         appMessage('error', 'You must supply a reason message for the resolution')
         return;
     }
-    const json = await Api.post_async('/app/findings', { 'action': 'resolve', 'finding_id': finding_id, 'reason': reason_text })
+    const json = await Api.post_async('/findings', { 'action': 'resolve', 'finding_id': finding_id, 'reason': reason_text })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     const new_note = `<div class="notes-item">
@@ -59,7 +59,7 @@ async function resolveFinding(e) {
 
 async function duplicateFinding(e) {
     const finding_id = e.originalTarget.value
-    const json = await Api.post_async('/app/findings', { 'action': 'workflow', 'finding_id': finding_id, 'workflow_state': 'DUPLICATE' })
+    const json = await Api.post_async('/findings', { 'action': 'workflow', 'finding_id': finding_id, 'workflow_state': 'DUPLICATE' })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     for await(const el of document.querySelectorAll(`tr[data-finding-id="${finding_id}"] td`)) {
@@ -78,7 +78,7 @@ async function verifyFinding(e) {
         appMessage('error', 'You must supply a verification state')
         return;
     }
-    const json = await Api.post_async('/app/findings', { 'action': 'verify', 'finding_id': finding_id, 'verification_state': verification_state })
+    const json = await Api.post_async('/findings', { 'action': 'verify', 'finding_id': finding_id, 'verification_state': verification_state })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     const states = {
@@ -106,7 +106,7 @@ async function noteFinding(e, note_text, finding_id) {
         appMessage('error', 'You must supply a message to create a note')
         return;
     }
-    const json = await Api.post_async('/app/findings', { 'action': 'note', 'finding_id': finding_id, 'text': note_text })
+    const json = await Api.post_async('/findings', { 'action': 'note', 'finding_id': finding_id, 'text': note_text })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     const new_note = `<div class="notes-item">
@@ -129,7 +129,7 @@ async function assignFinding(e) {
     if (!assignee_id) {
         action = 'unassign'
     }
-    const json = await Api.post_async('/app/findings', { 'action': action, 'finding_id': finding_id, 'assignee_id': assignee_id })
+    const json = await Api.post_async('/findings', { 'action': action, 'finding_id': finding_id, 'assignee_id': assignee_id })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     if (action == 'assign') {
@@ -142,7 +142,7 @@ async function assignFinding(e) {
 async function projectFinding(e) {
     const finding_id = e.originalTarget.getAttribute('data-finding-id')
     const project_id = e.originalTarget.value
-    const json = await Api.post_async('/app/findings', { 'action': 'project', 'finding_id': finding_id, 'project_id': project_id })
+    const json = await Api.post_async('/findings', { 'action': 'project', 'finding_id': finding_id, 'project_id': project_id })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
 }
@@ -150,7 +150,7 @@ async function projectFinding(e) {
 async function severityFinding(e) {
     const finding_id = e.originalTarget.getAttribute('data-finding-id')
     const severity = e.originalTarget.value
-    const json = await Api.post_async('/app/findings', { 'action': 'severity', 'finding_id': finding_id, 'severity': severity })
+    const json = await Api.post_async('/findings', { 'action': 'severity', 'finding_id': finding_id, 'severity': severity })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
 }
@@ -158,7 +158,7 @@ async function severityFinding(e) {
 async function deferFinding(e) {
     const finding_id = e.originalTarget.getAttribute('data-finding-id')
     const defer_date = e.originalTarget.value
-    const json = await Api.post_async('/app/findings', { 'action': 'defer', 'finding_id': finding_id, 'defer': defer_date })
+    const json = await Api.post_async('/findings', { 'action': 'defer', 'finding_id': finding_id, 'defer': defer_date })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     document.querySelector(`[data-finding-id="${finding_id}"] td:nth-child(10)`).textContent = 'Deferred'

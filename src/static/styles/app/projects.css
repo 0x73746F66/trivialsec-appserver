@@ -75,6 +75,74 @@ i.icofont-toggle-off {
 .projects-list {
     margin: 10px 0 0 0;
 }
+.projects-list th:first-of-type,
+.projects-list td:first-of-type {
+    border-top: transparent;
+    border-top-color: transparent;
+    border-bottom: transparent;
+    border-bottom-color: transparent;
+    border-color: transparent;
+    padding: 0;
+    background-color: transparent;
+}
+.projects-list th:nth-child(2),
+.projects-list th:nth-child(3),
+.projects-list td:nth-child(2),
+.projects-list td:nth-child(3) {
+    text-align: left;
+}
+.projects-list td:nth-child(2) {
+    font-weight: 700;
+}
+.projects-list .details {
+    vertical-align: middle;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-family: monospace;
+}
+.projects-list .border {
+    height: 100%;
+    position: relative;
+    left: 0;
+    width: 5px;
+    margin: 0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.border.high {
+    background-color: rgb(255, 56, 56);
+}
+.border.med {
+    background-color: rgb(255, 164, 56);
+}
+.border.low {
+    background-color: rgb(26, 140, 39);
+}
+.border.info {
+    background-color: rgb(40, 112, 204);    
+}
+.label {
+    border-radius: 5px;
+    padding: 2px 6px;
+    color: rgb(255 255 255);
+    min-width: 28px;
+    font-weight: 600;
+    display: inline-block;
+    font-size: 13px;
+    vertical-align: top;
+}
+.label.info {
+    background-color: #2870cc;    
+}
+.label.low {
+    background-color: #1a8c27;
+}
+.label.medium {
+    background-color: #ffa438;
+}
+.label.high {
+    background-color: #ff3838;
+}
 
 .metrics-list,
 .progress-bar .progress__label {

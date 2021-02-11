@@ -18,12 +18,27 @@
             <div class="input-column column">
                 <div class="projects-list">
                     <table cellspacing="0" cellpadding="0">
+                        <thead>
+                            <th></th>
+                            <th>Project Name</th>
+                            <th>Domains</th>
+                            <th colspan="5">Findings</th>
+                        </thead>
                         <tbody>
                         {% for project in projects %}
                         <tr class="highlight" data-project-id="{{ project.project_id }}">
-                            <td>{{ project.name }}</td>
-                            <td title="Domains">{% if project.domains %}<i class="icofont-globe"></i><div>{{ project.domains }}</div>{% endif %}</td>
-                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                            <td width="5px">
+                                <div class="border {% if project.findings_high > 0 %}high{% elif project.findings_med > 0 %}med{% elif project.findings_low > 0 %}low{% else %}info{% endif %}"></div>
+                            </td>
+                            <td>
+                                {{ project.name }}
+                            </td>
+                            <td title="Domains"><i class="icofont-globe"></i><div>{{ project.domains }}</div></td>
+                            <td width="65px"><span title="High Severity Findings" class="label high">{{ project.findings_high }}</span></td>
+                            <td width="65px"><span title="Medium Severity Findings" class="label medium">{{ project.findings_med }}</span></td>
+                            <td width="65px"><span title="Low Severity Findings" class="label low">{{ project.findings_low }}</span></td>
+                            <td width="65px"><span title="Informational Findings" class="label info">{{ project.findings_info }}</span></td>
+                            <td width="100px"><span class="details">Details</span><i class="icofont-curved-right"></i></td>
                         </tr>
                         {% endfor %}
                         </tbody>

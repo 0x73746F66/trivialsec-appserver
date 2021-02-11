@@ -1,6 +1,6 @@
 <div class="navbar-row">
     <nav role="navigation" class="navigation-top">
-      <a href="/" class="title-link-top">
+      <a href="{{ host_scheme }}{{ host_domain }}" class="title-link-top">
         <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
         <span>Trivial Security</span>
       </a>
@@ -12,7 +12,7 @@
       </div>
       {% endif %}
       <ul class="breadcrumbs">
-          <li><a href="/app">Dashboard</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
           {% if page == 'projects' and not project %}
           <li>Projects</li>
           {% elif page == 'tasks' and not task %}
@@ -25,15 +25,15 @@
           <li>Findings</li>
           {% endif %}
           {% if project %}
-          <li><a href="/app/projects">Projects</a></li>
+          <li><a href="/projects">Projects</a></li>
           <li>{{ project.name }}</li>
           {% endif %}
           {% if domain and domain.project %}
-          <li><a href="/app/projects">Projects</a></li>
-          <li><a href="/app/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
+          <li><a href="/projects">Projects</a></li>
+          <li><a href="/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
           {% if domain %}
           {% if domain.parent_domain_id %}
-          <li><a href="/app/domain/{{ domain.parent_domain_id }}">{{ domain.parent.name }}</a></li>
+          <li><a href="/domain/{{ domain.parent_domain_id }}">{{ domain.parent.name }}</a></li>
           {% endif %}
           <li>{{ domain.name }}</li>
           {% endif %}
@@ -63,49 +63,49 @@
         {% endif %}
         {% if account.is_authenticated %}
         <li class="{% if page == 'dashboard' %}active {% endif %}nav-dashboard">
-          <a href="/app">
+          <a href="/dashboard">
             <i class="icofont-dashboard"></i>
             <span>Dashboard</span>
           </a>
         </li>
         <li class="{% if page == 'projects' %}active {% endif %}nav-projects">
-          <a href="/app/projects">
+          <a href="/projects">
             <i class="icofont-label"></i>
             <span>Projects</span>
           </a>
         </li>
         <li class="{% if page == 'tasks' %}active {% endif %}nav-tasks">
-          <a href="/app/tasks">
+          <a href="/tasks">
             <i class="icofont-tasks"></i>
-            <span>Task List</span>
+            <span>My Tasks</span>
           </a>
         </li>
         {# <li class="{% if page == 'repositories' %}active {% endif %}nav-repositories">
-          <a href="/app/repositories">
+          <a href="/repositories">
             <i class="icofont-code"></i>
             <span>Repositories</span>
           </a>
         </li> #}
-        <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
-          <a href="/app/inventory">
+        {# <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
+          <a href="/inventory">
             <i class="icofont-clip-board"></i>
             <span>Inventory</span>
           </a>
-        </li>
-        <li class="{% if page == 'findings' %}active {% endif %}nav-findings">
-          <a href="/app/findings">
+        </li> #}
+        {# <li class="{% if page == 'findings' %}active {% endif %}nav-findings">
+          <a href="/findings">
             <i class="icofont-safety"></i>
             <span>Findings</span>
           </a>
-        </li>
+        </li> #}
         <li class="{% if page == 'reports' %}active {% endif %}nav-reports">
-          <a href="/app/reports">
+          <a href="/reports">
             <i class="icofont-archive"></i>
             <span>Reports</span>
           </a>
         </li>
         {# <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
-          <a href="/app/feed">
+          <a href="/feed">
             <i class="icofont-rss-feed"></i>
             <span>Feed</span>
           </a>
@@ -123,7 +123,7 @@
     <a data-toggle="tooltip" href="/account/preferences" title="Preferences">
       <i class="icofont-options"></i>
     </a>
-    <a data-toggle="tooltip" href="/app/notifications" title="Notifications">
+    <a data-toggle="tooltip" href="/notifications" title="Notifications">
       <i class="icofont-notification"></i>
     </a>
     <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">

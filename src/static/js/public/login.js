@@ -101,7 +101,7 @@ const login_action = async(event, retry_count=0) => {
             return;
         } else if (json.status == 'success') {
             localStorage.setItem('hmac-secret', json.hmac_secret)
-            window.location.href = json.is_setup ? '/app' : '/account/setup/1'
+            window.location.href = json.is_setup ? '/' : '/account/setup/1'
         }
     }
     refresh_recaptcha_token('login_action')

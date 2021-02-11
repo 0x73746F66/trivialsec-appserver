@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import session, request, redirect, url_for, render_template, abort, jsonify, Blueprint, current_app as app
-from flask_login import current_user, logout_user, login_user
+from flask_login import current_user, logout_user, login_user, login_required
 from trivialsec.helpers import messages, oneway_hash, check_password_policy, check_email_rules, hash_password
 from trivialsec.helpers.config import config
 from trivialsec.helpers.log_manager import logger
@@ -20,7 +20,12 @@ from trivialsec.services.member import handle_login
 from . import get_frontend_conf
 
 
-blueprint = Blueprint('public', __name__)
+blueprint = Blueprint('root', __name__)
+
+@blueprint.route('/', methods=['GET'])
+@login_required
+def page_dashboard():
+    return redirect(url_for('dashboard.page_dashboard'))
 
 @blueprint.route('/campaign/<slug>', methods=['GET'])
 @blueprint.route('/', methods=['GET'])
@@ -41,15 +46,6 @@ def landing(slug: str = None):
         params['slug'] = redis_value
 
     return render_template('public/landing.html.j2', **params)
-
-@blueprint.route('/privacy', methods=['GET'])
-def privacy():
-    params = get_frontend_conf()
-    params['page'] = 'privacy'
-    params['page_title'] = 'Privacy Policy'
-    params['account'] = current_user
-
-    return render_template('public/privacy.html.j2', **params)
 
 @blueprint.route('/faq', methods=['GET'])
 def page_faq():

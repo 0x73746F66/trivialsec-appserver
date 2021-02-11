@@ -1,14 +1,14 @@
 const addDomain = async () => {
     const domain_el = document.getElementById('domain_search_input')
     const project_el = document.getElementById('project_select')
-    const json = await Api.post_async('/app/domains', { 'domain': domain_el.value, 'project_id': project_el.value })
+    const json = await Api.post_async('/domains', { 'domain': domain_el.value, 'project_id': project_el.value })
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     appMessage(json)
     if ('id' in json['domain']) {
         let tr = `<tr class="highlight" data-domain-id="${json['domain']['id']}">
         <td><input type="checkbox" name="table_domains" value="${json['domain']['id']}"></td>
-        <td><a href="/app/project/${json['domain']['project_id']}">${json['project']['name']}</a></td>
-        <td><a href="/app/domain/1">${json['domain']['name']}</a></td>
+        <td><a href="/project/${json['domain']['project_id']}">${json['project']['name']}</a></td>
+        <td><a href="/domain/1">${json['domain']['name']}</a></td>
         <td>None 0 (0bytes)</td>
         <td>None</td>
         <td>None</td>
@@ -22,7 +22,7 @@ const addDomain = async () => {
 
 const searchDomain = async event => {
     const domain_name = event.currentTarget.value
-    const json = await Api.get_async(`/app/domains/search/${domain_name}`)
+    const json = await Api.get_async(`/domains/search/${domain_name}`)
         .catch(()=>appMessage('error', 'An unexpected error occurred. Please refresh the page and try again.'))
     const el = document.getElementById('add_domain')
     if (json.hasOwnProperty('id') && json['id']) {

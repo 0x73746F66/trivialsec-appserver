@@ -2,7 +2,7 @@
 {% block body %}
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/member.css')|autoversion }}">
     <ul class="breadcrumbs">
-        <li><a href="/app">Dashboard</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/account/organisation">Organisation</a></li>
         <li><a href="/account/member/{{ member.member_id }}">Member</a></li>
         <li>{{ member.email }}</li>

@@ -19,7 +19,7 @@ const saveFields = async() => {
         refresh_recaptcha_token('invitation_action')
     }
     if (json.status == 'success') {
-        setTimeout(()=>{window.location.href = '/app'}, 5000)
+        setTimeout(()=>{window.location.href = '/'}, 5000)
     }
 }
 if (recaptcha_site_key) {
