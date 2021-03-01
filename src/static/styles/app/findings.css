@@ -51,32 +51,6 @@
     background: rgb(121, 18, 18);
 }
 
-.criticality-info,
-.criticality-none {
-    border: solid 1px #fff;
-    background: rgb(44, 192, 255);
-}
-
-.criticality-low {
-    border: solid 1px #fff;
-    background: rgb(0, 162, 232);
-}
-
-.criticality-medium {
-    border: solid 1px #fff;
-    background: rgb(5, 100, 140);
-}
-
-.criticality-high {
-    border: solid 1px #fff;
-    background: rgb(5, 72, 100);
-}
-
-.criticality-critical {
-    border: solid 1px #ffffff;
-    background: rgb(5, 48, 66);
-}
-
 .confidence-low {
     border: solid 1px #fff;
     background: rgb(0, 90, 72);

@@ -44,28 +44,6 @@
 
     </div>
     <div class="recommendation-sidebar">
-        <div class="edit-criticality">
-            <div class="recommendation-group">
-                <div class="recommendation-label">
-                    <label class="recommendation-title" for="criticality{{ recommendation.finding_detail_id }}">Criticality</label>
-                </div>
-                <div class="recommendation-input">
-                    <input autocomplete="off" id="criticality{{ recommendation.finding_detail_id }}" name="criticality" type="number" min="0" max="100" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.criticality }}">
-                </div>
-            </div>
-        </div>
-
-        <div class="edit-confidence">
-            <div class="recommendation-group">
-                <div class="recommendation-label">
-                    <label class="recommendation-title" for="confidence{{ recommendation.finding_detail_id }}">Confidence</label>
-                </div>
-                <div class="recommendation-input">
-                    <input autocomplete="off" id="confidence{{ recommendation.finding_detail_id }}" name="confidence" type="number" min="0" max="100" data-review-id="{{ recommendation.finding_detail_id }}" value="{{ recommendation.confidence }}">
-                </div>
-            </div>
-        </div>
-
         <div class="edit-severity_product">
             <div class="recommendation-group">
                 <div class="recommendation-label">

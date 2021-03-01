@@ -38,8 +38,8 @@ with app.app_context():
     from routes.webhook import blueprint as webhook_blueprint
     app.register_blueprint(public_blueprint, url_prefix='/')
     app.register_blueprint(domain_blueprint, url_prefix='/domain')
-    app.register_blueprint(project_blueprint, url_prefix='/project')
-    app.register_blueprint(projects_blueprint, url_prefix='/projects')
+    app.register_blueprint(project_blueprint, url_prefix='/scope')
+    app.register_blueprint(projects_blueprint, url_prefix='/scopes')
     app.register_blueprint(notifications_blueprint, url_prefix='/notifications')
     app.register_blueprint(repositories_blueprint, url_prefix='/repositories')
     app.register_blueprint(inventory_blueprint, url_prefix='/inventory')

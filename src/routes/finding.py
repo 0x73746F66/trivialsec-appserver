@@ -32,9 +32,6 @@ def page_finding():
     #     Finding.RATING_HIGH,
     #     Finding.RATING_CRITICAL,
     # ]
-    # params['agg_severity_normalized'] = charts.findings_severity_donut(all_findings)
-    # params['agg_confidence'] = charts.findings_confidence_donut(all_findings)
-    # params['agg_criticality'] = charts.findings_criticality_donut(all_findings)
 
     # params['members'] = []
     # members = Members().find_by([('account_id', current_user.account_id)], limit=1000)

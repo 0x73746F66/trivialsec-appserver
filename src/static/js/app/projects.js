@@ -1,7 +1,7 @@
 window.choices_rendered = {}
 const projectsAction = async event => {
     const project_id = event.currentTarget.parent('tr').getAttribute('data-project-id')
-    location.href = `/project/${project_id}`
+    location.href = `/scope/${project_id}`
 }
 const handleSocket = async data => {
     console.debug(data)

@@ -12,8 +12,8 @@ blueprint = Blueprint('projects', __name__)
 @login_required
 def page_projects():
     params = get_frontend_conf()
-    params['page_title'] = 'Projects'
-    params['page'] = 'projects'
+    params['page_title'] = 'Scopes'
+    params['page'] = 'scopes'
     params['account'] = current_user
 
     project_arr = []

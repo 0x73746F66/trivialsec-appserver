@@ -9,7 +9,7 @@
         <input type="hidden" id="project-tracking-id">
         <input autocomplete="off" type="text" name="project_name" id="project_name_input" placeholder="Enter project name" tabindex="1" list="projects">
         <input autocomplete="off" type="text" name="domain_name" id="domain_name_input" placeholder="Enter domain name" tabindex="2" list="domains">
-        <button id="create_project_input" type="button" tabindex="3"><i class="icofont-ui-add"></i> New Project</button>
+        <button id="create_project_input" type="button" tabindex="3"><i class="icofont-ui-add"></i> New Scope</button>
     </div>
     {% endif %}
 
@@ -20,7 +20,7 @@
                     <table cellspacing="0" cellpadding="0">
                         <thead>
                             <th></th>
-                            <th>Project Name</th>
+                            <th>Scope Name</th>
                             <th>Domains</th>
                             <th colspan="5">Findings</th>
                         </thead>
@@ -48,7 +48,7 @@
         </div>
     </section>
     {% if not projects %}
-    <span id="no-projects">No Projects</span>
+    <span id="no-projects">No Project Scopes</span>
     {% endif %}
 </div>
 

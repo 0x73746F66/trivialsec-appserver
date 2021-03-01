@@ -13,8 +13,8 @@
       {% endif %}
       <ul class="breadcrumbs">
           <li><a href="/dashboard">Dashboard</a></li>
-          {% if page == 'projects' and not project %}
-          <li>Projects</li>
+          {% if page == 'scopes' and not project %}
+          <li>Scopes</li>
           {% elif page == 'tasks' and not task %}
           <li>Task List</li>
           {% elif page == 'inventory' %}
@@ -25,12 +25,12 @@
           <li>Findings</li>
           {% endif %}
           {% if project %}
-          <li><a href="/projects">Projects</a></li>
+          <li><a href="/scopes">Scopes</a></li>
           <li>{{ project.name }}</li>
           {% endif %}
           {% if domain and domain.project %}
-          <li><a href="/projects">Projects</a></li>
-          <li><a href="/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
+          <li><a href="/scopes">Scopes</a></li>
+          <li><a href="/scope/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
           {% if domain %}
           {% if domain.parent_domain_id %}
           <li><a href="/domain/{{ domain.parent_domain_id }}">{{ domain.parent.name }}</a></li>
@@ -68,10 +68,10 @@
             <span>Dashboard</span>
           </a>
         </li>
-        <li class="{% if page == 'projects' %}active {% endif %}nav-projects">
-          <a href="/projects">
-            <i class="icofont-label"></i>
-            <span>Projects</span>
+        <li class="{% if page == 'scopes' %}active {% endif %}nav-scopes">
+          <a href="/scopes">
+            <i class="icofont-bullseye"></i>
+            <span>Scopes</span>
           </a>
         </li>
         <li class="{% if page == 'tasks' %}active {% endif %}nav-tasks">

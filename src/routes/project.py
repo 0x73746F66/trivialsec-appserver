@@ -16,8 +16,8 @@ blueprint = Blueprint('project', __name__)
 @login_required
 def page_project(project_id, page: int = 1):
     params = get_frontend_conf()
-    params['page'] = 'projects'
-    params['uri_page'] = 'project'
+    params['page'] = 'scopes'
+    params['uri_page'] = 'scope'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
@@ -107,8 +107,8 @@ def page_project(project_id, page: int = 1):
 @login_required
 def page_project_jobs(project_id, page: int = 1):
     params = get_frontend_conf()
-    params['page'] = 'projects'
-    params['uri_page'] = 'project'
+    params['page'] = 'scopes'
+    params['uri_page'] = 'scope'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
@@ -152,6 +152,39 @@ def page_project_jobs(project_id, page: int = 1):
         ('project_id', project.project_id),
         ('state', 'queued'),
     ], limit=1000).to_list()
+    project_dict['findings_info'] = Findings().count_informational([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_low'] = Findings().count_low_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_med'] = Findings().count_medium_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_high'] = Findings().count_high_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['jobs_completed'] = JobRuns().count([
+        ('state', 'completed'),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['jobs_total'] = JobRuns().count([
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
 
     return render_template('app/project-jobs.html.j2', **params)
 
@@ -160,8 +193,8 @@ def page_project_jobs(project_id, page: int = 1):
 @login_required
 def page_project_reports(project_id, page: int = 1):
     params = get_frontend_conf()
-    params['page'] = 'projects'
-    params['uri_page'] = 'project'
+    params['page'] = 'scopes'
+    params['uri_page'] = 'scope'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
@@ -173,6 +206,39 @@ def page_project_reports(project_id, page: int = 1):
     project_dict = {'reports': []}
     for col in project.cols():
         project_dict[col] = getattr(project, col)
+    project_dict['findings_info'] = Findings().count_informational([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_low'] = Findings().count_low_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_med'] = Findings().count_medium_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['findings_high'] = Findings().count_high_severity([
+        ('state', 'ACTIVE'),
+        ('archived', 0),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['jobs_completed'] = JobRuns().count([
+        ('state', 'completed'),
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
+    project_dict['jobs_total'] = JobRuns().count([
+        ('account_id', current_user.account_id),
+        ('project_id', project.project_id)
+    ])
 
     params['project'] = project_dict
 

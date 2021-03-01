@@ -11,9 +11,9 @@ findings_severity = {
 {% include 'app/project-banner.html.j2' %}
 <div class="project-container">
     <div class="container-tabs">
-        <a href="/project/{{ project.project_id }}">Domains</a>
-        <a href="/project/{{ project.project_id }}/jobs" class="active">Jobs</a>
-        <a href="/project/{{ project.project_id }}/reports">Reports</a>
+        <a href="/scope/{{ project.project_id }}">Domains</a>
+        <a href="/scope/{{ project.project_id }}/jobs" class="active">Jobs</a>
+        <a href="/scope/{{ project.project_id }}/reports">Reports</a>
     </div>
 
     <section class="fields" id="jobs-list"{% if not error_jobs %} style="display: none;"{% endif %}>

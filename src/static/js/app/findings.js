@@ -165,21 +165,6 @@ async function deferFinding(e) {
 }
 
 document.addEventListener('DOMContentLoaded', async() => {
-    const ctx1 = document.getElementById('agg_severity_normalized').getContext('2d')
-    const ctx2 = document.getElementById('agg_confidence').getContext('2d')
-    const ctx3 = document.getElementById('agg_criticality').getContext('2d')
-    new Chart(ctx1, {
-        type: 'doughnut',
-        data: agg_severity_normalized
-    })
-    new Chart(ctx2, {
-        type: 'doughnut',
-        data: agg_confidence
-    })
-    new Chart(ctx3, {
-        type: 'doughnut',
-        data: agg_criticality
-    })
     document.addEventListener('keyup', e => {
         if (e.keyCode == 13 && e.ctrlKey) {
             let ele = document.querySelector('textarea[name="note"]:focus')

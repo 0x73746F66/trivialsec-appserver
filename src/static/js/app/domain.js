@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     socket.on('check_domains_tld', handleSocket)
     const barCanvasEl = document.querySelector('.bar-canvas canvas')
     if (barCanvasEl) {
-        findings_chart = new Chart(findingsCanvasEl.getContext('2d'), {
+        findings_chart = new Chart(barCanvasEl.getContext('2d'), {
             type: 'bar',
             data: findings_chart_config,
             options: {

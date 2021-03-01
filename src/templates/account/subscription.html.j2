@@ -4,12 +4,12 @@
 <script type=text/javascript>
 charts_data = {
     domains: {
-        used: {{ monitored_domains }},
-        total: {{ account.account.plan.domains_monitored }},
+        used: {{ monitored_domains | default(0) }},
+        total: {{ account.account.plan.domains_monitored | default(0) }},
     },
     scans: {
-        used: {{ on_demand_active + on_demand_passive }},
-        total: {{ account.account.plan.on_demand_passive_daily + account.account.plan.on_demand_active_daily }},
+        used: {{ on_demand_active | default(0) + on_demand_passive | default(0) }},
+        total: {{ account.account.plan.on_demand_passive_daily | default(0) + account.account.plan.on_demand_active_daily | default(0) }},
     },
 }
 </script>
@@ -42,7 +42,10 @@ charts_data = {
         {# american express, diners club, discover, jcb, mastercard, unionpay, visa, or Unknown #}
         <div class="col-80">
             <div class="field-label card-brand">
-                <i class="icofont-{{ account.account.plan.stripe_card_brand | lower | replace(' ', '-') }}"></i> <span class="mask">**** **** ****</span> {{ account.account.plan.stripe_card_last4 }} expiry {{ '%02d' % account.account.plan.stripe_card_expiry_month }}/{{ account.account.plan.stripe_card_expiry_year }}
+                {% set expiry_month = account.account.plan.stripe_card_expiry_month | default('0') %}
+                {% if expiry_month %}
+                <i class="icofont-{{ account.account.plan.stripe_card_brand | default('') | lower | replace(' ', '-') }}"></i> <span class="mask">**** **** ****</span> {{ account.account.plan.stripe_card_last4 | default('') }} expiry {{ '%02d' % expiry_month }}/{{ account.account.plan.stripe_card_expiry_year | default('') }}
+                {% endif %}
             </div>
         </div>
     </div>

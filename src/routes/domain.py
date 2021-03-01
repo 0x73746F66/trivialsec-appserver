@@ -7,7 +7,7 @@ from trivialsec.models.finding import Findings
 from trivialsec.models.dns_record import DnsRecords
 from trivialsec.models.known_ip import KnownIps
 from trivialsec.models.job_run import JobRuns
-from trivialsec.models.program import Programs
+from trivialsec.models.program import InventoryItems
 from trivialsec.models.project import Project
 from actions import charts
 from . import get_frontend_conf
@@ -239,7 +239,7 @@ def page_domain_inventory(domain_id):
             parent_dict[pcol] = getattr(parent_domain, pcol)
         domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
-    params['programs'] = Programs().find_by([
+    params['programs'] = InventoryItems().find_by([
         ('domain_id', domain.domain_id),
     ])
     known_ip_arr = KnownIps().find_by([
@@ -314,8 +314,7 @@ def page_domain_subdomains(domain_id, page=1):
     )
     params['pagination']['page_id'] = domain_id
     params['pagination']['sub_page'] = 'subdomains'
-    subdomains = Domains()
-    for subdomain in subdomains.find_by(search_filter, limit=page_size, offset=offset):
+    for subdomain in Domains().find_by(search_filter, limit=page_size, offset=offset, cache_key=None):
         subdomain.get_stats()
         subdomain_dict = {}
         for col in subdomain.cols():

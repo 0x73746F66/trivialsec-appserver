@@ -86,4 +86,5 @@ cert_dot_sh/*.csv.part
 **/.monit*
 **/*.whl
 *.zip
-*.tar.gz
+*.tgz
+*.gz

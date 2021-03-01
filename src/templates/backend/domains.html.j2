@@ -7,13 +7,13 @@
             <tbody>
             <tr>
                 <th><input type="checkbox" name="table_domains"/></th>
-                <th>Project</th>
+                <th>Project Scope</th>
                 <th>Domain</th>
             </tr>
             {% for domain in domains %}
             <tr class="highlight" data-domain-id="{{ domain.domain_id }}">
                 <td><input type="checkbox" name="table_domains" value="{{ domain.domain_id }}"/></td>
-                <td><a href="/project/{{ domain.project.project_id }}">{{ domain.project.name }}</a></td>
+                <td><a href="/scope/{{ domain.project.project_id }}">{{ domain.project.name }}</a></td>
                 <td><a href="/domain/{{ domain.domain_id }}">{{ domain.name }}</a></td>
             </tr>
             {% endfor %}

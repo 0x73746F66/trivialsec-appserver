@@ -61,7 +61,7 @@ def http_code_group(s):
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'public.login'
+login_manager.login_view = 'root.login'
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:

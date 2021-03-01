@@ -4,84 +4,72 @@ remediations = {
     'SSL Session ID support': {
         'issue': 'Session Hijacking can be achieved if the session ID is previously stolen (XSS, Session Sniffing) and enables gain unauthorized access to the web server',
         'recommendation': 'Applying strict Content Security Policy is the best defense for XXS, and consider HSTS at the top-level domain name to prevent Session Sniffing',
-        'criticality': 40,
         'confidence': 80,
         'severity_product': 45
     },
     'Session Resumption': {
         'issue': 'a TLS session resumption, being uniquely tied to a specific browser, can be used to track users in the same way cookies might. Essentially, when a browser resumes a session, the web site can correlate the connection with the one that originally created the session, even if the user visits from a different network. University of Hamburg research paper concluded, the average user can be tracked for up to eight day',
         'recommendation': 'Allow session resumption for first-party domains but not third-parties, to prevent unauthorised user tracking',
-        'criticality': 90,
         'confidence': 100,
         'severity_product': 90
     },
     'Anonymous NULL Ciphers': {
         'issue': 'A null cipher, or concealment cipher, which are highly vulnerable to man in the middle attacks',
         'recommendation': 'Disable anonymous and weak cipher suites by manually explicitly configuring ciphers on the web server',
-        'criticality': 95,
         'confidence': 90,
         'severity_product': 95
     },
     'Trust (hostname)': {
         'issue': 'The certificate does not match supplied URI which would allow Man in the Middle attacks on the client. Hostname verification is a client-side responcibility that many common client implementations fail to address',
         'recommendation': 'To provide a higher degree of safety to clients that use hostname verification, make sure your X.509 certificate has the correct subjectAltName field set correctly',
-        'criticality': 60,
         'confidence': 70,
         'severity_product': 75
     },
     'EV cert (experimental)': {
         'issue': 'Extended Validation (EV) certificates provide protections against domain take-over attacks that utilise the IP churn inherent nature of many cloud service providors to take advantage of the automated issuance of Domain Validated (DV) certificates',
         'recommendation': 'If you are using Domain Validated (DV) certificates you should at least upgrade to EV or prefereably an Organization validated (OV) certificate that can not be as easily used in attacks that rely on automated certificate issuance',
-        'criticality': 60,
         'confidence': 100,
         'severity_product': 85
     },
     'In pwnedkeys.com DB': {
         'issue': 'pwnedkeys.com makes available to anyone a large collection of private keys that can be used to decrypt assumed secure communications using SSL/TLS',
         'recommendation': 'Immediately replace the exposed key and investigate the cause and vector of the compromise to ensure the new private key is not also compromised',
-        'criticality': 95,
         'confidence': 100,
         'severity_product': 95
     },
     'OCSP stapling': {
         'issue': 'OCSP stapling simultaneously decrease page load times and increase user security, without stapling OCSP alone will result in an excessive amount of checks being made to the CA, also  the client had no idea that the site in question supports OCSP and whether or not it should expect them to staple an OCSP response.',
         'recommendation': 'To address the certificate revocation, performance issues, and the uncertainty in OCSP support, set the OCSP must-staple flag (by your CA in the certificate they generate for you) when you obtain your replacement certificates. Finally, ensure the server openssl is configured with the appropriate extension to support OCSP must-staple',
-        'criticality': 40,
         'confidence': 100,
         'severity_product': 65
     },
     'OCSP must staple extension': {
         'issue': 'OCSP stapling simultaneously decrease page load times and increase user security, without stapling OCSP alone will result in an excessive amount of checks being made to the CA, also  the client had no idea that the site in question supports OCSP and whether or not it should expect them to staple an OCSP response.',
         'recommendation': 'To address the certificate revocation, performance issues, and the uncertainty in OCSP support, set the OCSP must-staple flag (by your CA in the certificate they generate for you) when you obtain your replacement certificates. Finally, ensure the server openssl is configured with the appropriate extension to support OCSP must-staple',
-        'criticality': 40,
         'confidence': 100,
         'severity_product': 65
     },
     'Public Key Pinning': {
         'issue': 'The original problem was the Key Distribution Problem. Insecure communications can be transformed into a secure communication problem with encryption. Encrypted communications can be transformed into an identity problem with signatures. The identity problem terminates at the key distribution problem. They are the same problem. Pinning leverages knowledge of the pre-existing relationship between the user and an organization or service to help make better security related decisions. Because you already have information on the server or service, you don’t need to rely on generalized mechanisms meant to solve the key distribution problem. That is, you don’t need to turn to DNS for name/address mappings or CAs for bindings and status.',
         'recommendation': 'There are three steps needed to address the issue of key distribution, first is to know and access to the peer, server or service. Next chose a trust model (web of trust, or hierarchy of trust) which essentially will confer trust. Last associate "pin" a host with their expected X509 certificate or public key by adding this certificate or public key to the requesting application at development time. Do not attempt to preloading it out of band in hostile internet connected environments, which negates the intent entirely. Consider OCSP must-staple flag on the certificate to address the limitation of pinning that is revocation, because Pinning is not Stapling. Stapling sends both the certificate and OCSP responder information in the same request to avoid the additional fetches the client should perform during path validations',
-        'criticality': 40,
         'confidence': 100,
         'severity_product': 65
     },
     'OCSP URI': {
         'issue': 'OCSP stapling simultaneously decrease page load times and increase user security, without stapling OCSP alone will result in an excessive amount of checks being made to the CA, also  the client had no idea that the site in question supports OCSP and whether or not it should expect them to staple an OCSP response.',
         'recommendation': 'To address the certificate revocation, performance issues, and the uncertainty in OCSP support, set the OCSP must-staple flag (by your CA in the certificate they generate for you) when you obtain your replacement certificates. Finally, ensure the server openssl is configured with the appropriate extension to support OCSP must-staple',
-        'criticality': 70,
         'confidence': 70,
         'severity_product': 75
     },
     'X-XSS-Protection': {
         'issue': 'This header enables the Cross-site scripting (XSS) filter in your browser, without it the browser will by default do nothing to protect from XSS',
         'recommendation': 'With the filter enabled in blocking mode, rather than sanitize the page, when a XSS attack is detected, the browser will prevent rendering of the page',
-        'criticality': 95,
         'confidence': 100,
         'severity_product': 95
     },
     'X-Content-Type-Options': {
         'issue': 'Setting this header will prevent the browser from interpreting files as something else than declared by the content type in the HTTP headers',
         'recommendation': 'Use the "nosnif" setting which Will prevent the browser from MIME-sniffing a response away from the declared content-type',
-        'criticality': 95,
         'confidence': 100,
         'severity_product': 95
     },

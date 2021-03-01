@@ -156,9 +156,9 @@ def confirmation_link(confirmation_hash: str):
             member.verified = True
             member.persist()
 
-            return redirect(url_for('.login'))
+            return redirect(url_for('root.login'))
     except Exception as err:
-        logger.exception(err)
+        logger.error(err)
 
     return abort(403)
 
@@ -456,7 +456,7 @@ def api_invitation_confirm_password():
         ).persist()
 
     except Exception as err:
-        logger.exception(err)
+        logger.error(err)
         params['error'] = str(err)
         errors.append(messages.ERR_ACCOUNT_UPDATE)
 
@@ -526,7 +526,7 @@ def api_change_password():
             description=f'{remote_addr}\t{request.user_agent}'
         ).persist()
     except Exception as err:
-        logger.exception(err)
+        logger.error(err)
         params['error'] = str(err)
         errors.append(messages.ERR_ACCOUNT_UPDATE)
 

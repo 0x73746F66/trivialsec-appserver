@@ -7,7 +7,7 @@ const addDomain = async () => {
     if ('id' in json['domain']) {
         let tr = `<tr class="highlight" data-domain-id="${json['domain']['id']}">
         <td><input type="checkbox" name="table_domains" value="${json['domain']['id']}"></td>
-        <td><a href="/project/${json['domain']['project_id']}">${json['project']['name']}</a></td>
+        <td><a href="/scope/${json['domain']['project_id']}">${json['project']['name']}</a></td>
         <td><a href="/domain/1">${json['domain']['name']}</a></td>
         <td>None 0 (0bytes)</td>
         <td>None</td>
