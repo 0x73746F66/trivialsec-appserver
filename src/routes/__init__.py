@@ -1,6 +1,6 @@
 import json
 from datetime import date
-from flask import send_from_directory, request, abort, current_app as app
+from flask import send_from_directory, make_response, request, abort, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.account import Account
@@ -28,6 +28,7 @@ def get_frontend_conf() -> dict:
         }
     }
     return {**conf, **config.get_app()}
+
 @app.teardown_request
 def teardown_request_func(error: Exception = None):
     if error:
@@ -89,3 +90,21 @@ def load_user(user_id: int) -> Member:
     setattr(member, 'apikey', apikey)
 
     return member
+
+@app.before_request
+def before_request():
+    if request.path in ['/', '/healthcheck']:
+        return make_response(), 204
+
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', f'{config.get_app().get("host_scheme")}{config.get_app().get("host_domain")}')
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        return response
+
+@app.after_request
+def after_request(response):
+    if request.method in ["GET", "POST"]:
+        response.headers.add('Access-Control-Allow-Origin', f'{config.get_app().get("host_scheme")}{config.get_app().get("host_domain")}')
+    return response

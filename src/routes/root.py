@@ -86,14 +86,10 @@ def api_register():
     except Exception as ex:
         logger.warning(ex)
 
-    if 'password' not in params or 'password2' not in params:
-        errors.append(messages.ERR_VALIDATION_PASSWORDS_MATCH)
-    if params['password'] != params['password2']:
-        errors.append(messages.ERR_VALIDATION_PASSWORDS_MATCH)
-
-    res = check_password_policy(params['password'])
-    if not res:
-        errors.append(messages.ERR_VALIDATION_PASSWORD_POLICY)
+    if not params.get('privacy'):
+        params['status'] = 'warning'
+        params['message'] = 'Please accept the Terms of Service and Privacy Policy'
+        return jsonify(params)
 
     if len(errors) > 0:
         params['status'] = 'error'
@@ -103,8 +99,9 @@ def api_register():
     try:
         member = register(
             email_addr=params.get('email'),
-            passwd=params.get('password'),
-            alias=params.get('alias', params.get('email')),
+            first_name=params.get('firstName'),
+            last_name=params.get('lastName'),
+            alias=params.get('company', params.get('email')),
             selected_plan={'name': 'Pending'}
         )
         if not isinstance(member, Member):

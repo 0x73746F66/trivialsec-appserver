@@ -11,7 +11,7 @@ app:
     site_domain: /mnt/nvme/trivialsec/website/src/index.html
   frontend:
     site_scheme: "http://"
-    site_domain: localhost:5000
+    site_domain: localhost:8081
     api_scheme: "http://"
     api_domain: localhost:8080
     socket_scheme: "http://"
