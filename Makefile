@@ -41,11 +41,16 @@ common-dev: ## Install trivialsec_common lib from local build
 	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
 
 install-dev:
-	pip install -q -U pip setuptools pylint wheel awscli
+	pip install -q -U pip setuptools pylint wheel awscli semgrep
 	pip install -q -U --no-cache-dir --isolated -r ./docker/requirements.txt
 
 lint:
 	pylint --jobs=0 --persistent=y --errors-only src/**/*.py
+	semgrep -q --strict --timeout=0 --config=p/ci --lang=py src/**/*.py
+	semgrep -q --strict --config p/minusworld.flask-xss --lang=py src/**/*.py
+
+stripe-dev:
+	stripe listen --forward-to localhost:5000/webhook/stripe
 
 build: prep package-dev ## Build compressed container
 	docker-compose build --compress
