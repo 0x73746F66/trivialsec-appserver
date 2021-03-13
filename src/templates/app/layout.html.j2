@@ -9,7 +9,6 @@
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/vendor/choices.9.0.1.min.css') }}" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/main.css')|autoversion }}" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/tables.css')|autoversion }}" />
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/modal.css')|autoversion }}" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/meter.css')|autoversion }}" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/scaffolding.css')|autoversion }}" />
         <script type=text/javascript src="{{url_for('static', filename='js/vendor/timeago.min.js')|autoversion }}"></script>
@@ -18,8 +17,8 @@
             window.app = {
                 page: '{{ page }}',
                 domain: {
-                    name: '{{ host_domain }}',
-                    scheme: '{{ host_scheme }}',
+                    name: '{{ app_domain }}',
+                    scheme: '{{ app_scheme }}',
                 },
                 websocket: {
                     domain: '{{ socket_domain }}',
@@ -63,7 +62,6 @@
             {% block body %}{% endblock %}
             {% if account.is_authenticated %}
             <input name="socketio_token" type="hidden" value="{{ account.account.socket_key }}"/>
-            <script type=text/javascript src="{{url_for('static', filename='js/app/modal.js')|autoversion }}"></script>
             <script type=text/javascript src="{{url_for('static', filename='js/vendor/socket.io.2.3.0.min.js') }}"></script>
             <script type=text/javascript src="{{url_for('static', filename='js/vendor/choices.9.0.1.min.js') }}"></script>
             <script type=text/javascript src="{{url_for('static', filename='js/vendor/ejs.3.0.2.min.js') }}"></script>

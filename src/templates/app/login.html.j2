@@ -1,0 +1,10 @@
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', async() => {
+    localStorage.setItem('hmac-secret', '{{ hmac_secret }}')
+    {% if is_setup %}
+    window.location.href = '/dashboard'
+    {% else %}
+    window.location.href = '/account/setup/1'
+    {% endif %}
+}, false)
+</script>

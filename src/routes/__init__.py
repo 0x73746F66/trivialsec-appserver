@@ -1,6 +1,6 @@
 import json
 from datetime import date
-from flask import send_from_directory, make_response, request, abort, current_app as app
+from flask import send_from_directory, make_response, request, abort, redirect, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.account import Account
@@ -8,6 +8,7 @@ from trivialsec.models.plan import Plan
 from trivialsec.models.apikey import ApiKey
 from trivialsec.helpers.config import config
 from trivialsec.services.roles import is_internal_member, is_audit_member, is_billing_member, is_owner_member, is_support_member, is_readonly_member
+from trivialsec.helpers.log_manager import logger
 
 
 def get_frontend_conf() -> dict:
@@ -62,7 +63,10 @@ def http_code_group(s):
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'root.login'
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(f'{config.frontend.get("site_url")}', code=401)
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
@@ -98,13 +102,21 @@ def before_request():
 
     if request.method == "OPTIONS":
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', f'{config.get_app().get("host_scheme")}{config.get_app().get("host_domain")}')
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
+            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
+        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
+            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("site_url"))
         return response
+    return None
 
 @app.after_request
 def after_request(response):
     if request.method in ["GET", "POST"]:
-        response.headers.add('Access-Control-Allow-Origin', f'{config.get_app().get("host_scheme")}{config.get_app().get("host_domain")}')
+        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
+            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
+        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
+            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("site_url"))
+
     return response

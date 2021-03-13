@@ -1,3 +1,4 @@
+from random import random
 from datetime import datetime
 from flask import session, request, redirect, url_for, render_template, abort, jsonify, Blueprint, current_app as app
 from flask_login import current_user, logout_user, login_user, login_required
@@ -9,14 +10,12 @@ from trivialsec.helpers.sendgrid import send_email, upsert_contact
 from trivialsec.decorators import control_timing_attacks, require_recaptcha
 from trivialsec.models.apikey import ApiKey
 from trivialsec.models.activity_log import ActivityLog
-from trivialsec.models.key_value import KeyValues
 from trivialsec.models.account import Account
 from trivialsec.models.member import Member
 from trivialsec.models.invitation import Invitation
 from trivialsec.models.plan import Plan
 from trivialsec.models.subscriber import Subscriber
 from trivialsec.services.accounts import register, generate_api_key_secret
-from trivialsec.services.member import handle_login
 from . import get_frontend_conf
 
 
@@ -47,36 +46,9 @@ def landing(slug: str = None):
 
     return render_template('public/landing.html.j2', **params)
 
-@blueprint.route('/faq', methods=['GET'])
-def page_faq():
-    params = get_frontend_conf()
-    params['page'] = 'faq'
-    params['page_title'] = 'FAQ'
-    params['account'] = current_user
-
-    for section in ['faq_general', 'faq_features', 'faq_security']:
-        params[section] = []
-        for faq in KeyValues().find_by([('type', section)], limit=50):
-            if faq.hidden:
-                continue
-            if faq.active_date and faq.active_date > datetime.utcnow():
-                continue
-            params[section].append(faq)
-
-    return render_template('public/faq.html.j2', **params)
-
-@blueprint.route('/register', methods=['GET'])
-def get_register():
-    params = get_frontend_conf()
-    params['page'] = 'register'
-    params['page_title'] = 'Registration'
-    params['account'] = current_user
-
-    return render_template('public/register.html.j2', **params)
-
 @control_timing_attacks(seconds=2)
 @blueprint.route('/register', methods=['POST'])
-@require_recaptcha(action='register_action')
+@require_recaptcha(action='public_action')
 def api_register():
     errors = []
     params = request.get_json()
@@ -99,10 +71,7 @@ def api_register():
     try:
         member = register(
             email_addr=params.get('email'),
-            first_name=params.get('firstName'),
-            last_name=params.get('lastName'),
-            alias=params.get('company', params.get('email')),
-            selected_plan={'name': 'Pending'}
+            company=params.get('company', params.get('email'))
         )
         if not isinstance(member, Member):
             errors.append(messages.ERR_VALIDATION_EMAIL_RULES)
@@ -112,13 +81,13 @@ def api_register():
             stripe_result = create_customer(member.email)
             plan.stripe_customer_id = stripe_result.get('id')
             plan.persist()
-            confirmation_url = f"{config.frontend.get('site_scheme')}{config.frontend.get('site_domain')}{member.confirmation_url}"
+            confirmation_url = f"{config.frontend.get('app_url')}{member.confirmation_url}"
             send_email(
                 subject="TrivialSec Confirmation",
                 recipient=member.email,
                 template='registrations',
                 data={
-                    "invitation_message": "Thank you for your interest in TrivialSec",
+                    "invitation_message": "Please click the Activation link below, or copy and paste it into a browser if you prefer.",
                     "activation_url": confirmation_url
                 }
             )
@@ -193,62 +162,23 @@ def password_reset(confirmation_hash: str):
         return render_template('public/password-reset.html.j2', **params)
     return abort(403)
 
-@blueprint.route('/login', methods=['GET'])
-def login():
-    params = get_frontend_conf()
-    params['page'] = 'login'
-    params['page_title'] = 'Login'
-    params['account'] = current_user
-
-    return render_template('public/login.html.j2', **params)
-
 @control_timing_attacks(seconds=2)
-@blueprint.route('/login', methods=['POST'])
-def login_post():
-    params = request.get_json()
-    if not isinstance(params.get('password'), str) or params.get('password').strip() == '':
-        params['status'] = 'error'
-        params['message'] = messages.ERR_LOGIN_FAILED
-        return jsonify(params)
-
-    member = handle_login(params.get('email'), params.get('password'))
-    if not isinstance(member, Member):
-        logger.debug(f'No user for {params.get("email")}')
-        params['status'] = 'error'
-        params['message'] = messages.ERR_LOGIN_FAILED
-        return jsonify(params)
-
-    apikey = ApiKey(member_id=member.member_id, comment='public-api')
-    if not apikey.hydrate(['member_id', 'comment']):
-        logger.debug(f'inactive public-api key for user {member.member_id}')
-        params['status'] = 'error'
-        params['message'] = messages.ERR_LOGIN_FAILED
-        return jsonify(params)
-
-    if not member.verified:
-        logger.debug(f'unverified user {member.member_id}')
-        params['status'] = 'error'
-        params['message'] = messages.ERR_MEMBER_VERIFICATION
-        return jsonify(params)
-
+@blueprint.route('/login/<auth_hash>', methods=['GET'])
+def login(auth_hash: str):
+    member = Member(confirmation_url=auth_hash)
+    if not member.hydrate('confirmation_url'):
+        return redirect(f'{config.frontend.get("site_url")}', code=401)
     account = Account(account_id=member.account_id)
     if not account.hydrate():
         logger.debug(f'unverified user {member.member_id}')
-        params['status'] = 'error'
-        params['message'] = messages.ERR_LOGIN_FAILED
-        return jsonify(params)
+        return redirect(f'{config.frontend.get("site_url")}', code=401)
 
     login_user(member)
-    if request.headers.getlist("X-Forwarded-For"):
-        remote_addr = '\t'.join(request.headers.getlist("X-Forwarded-For"))
-    else:
-        remote_addr = request.remote_addr
+    apikey = ApiKey(member_id=member.member_id, comment='public-api')
+    if not apikey.hydrate(['member_id', 'comment']):
+        logger.debug(f'inactive public-api key for user {member.member_id}')
+        return redirect(f'{config.frontend.get("site_url")}', code=401)
 
-    ActivityLog(
-        member_id=member.member_id,
-        action=ActivityLog.ACTION_USER_LOGIN,
-        description=f'{remote_addr}\t{request.user_agent}'
-    ).persist()
     ActivityLog(
         member_id=member.member_id,
         action=ActivityLog.ACTION_USER_KEY_ROTATE,
@@ -259,9 +189,66 @@ def login_post():
     apikey.active = True
     apikey.api_key_secret = generate_api_key_secret()
     apikey.persist()
-    params['hmac_secret'] = apikey.api_key_secret
-    params['is_setup'] = account.is_setup
+
+    return render_template('app/login.html.j2', hmac_secret=apikey.api_key_secret, is_setup=account.is_setup)
+
+@control_timing_attacks(seconds=2)
+@blueprint.route('/login', methods=['POST'])
+@require_recaptcha(action='public_action')
+def login_post():
+    params = request.get_json()
+    del params['recaptcha_token']
+    email_addr = params.get('email')
+    member = Member(email=email_addr)
+    member.hydrate('email')
+    if member.member_id is None:
+        logger.debug(f'No user for {email_addr}')
+        params['status'] = 'error'
+        params['message'] = messages.ERR_LOGIN_FAILED
+        return jsonify(params)
+
+    if not member.verified:
+        logger.debug(f'unverified user {member.member_id}')
+        params['status'] = 'error'
+        params['message'] = messages.ERR_MEMBER_VERIFICATION
+        return jsonify(params)
+
+    res = check_email_rules(email_addr)
+    if not res:
+        params['status'] = 'error'
+        params['message'] = messages.ERR_VALIDATION_EMAIL_RULES
+        return jsonify(params)
+
+    account = Account(account_id=member.account_id)
+    if not account.hydrate():
+        logger.debug(f'unverified user {member.member_id}')
+        params['status'] = 'error'
+        params['message'] = messages.ERR_LOGIN_FAILED
+        return jsonify(params)
+
+    if request.headers.getlist("X-Forwarded-For"):
+        remote_addr = '\t'.join(request.headers.getlist("X-Forwarded-For"))
+    else:
+        remote_addr = request.remote_addr
+
+    member.confirmation_url = oneway_hash(f'{random()}{remote_addr}')
+    member.persist()
+    magic_link = f"{config.frontend.get('app_url')}/login/{member.confirmation_url}"
+    send_email(
+        subject="TrivialSec Magic Link",
+        recipient=member.email,
+        template='magic-link',
+        data={
+            "magic_link": magic_link
+        }
+    )
+    ActivityLog(
+        member_id=member.member_id,
+        action=ActivityLog.ACTION_USER_LOGIN,
+        description=f'{remote_addr}\t{request.user_agent}'
+    ).persist()
     params['status'] = 'success'
+    params['message'] = messages.OK_MAGIC_LINK_SENT
 
     return jsonify(params)
 
@@ -316,7 +303,7 @@ def api_password_reset():
     check_member.confirmation_url = f"/password-reset/{oneway_hash(params.get('email'))}"
     check_member.persist()
 
-    confirmation_url = f"{config.frontend.get('site_scheme')}{config.frontend.get('site_domain')}{check_member.confirmation_url}"
+    confirmation_url = f"{config.frontend.get('app_url')}{check_member.confirmation_url}"
     send_email(
         subject="TrivialSec - password reset request",
         recipient=check_member.email,

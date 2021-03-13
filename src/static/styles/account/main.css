@@ -351,11 +351,6 @@ a.underline-hover:hover:after {
     z-index: 2;
 }
 
-.modal-messages {
-    margin: 5px 0;
-    min-height: 40px;
-}
-
 .alert {
     line-height: 40px;
     border-radius: 3px 3px 3px 3px;

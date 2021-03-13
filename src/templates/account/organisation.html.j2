@@ -5,7 +5,6 @@
         <td><%= invite_email %></td>
         <td><%= role_name %></td>
         <td><%= invited_by %></td>
-        <td><a href="{{ host_scheme }}{{ host_domain }}<%= confirmation_url %>" target="_blank"><%= confirmation_url %></a></td>
         <td><time datetime="<%= created_at %>"></time></td>
     </template>
     <ul class="breadcrumbs">
@@ -99,7 +98,6 @@
                                 <th>Invitee Email</th>
                                 <th>Role Name</th>
                                 <th>Invited By</th>
-                                <th>Invitation Link</th>
                                 <th>Invitation Sent</th>
                             </tr>
                         </thead>
@@ -118,7 +116,6 @@
                                 {% endif %}
                             </td>
                             <td>{{ invitation.invited_by.email }}</td>
-                            <td><a href="{{ host_scheme }}{{ host_domain }}{{ invitation.confirmation_url }}" target="_blank">{{ invitation.confirmation_url }}</a></td>
                             <td><time datetime="{{ invitation.created_at }}"></time></td>
                         </tr>
                         {% endfor %}
