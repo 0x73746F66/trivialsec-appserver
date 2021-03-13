@@ -1,6 +1,7 @@
 version: '3.6'
 x-defaults: &defaults
   env_file: .env
+  network_mode: host
   restart: unless-stopped
   logging:
     options:
@@ -47,25 +48,12 @@ services:
       - ./src/routes:/srv/app/routes
       - ./src/static:/srv/app/static
       - ./src/templates:/srv/app/templates
-    external_links:
-      - mysql
-      - sockets
-      - redis
     cap_drop:
       - ALL
     cap_add:
       - DAC_OVERRIDE
       - NET_BIND_SERVICE
-    networks:
-      trivialsec:
-        aliases:
-          - app
     healthcheck:
       test: curl -f http://localhost || exit 1
       timeout: 20s
       retries: 10
-
-networks:
-  trivialsec:
-    external: true
-    name: containers-common_trivialsec
