@@ -15,11 +15,6 @@ variables:
   PRIV_KEY_NAME: trivialsec-prod
   SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
 
-cache:
-  key: $CI_PIPELINE_ID
-  paths:
-    - "${APP_NAME}.tar.gz"
-
 before_script:
   - aws --version
   - pylint --version
@@ -124,6 +119,7 @@ upload:package:
     - python
   stage: upload
   script:
+    - make package
     - make package-upload
   only:
     refs:
