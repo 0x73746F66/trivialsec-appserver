@@ -22,26 +22,51 @@ before_script:
   - pip --version
 
 stages:
+  - prep
   - test
   - build
+  - upload
+  - bake
   - deploy
   - teardown
 
-lint:
+prep:requirements:
+  retry: 2
+  tags:
+    - python
+  stage: prep
+  script:
+    - pip install -q -r docker/requirements.txt
+  only:
+    refs:
+      - merge_request
+      - master
+
+prep:common:
+  retry: 2
+  tags:
+    - python
+  stage: prep
+  script:
+    - make common
+  only:
+    refs:
+      - merge_request
+      - master
+
+test:lint:
   retry: 2
   tags:
     - python
   stage: test
   script:
-    - make common
-    - pip install -q -r docker/requirements.txt
     - make lint
   only:
     refs:
       - merge_request
       - master
 
-build:
+build:package:
   retry: 2
   tags:
     - python
@@ -51,19 +76,31 @@ build:
   only:
     refs:
       - merge_request
+      - master
 
-build-upload:
+upload:package:
   retry: 2
   tags:
     - python
-  stage: build
+  stage: upload
   script:
     - make package-upload
   only:
     refs:
       - master
 
-deploy:
+bake:ec2:
+  retry: 2
+  tags:
+    - python
+  stage: bake
+  script:
+    - ./deploy/bake.sh
+  only:
+    refs:
+      - master
+
+deploy:ec2:
   retry: 2
   tags:
     - python
@@ -76,7 +113,7 @@ deploy:
     refs:
       - master
 
-teardown:
+teardown:ec2:
   retry: 2
   stage: teardown
   script:

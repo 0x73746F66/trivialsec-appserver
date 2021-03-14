@@ -89,7 +89,7 @@ package: prep
 	zip -9rq $(APP_NAME).zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
 	zip -uj9q $(APP_NAME).zip docker/requirements.txt
 
-package-upload: package
+package-upload:
 	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME).zip
 	$(CMD_AWS) s3 cp --only-show-errors deploy/nginx.conf s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME)-nginx.conf
 
