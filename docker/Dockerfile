@@ -45,7 +45,7 @@ RUN mkdir -p /var/log/uwsgi && \
         /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl && \
     aws s3 cp --only-show-errors s3://trivialsec-assets/dev/${COMMON_VERSION}/build.tgz /tmp/trivialsec/build.tgz && \
     tar -xzvf /tmp/trivialsec/build.tgz -C /srv/app && \
-    tar -xzvf /tmp/trivialsec/appserver.tar.gz -d /tmp/trivialsec && \
+    tar -xzvf /tmp/trivialsec/appserver.tar.gz -C /tmp/trivialsec && \
     cp -nr /tmp/trivialsec/src/* /srv/app/ && \
     chown -R ec2-user: \
         /srv/app \

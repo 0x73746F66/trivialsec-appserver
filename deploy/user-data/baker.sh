@@ -83,7 +83,7 @@ function deploy_appserver() {
     aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl \
         /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
     aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/build.tgz /tmp/trivialsec/build.tgz
-    tar -xzvf /tmp/trivialsec/appserver.tar.gz -d /tmp/trivialsec
+    tar -xzvf /tmp/trivialsec/appserver.tar.gz -C /tmp/trivialsec
     tar -xzvf /tmp/trivialsec/build.tgz -C /srv/app
     cp -nr /tmp/trivialsec/src/* /srv/app/
     cp -n /tmp/trivialsec/requirements.txt /srv/app/requirements.txt
