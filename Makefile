@@ -44,10 +44,15 @@ install-dev:
 	pip install -q -U pip setuptools pylint wheel awscli semgrep
 	pip install -q -U --no-cache-dir --isolated -r ./docker/requirements.txt
 
-lint:
-	pylint --jobs=0 --persistent=y --errors-only src/**/*.py
+lint-local:
+	pylint --exit-zero -f colorized --persistent=y -r y --jobs=0 src/**/*.py
 	semgrep -q --strict --timeout=0 --config=p/ci --lang=py src/**/*.py
 	semgrep -q --strict --config p/minusworld.flask-xss --lang=py src/**/*.py
+
+lint:
+	pylint --persistent=n -f json -r n --jobs=0 --errors-only src/**/*.py > pylint.json
+	semgrep --disable-version-check -q --strict --error -o semgrep-ci.json --json --timeout=0 --config=p/ci --lang=py src/**/*.py
+	semgrep --disable-version-check -q --strict --error -o semgrep-flask-xss.json --json --config p/minusworld.flask-xss --lang=py src/**/*.py
 
 stripe-dev:
 	stripe listen --forward-to localhost:5000/webhook/stripe

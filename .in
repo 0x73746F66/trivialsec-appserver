@@ -31,4 +31,4 @@ else
   echo "Please install git-secrets"
 fi
 make install-dev
-make lint
+make lint-local

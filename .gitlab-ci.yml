@@ -69,6 +69,12 @@ test:lint:
     refs:
       - merge_request
       - master
+  artifacts:
+    name: test-results
+    paths:
+      - pylint.json
+      - semgrep-ci.json
+      - semgrep-flask-xss.json
 
 build:package:
   retry: 2
@@ -81,10 +87,6 @@ build:package:
     refs:
       - merge_request
       - master
-  artifacts:
-    name: "${APP_NAME}.tar.gz"
-    paths:
-      - "${APP_NAME}.tar.gz"
 
 upload:package:
   retry: 2
@@ -96,8 +98,6 @@ upload:package:
   only:
     refs:
       - master
-  dependencies: 
-    - build:package
 
 bake:ec2:
   retry: 2
