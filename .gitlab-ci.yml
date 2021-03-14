@@ -1,3 +1,6 @@
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
 variables:
   COMMON_VERSION: 0.4.4
   APP_NAME: appserver
@@ -52,6 +55,16 @@ prep:common:
     refs:
       - merge_request
       - master
+
+code_quality:
+  services: []
+  artifacts:
+    paths: [gl-code-quality-report.json]
+  rules:
+    - if: '$CODE_QUALITY_DISABLED'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"' # Run code quality job in merge request pipelines
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'      # Run code quality job in pipelines on the master branch (but not in other branch pipelines)
 
 test:sast:
   retry: 2
