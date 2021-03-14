@@ -16,7 +16,7 @@ variables:
   SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
 
 cache:
-  key: $CI_COMMIT_REF_SLUG
+  key: $CI_PIPELINE_ID
   paths:
     - "${APP_NAME}.tar.gz"
 
