@@ -28,7 +28,7 @@ before_script:
 
 stages:
   - prep
-  - test
+  - tests
   - build
   - upload
   - bake
@@ -58,11 +58,43 @@ prep:common:
       - merge_request
       - master
 
+test:sast:
+  retry: 2
+  tags:
+    - python
+  stage: tests
+  script:
+    - make sast
+  only:
+    refs:
+      - merge_request
+      - master
+  artifacts:
+    name: sast-results
+    paths:
+      - semgrep-ci.json
+
+test:xss:
+  retry: 2
+  tags:
+    - python
+  stage: tests
+  script:
+    - make xss
+  only:
+    refs:
+      - merge_request
+      - master
+  artifacts:
+    name: sast-results
+    paths:
+      - semgrep-flask-xss.json
+
 test:lint:
   retry: 2
   tags:
     - python
-  stage: test
+  stage: tests
   script:
     - make lint
   only:
@@ -70,11 +102,9 @@ test:lint:
       - merge_request
       - master
   artifacts:
-    name: test-results
+    name: lint-results
     paths:
       - pylint.json
-      - semgrep-ci.json
-      - semgrep-flask-xss.json
 
 build:package:
   retry: 2
