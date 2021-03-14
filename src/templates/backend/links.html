@@ -1,0 +1,42 @@
+{% extends 'backend/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/links.css')|autoversion }}">
+    <div class="table-inner">
+        <table id="link-list" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <th><input type="checkbox" id="table_links"/></th>
+                <th>Campaign</th>
+                <th>Channel</th>
+                <th>Link Slug</th>
+                <th>Expires</th>
+                <th>Created</th>
+                <th class="actions">
+                    <i class="icofont-close-squared"></i>
+                </th>
+            </tr>
+            {% for link in links %}
+            <tr class="highlight open-modal{% if link.disabled %} disabled{% endif %}" data-modal-id="{{ link.link_id }}" data-link-id="{{ link.link_id }}">
+                <td><input type="checkbox" name="table_link" value="{{ link.link_id }}"/></td>
+                <td class="campaign-cell" title="{{ link.campaign }}">{{ link.campaign }}</td>
+                <td class="channel-cell" title="{{ link.channel }}">{{ link.channel }}</td>
+                <td class="slug-cell" title="{{ link.slug }}">{{ link.slug }}</td>
+                <td class="expires-cell" title="{{ link.expires }}">
+                    <time datetime="{{ link.expires }}" title="{{ link.expires }}"></time>
+                </td>
+                <td class="created-cell" title="{{ link.created_at }}">
+                    <time datetime="{{ link.created_at }}" title="{{ link.created_at }}"></time>
+                </td>
+                <td class="actions">
+                    <i class="icofont-close" data-link-id="{{ link.link_id }}" data-action="deleted" title="Revoke Invitation"></i>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% include 'backend/pagination.html' %}
+    </div>
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/links.js')|autoversion }}"></script>
+{% endblock %}

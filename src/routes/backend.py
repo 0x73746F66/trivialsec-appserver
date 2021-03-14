@@ -28,7 +28,7 @@ def backend():
     params['page'] = 'backend'
     params['account'] = current_user
 
-    return render_template('backend/backend.html.j2', **params)
+    return render_template('backend/backend.html', **params)
 
 @blueprint.route('/domains/<page>', methods=['GET'])
 @blueprint.route('/domains', methods=['GET'])
@@ -66,7 +66,7 @@ def domains_backend(page: int = 1):
         })
 
     params['domains'] = domains_arr
-    return render_template('backend/domains.html.j2', **params)
+    return render_template('backend/domains.html', **params)
 
 @blueprint.route('/recommendations/<page>', methods=['GET'])
 @blueprint.route('/recommendations', methods=['GET'])
@@ -95,7 +95,7 @@ def recommendations(page: int = 1):
         industry_and_regulatory_standards
     ]
 
-    return render_template('backend/recommendations.html.j2', **params)
+    return render_template('backend/recommendations.html', **params)
 
 @blueprint.route('/services', methods=['GET'])
 @login_required
@@ -125,7 +125,7 @@ def services():
     #     data = JobRuns().get_active(category=category)
     #     params['services'].append({**default_data, **data})
 
-    return render_template('backend/services.html.j2', **params)
+    return render_template('backend/services.html', **params)
 
 @blueprint.route('/links', methods=['GET'])
 @blueprint.route('/links/<page>', methods=['GET'])
@@ -156,7 +156,7 @@ def links_backend(page: int = 1):
 
     params['links'] = links_arr
 
-    return render_template('backend/links.html.j2', **params)
+    return render_template('backend/links.html', **params)
 
 @blueprint.route('/subscribers', methods=['GET'])
 @blueprint.route('/subscribers/<page>', methods=['GET'])
@@ -185,7 +185,7 @@ def subscribers_backend(page: int = 1):
 
     params['subscriptions'] = subscribers_arr
 
-    return render_template('backend/subscriptions.html.j2', **params)
+    return render_template('backend/subscriptions.html', **params)
 
 @blueprint.route('/invitations/<page>', methods=['GET'])
 @blueprint.route('/invitations', methods=['GET'])
@@ -218,7 +218,7 @@ def invitations_backend(page: int = 1):
 
     params['invitations'] = invitations_arr
 
-    return render_template('backend/invitations.html.j2', **params)
+    return render_template('backend/invitations.html', **params)
 
 @blueprint.route('/accounts/<page>', methods=['GET'])
 @blueprint.route('/accounts', methods=['GET'])
@@ -252,7 +252,7 @@ def accounts_backend(page: int = 1):
 
     params['accounts'] = accounts_arr
 
-    return render_template('backend/accounts.html.j2', **params)
+    return render_template('backend/accounts.html', **params)
 
 @blueprint.route('/users/<page>', methods=['GET'])
 @blueprint.route('/users', methods=['GET'])
@@ -284,7 +284,7 @@ def users(page: int = 1):
 
     params['members'] = members_arr
 
-    return render_template('backend/users.html.j2', **params)
+    return render_template('backend/users.html', **params)
 
 @blueprint.route('/keyvalues/<page>', methods=['GET'])
 @blueprint.route('/keyvalues', methods=['GET'])
@@ -315,7 +315,7 @@ def keyvalues(page: int = 1):
 
     params['keyvalues'] = kv_arr
 
-    return render_template('backend/keyvalues.html.j2', **params)
+    return render_template('backend/keyvalues.html', **params)
 
 @blueprint.route('/feeds/<page>', methods=['GET'])
 @blueprint.route('/feeds', methods=['GET'])
@@ -363,4 +363,4 @@ def feeds_backend(page: int = 1):
 
     params['feeds'] = feeds_arr
 
-    return render_template('backend/feeds.html.j2', **params)
+    return render_template('backend/feeds.html', **params)

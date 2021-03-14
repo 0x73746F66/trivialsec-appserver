@@ -1,4 +1,4 @@
-{% extends 'account/layout.html.j2' %} 
+{% extends 'account/layout.html' %} 
 {% block body %}
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/organisation.css')|autoversion }}">
     <template id="tmpl-invitation-list">
@@ -122,7 +122,7 @@
                         </tbody>
                     </table>
                 </div>
-                {% include 'account/pagination.html.j2' %}
+                {% include 'account/pagination.html' %}
             </div>
         </div>
     </section>

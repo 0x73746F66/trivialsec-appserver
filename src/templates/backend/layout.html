@@ -6,9 +6,10 @@
         <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/vendor/icofont.min.css')|autoversion }}" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/vendor/choices.9.0.1.min.css') }}" />
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/main.css')|autoversion }}" />
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/tables.css')|autoversion }}" />
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/scaffolding.css')|autoversion }}" />
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/main.css')|autoversion }}" />
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/tables.css')|autoversion }}" />
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/scaffolding.css')|autoversion }}" />
+        <script type=text/javascript src="{{url_for('static', filename='js/vendor/timeago.min.js')|autoversion }}"></script>
         <script type=text/javascript>
             window.recaptcha_site_key = '{{ recaptcha_site_key }}'
             window.app = {
@@ -29,15 +30,11 @@
                     domain: '{{ api_domain }}',
                     scheme: '{{ api_scheme }}',
                     key: '{{ account.apikey.api_key }}'
-                },
-                stripe_publishable_key: '{{ stripe_publishable_key }}'{% endif %}
+                }{% endif %}
             }
         </script>
-        {% if page == 'setup' %}
-        <script type=text/javascript src="https://js.stripe.com/v3"></script>
-        {% endif  %}
-        <script type=text/javascript src="{{url_for('static', filename='js/vendor/timeago.min.js')|autoversion }}"></script>
         <script type=text/javascript src="{{url_for('static', filename='js/site.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/main.js')|autoversion }}"></script>
         <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static',filename='images/apple-touch-icon.png') }}">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static',filename='images/favicon-32x32.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static',filename='images/favicon-16x16.png') }}">
@@ -49,7 +46,7 @@
         <meta name="theme-color" content="#1ABB9C">
     </head>  
     <body class="sidenav-closed">
-    {% include 'account/navbar.html' %}
+    {% include 'backend/navbar.html' %}
     <div class="container">
         <div id="app-messages">
             {% if error %}

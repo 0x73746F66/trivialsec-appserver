@@ -1,4 +1,4 @@
-{% extends 'account/layout.html.j2' %}
+{% extends 'account/layout.html' %}
 {% block body %}
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/member.css')|autoversion }}">
     <ul class="breadcrumbs">
@@ -51,7 +51,7 @@
                         </tbody>
                     </table>
                 </div>
-                {% include 'account/member-pagination.html.j2' %}
+                {% include 'account/member-pagination.html' %}
             </div>
         </div>
     </section>

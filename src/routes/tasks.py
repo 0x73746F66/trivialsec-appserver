@@ -13,4 +13,4 @@ def page_reports():
     params['page'] = 'tasks'
     params['account'] = current_user
 
-    return render_template('app/tasks.html.j2', **params)
+    return render_template('app/tasks.html', **params)

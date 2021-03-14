@@ -26,4 +26,4 @@ def page_notifications():
     params['page'] = 'notifications'
     params['account'] = current_user
     params['notifications'] = noti_arr
-    return render_template('app/notifications.html.j2', **params)
+    return render_template('app/notifications.html', **params)

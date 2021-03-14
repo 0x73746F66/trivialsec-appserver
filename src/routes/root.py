@@ -39,12 +39,12 @@ def landing(slug: str = None):
         #     check_link.hydrate('slug')
         # if check_link.expires > datetime.utcnow():
         #     params['link'] = check_link
-        #     render_template('public/login.html.j2', **params)
+        #     render_template('public/login.html', **params)
     redis_value = session.get('slug')
     if redis_value:
         params['slug'] = redis_value
 
-    return render_template('public/landing.html.j2', **params)
+    return render_template('public/landing.html', **params)
 
 @control_timing_attacks(seconds=2)
 @blueprint.route('/register', methods=['POST'])
@@ -144,7 +144,7 @@ def invitation(confirmation_hash: str):
             invitee_dict[col] = getattr(invitee, col)
 
         params['invitee'] = invitee_dict
-        return render_template('public/invitation.html.j2', **params)
+        return render_template('public/invitation.html', **params)
     return abort(403)
 
 @control_timing_attacks(seconds=2)
@@ -159,7 +159,7 @@ def password_reset(confirmation_hash: str):
     if member.exists(['confirmation_url']):
         member.hydrate()
         params['account'] = member
-        return render_template('public/password-reset.html.j2', **params)
+        return render_template('public/password-reset.html', **params)
     return abort(403)
 
 @control_timing_attacks(seconds=2)
@@ -190,7 +190,7 @@ def login(auth_hash: str):
     apikey.api_key_secret = generate_api_key_secret()
     apikey.persist()
 
-    return render_template('app/login.html.j2', hmac_secret=apikey.api_key_secret, is_setup=account.is_setup)
+    return render_template('app/login.html', hmac_secret=apikey.api_key_secret, is_setup=account.is_setup)
 
 @control_timing_attacks(seconds=2)
 @blueprint.route('/login', methods=['POST'])
@@ -281,59 +281,6 @@ def logout():
     return redirect(url_for('.landing'))
 
 @control_timing_attacks(seconds=2)
-@blueprint.route('/password-reset', methods=['POST'])
-@require_recaptcha(action='login_action')
-def api_password_reset():
-    params = request.get_json()
-    res = check_email_rules(params.get('email'))
-    if res is not True:
-        params['status'] = 'error'
-        params['message'] = messages.ERR_VALIDATION_EMAIL_RULES
-        return jsonify(params)
-
-    check_member = Member(email=params.get('email'))
-    check_member.hydrate('email')
-    if check_member.exists(['email']) is not True:
-        params['status'] = 'error'
-        params['message'] = messages.ERR_PASSWORD_RESET_SENT
-        return jsonify(params)
-
-    check_member.verified = False
-    check_member.confirmation_sent = False
-    check_member.confirmation_url = f"/password-reset/{oneway_hash(params.get('email'))}"
-    check_member.persist()
-
-    confirmation_url = f"{config.frontend.get('app_url')}{check_member.confirmation_url}"
-    send_email(
-        subject="TrivialSec - password reset request",
-        recipient=check_member.email,
-        template='reset_password',
-        data={
-            "activation_url": confirmation_url
-        }
-    )
-    check_member.confirmation_sent = True
-    res = check_member.persist()
-    if res is not True:
-        params['status'] = 'error'
-        params['message'] = messages.ERR_PASSWORD_RESET_SENT
-        return jsonify(params)
-
-    if request.headers.getlist("X-Forwarded-For"):
-        remote_addr = '\t'.join(request.headers.getlist("X-Forwarded-For"))
-    else:
-        remote_addr = request.remote_addr
-    ActivityLog(
-        member_id=check_member.member_id,
-        action=ActivityLog.ACTION_USER_RESET_PASSWORD_REQUEST,
-        description=f'{remote_addr}\t{request.user_agent}'
-    ).persist()
-    params['status'] = 'info'
-    params['message'] = messages.OK_PASSWORD_RESET_SENT
-
-    return jsonify(params)
-
-@control_timing_attacks(seconds=2)
 @blueprint.route('/subscribe', methods=['POST'])
 @require_recaptcha(action='subscribe_action')
 def api_subscribe():
@@ -419,9 +366,7 @@ def api_invitation_confirm_password():
             account_id=invitee.account_id,
             role_id=invitee.role_id,
             email_addr=invitee.email,
-            passwd=params.get('password1'),
-            verified=True,
-            selected_plan={'name': 'Pending'}
+            verified=True
         )
         if not isinstance(member, Member):
             errors.append(messages.ERR_ACCOUNT_UPDATE)
@@ -450,76 +395,6 @@ def api_invitation_confirm_password():
     else:
         params['status'] = 'success'
         params['message'] = messages.OK_REGISTERED
-
-    del params['password1']
-    del params['password2']
-
-    return jsonify(params)
-
-@control_timing_attacks(seconds=2)
-@blueprint.route('/change-password', methods=['POST'])
-@require_recaptcha(action='password_reset_action')
-def api_change_password():
-    errors = []
-    params = request.get_json()
-    del params['recaptcha_token']
-    try:
-        logout_user()
-    except Exception as ex:
-        logger.warning(ex)
-
-    check_member = Member()
-    check_member.confirmation_url = params['confirmation_url']
-    if check_member.exists(['confirmation_url']):
-        check_member.hydrate()
-    else:
-        return abort(403)
-
-    if 'password1' not in params or 'password2' not in params:
-        errors.append(messages.ERR_VALIDATION_PASSWORDS_MATCH)
-    if params['password1'] != params['password2']:
-        errors.append(messages.ERR_VALIDATION_PASSWORDS_MATCH)
-
-    res = check_password_policy(params['password1'])
-    if not res:
-        errors.append(messages.ERR_VALIDATION_PASSWORD_POLICY)
-
-    if len(errors) > 0:
-        params['status'] = 'error'
-        params['message'] = "\n".join(errors)
-        return jsonify(params)
-
-    try:
-        check_member.password = hash_password(params['password1'])
-        check_member.verified = True
-        res = check_member.persist()
-        if not res:
-            errors.append(messages.ERR_ACCOUNT_UPDATE)
-            params['status'] = 'error'
-            params['message'] = "\n".join(errors)
-            return jsonify(params)
-
-        login_user(check_member)
-        if request.headers.getlist("X-Forwarded-For"):
-            remote_addr = '\t'.join(request.headers.getlist("X-Forwarded-For"))
-        else:
-            remote_addr = request.remote_addr
-        ActivityLog(
-            member_id=check_member.member_id,
-            action=ActivityLog.ACTION_USER_CHANGED_PASSWORD,
-            description=f'{remote_addr}\t{request.user_agent}'
-        ).persist()
-    except Exception as err:
-        logger.error(err)
-        params['error'] = str(err)
-        errors.append(messages.ERR_ACCOUNT_UPDATE)
-
-    if len(errors) > 0:
-        params['status'] = 'error'
-        params['message'] = "\n".join(errors)
-    else:
-        params['status'] = 'success'
-        params['message'] = messages.OK_PASSWORD_RESET
 
     del params['password1']
     del params['password2']

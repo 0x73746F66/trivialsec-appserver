@@ -1,0 +1,366 @@
+{% extends 'backend/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/feeds.css')|autoversion }}">
+    
+    {% include 'backend/datalists.html' %}
+    <button type="button" class="open-modal" data-modal-id="add-feed" style="margin-bottom: 15px"><i class="icofont-ui-add"></i> Create</button>
+    <div class="table-wrapper">
+        <div class="table-inner">
+        <table id="feed-list" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <th><input type="checkbox" id="table_feeds"/></th>
+                <th class="title-cell">Name</th>
+                <th>Alert Title</th>
+                <th>Url</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th class="actions">
+                    <i class="icofont-close-squared"></i>
+                </th>
+            </tr>
+            {% for feed in feeds %}
+            <tr class="highlight open-modal{% if feed.disabled %} disabled{% endif %}" data-modal-id="{{ feed.feed_id }}" data-feed-id="{{ feed.feed_id }}">
+                <td><input type="checkbox" name="table_feed" value="{{ feed.feed_id }}"/></td>
+                <td class="name-cell" title="{{ feed.name }}">
+                    <a href="//{{ feed.feed_site }}" target="_blank">{{ feed.name }}</a>
+                </td>
+                <td class="alert_title-cell" title="{{ feed.alert_title }}">{{ feed.alert_title }}</td>
+                <td class="url-cell" title="Go to feed">
+                    <a href="{{ feed.url }}" target="_blank">{{ feed.url }}</a>
+                </td>
+                <td class="status-cell" title="{{ feed.http_code }}">
+                    {{ feed.http_status }}
+                </td>
+                <td class="category-cell" title="{{ feed.category }}">{{ feed.category }}</td>
+                <td class="type-cell" title="{{ feed.type }}">{{ feed.type }}</td>
+                <td class="actions">
+                    <i class="icofont-gear" data-feed-id="{{ feed.feed_id }}" data-action="configure" title="Configure"></i>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% include 'backend/pagination.html' %}
+    </div>
+    <div class="modal modal-container">
+        {% for feed in feeds %}
+        <div class="modal-content" data-modal-id="{{ feed.feed_id }}">
+        <form method="post" action="/backend/feeds">
+            <input type="hidden" name="id" value="{{ feed.feed_id }}"/>
+            <div class="modal-header">
+                <i class="icofont-ui-close close"></i>
+                <h2>{{ feed.name }}</h2>
+            </div>
+            <div class="modal-messages"></div>
+            <div class="modal-body">
+                <div class="modal-title">
+                    Description
+                </div>
+                <textarea id="description{{ feed.feed_id }}" name="description" data-feed-id="{{ feed.feed_id }}">{{ feed.description }}</textarea>
+                <div class="edit-name">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="name{{ feed.feed_id }}">Name</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="name{{ feed.feed_id }}" name="name" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.name }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-alert_title">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="alert_title{{ feed.feed_id }}">Alert Title</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="alert_title{{ feed.feed_id }}" name="alert_title" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.alert_title }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-url">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="url{{ feed.feed_id }}">URL</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="url{{ feed.feed_id }}" name="url" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.url }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-feed_site">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="feed_site{{ feed.feed_id }}">Feed Site</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="feed_site{{ feed.feed_id }}" name="feed_site" type="domain" data-feed-id="{{ feed.feed_id }}" value="{{ feed.feed_site }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-abuse_email">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="abuse_email{{ feed.feed_id }}">Abuse Email</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="abuse_email{{ feed.feed_id }}" name="abuse_email" type="email" data-feed-id="{{ feed.feed_id }}" value="{{ feed.abuse_email }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-sidebar">
+                <div class="edit-disabled">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="disabled{{ feed.feed_id }}">State</label>
+                        </div>
+                        <div class="modal-input">
+                            <select autocomplete="off" id="disabled{{ feed.feed_id }}" name="disabled" data-feed-id="{{ feed.feed_id }}">
+                                <option {% if feed.disabled %}selected {% endif %}value="1">Disabled</option>
+                                <option {% if not feed.disabled %}selected {% endif %}value="0">Enabled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-schedule">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="schedule{{ feed.feed_id }}">Schedule</label>
+                        </div>
+                        <div class="modal-input">
+                            <select autocomplete="off" id="schedule{{ feed.feed_id }}" name="schedule" data-feed-id="{{ feed.feed_id }}">
+                            {% for schedule in schedule_opts %}
+                                <option {% if schedule == feed.schedule %}selected {% endif %}value="{{ schedule }}">{{ schedule }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-method">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="method{{ feed.feed_id }}">Method</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="method{{ feed.feed_id }}" name="method" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.method }}">
+                        </div>
+                    </div>
+                </div>
+                {% if feed.method.lower() == 'ftp' %}
+                <div class="edit-username">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="username{{ feed.feed_id }}">FTP Username</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="username{{ feed.feed_id }}" name="username" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.username }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-credential_key">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="credential_key{{ feed.feed_id }}">Credential Key</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="credential_key{{ feed.feed_id }}" name="credential_key" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.credential_key }}">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="edit-category">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="category{{ feed.feed_id }}">Category</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="category{{ feed.feed_id }}" name="category" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.category }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-type">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="type{{ feed.feed_id }}">Type</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="type{{ feed.feed_id }}" name="type" type="text" data-feed-id="{{ feed.feed_id }}" value="{{ feed.type }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button name="configure" value="{{ feed.feed_id }}" type="submit"><i class="icofont-submit"></i> Save</button>
+            </div>
+            <div class="modal-footer">
+                {{ feed.http_code }} {{ feed.http_status }} 
+                {% if feed.running %}
+                    {% if feed.start_check %}
+                    Started <time datetime="{{ feed.start_check }}"></time>
+                    {% endif %}
+                {% else %}
+                    {% if feed.last_checked %}
+                    Last Checked <time datetime="{{ feed.last_checked }}"></time>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </form>
+        </div>
+        {% endfor %}
+        <div class="modal-content" data-modal-id="add-feed">
+        <form method="post" action="/backend/feeds">
+            <div class="modal-header">
+                <i class="icofont-ui-close close"></i>
+                <h2>Create new Feed</h2>
+            </div>
+            <div class="modal-messages"></div>
+            <div class="modal-body">
+                <div class="modal-title">
+                    Description
+                </div>
+                <textarea id="description" name="description"></textarea>
+                <div class="add-name">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="name">Name</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="name" name="name" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-alert_title">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="alert_title">Alert Title</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="alert_title" name="alert_title" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-url">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="url">URL</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="url" name="url" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-feed_site">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="feed_site">Feed Site</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="feed_site" name="feed_site" type="domain" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-abuse_email">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="abuse_email">Abuse Email</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="abuse_email" name="abuse_email" type="email" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-sidebar">
+                <div class="add-disabled">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="disabled">State</label>
+                        </div>
+                        <div class="modal-input">
+                            <select autocomplete="off" id="disabled" name="disabled">
+                                <option value="0">Enabled</option>
+                                <option value="1">Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-schedule">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="schedule">Schedule</label>
+                        </div>
+                        <div class="modal-input">
+                            <select autocomplete="off" id="schedule" name="schedule">
+                            {% for schedule in schedule_opts %}
+                                <option value="{{ schedule }}">{{ schedule }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-method">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="method">Method</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="method" name="method" type="text" list="methods"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-username">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="username">FTP Username</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="username" name="username" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-credential_key">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="credential_key">Credential Key</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="credential_key" name="credential_key" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="add-category">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="category">Category</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="category" name="category" type="text" list="categories"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-type">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="feed-heading" for="type">Type</label>
+                        </div>
+                        <div class="modal-input">
+                            <input autocomplete="off" id="type" name="type" type="text" list="types"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button name="configure" type="submit"><i class="icofont-submit"></i> Save</button>
+            </div>
+            <div class="modal-footer">
+                &nbsp;
+            </div>
+        </form>
+        </div>
+    </div>
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/feeds.js')|autoversion }}"></script>
+{% endblock %}

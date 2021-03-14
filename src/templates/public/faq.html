@@ -1,0 +1,74 @@
+{% extends 'public/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/faq.css')|autoversion }}">
+
+    <div class="section subscribe">
+        <div class="message">
+        <p>
+            <b>Trivial Security</b> is nearing launch!
+        </p>
+        <p>
+            Subscribe to our mailing list to get early access.
+        </p>
+        </div>
+        <div class="subscribe-form">
+            <form id="subscribe_form" action="/api/subscribe" method="POST">
+                <div class="email-elem">
+                    <input id="email" type="email" required name="email" placeholder="you@example.com"/>
+                </div>
+                <div class="form-submit">
+                    <button class="wait_recaptcha" disabled type="submit">Subscribe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="section faq">
+        <div id="app-messages">{% if error %}
+            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
+            {% endif %}{% if success %}
+            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
+            {% endif %}{% if info %}
+            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
+            {% endif %}{% if warning %}
+            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
+{% endif %}</div>
+        <h1>Frequently Asked Questions</h1>
+        <div class="faq-group">
+            <h2>General</h2>
+            {% for faq in faq_general %}
+            <div class="faq-question">
+                <span>{{ faq.key }}</span>
+                <div class="faq-answer">
+                    {{ faq.value }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="faq-group">
+            <h2>Features</h2>
+            {% for faq in faq_features %}
+            <div class="faq-question">
+                <span>{{ faq.key }}</span>
+                <div class="faq-answer">
+                    {{ faq.value }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="faq-group">
+            <h2>Security</h2>
+            {% for faq in faq_security %}
+            <div class="faq-question">
+                <span>{{ faq.key }}</span>
+                <div class="faq-answer">
+                    {{ faq.value }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <input type="hidden" name="recaptcha_token" id="recaptcha_token" />
+    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='js/public/faq.js')|autoversion }}"></script>
+{% endblock %}

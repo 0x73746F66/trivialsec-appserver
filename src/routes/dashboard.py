@@ -12,4 +12,4 @@ def page_dashboard():
     params['page_title'] = 'Dashboard'
     params['page'] = 'dashboard'
     params['account'] = current_user
-    return render_template('app/dashboard.html.j2', **params)
+    return render_template('app/dashboard.html', **params)

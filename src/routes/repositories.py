@@ -13,4 +13,4 @@ def page_repositories():
     params['page'] = 'repositories'
     params['account'] = current_user
 
-    return render_template('app/repositories.html.j2', **params)
+    return render_template('app/repositories.html', **params)

@@ -72,7 +72,7 @@ def page_domain(domain_id):
 
     params['domain'] = domain_dict
 
-    return render_template('app/domain.html.j2', **params)
+    return render_template('app/domain.html', **params)
 
 @blueprint.route('/<domain_id>/jobs', methods=['GET'])
 @login_required
@@ -131,7 +131,7 @@ def page_domain_jobs(domain_id):
         domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
 
-    return render_template('app/domain-jobs.html.j2', **params)
+    return render_template('app/domain-jobs.html', **params)
 
 @blueprint.route('/<domain_id>/findings', methods=['GET'])
 @login_required
@@ -187,7 +187,7 @@ def page_domain_findings(domain_id):
         ('domain_id', domain.domain_id),
     ]).load_details()
 
-    return render_template('app/domain-findings.html.j2', **params)
+    return render_template('app/domain-findings.html', **params)
 
 @blueprint.route('/<domain_id>/inventory', methods=['GET'])
 @login_required
@@ -247,7 +247,7 @@ def page_domain_inventory(domain_id):
     ], limit=1000).to_list()
     params['known_ips'] = known_ip_arr
 
-    return render_template('app/domain-inventory.html.j2', **params)
+    return render_template('app/domain-inventory.html', **params)
 
 @blueprint.route('/<domain_id>/subdomains/<page>', methods=['GET'])
 @blueprint.route('/<domain_id>/subdomains', methods=['GET'])
@@ -341,4 +341,4 @@ def page_domain_subdomains(domain_id, page=1):
         domain_dict['parent'] = parent_dict
     params['domain'] = domain_dict
 
-    return render_template('app/domain-subdomains.html.j2', **params)
+    return render_template('app/domain-subdomains.html', **params)

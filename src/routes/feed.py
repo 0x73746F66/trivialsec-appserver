@@ -13,4 +13,4 @@ def page_feed():
     params['page'] = 'feed'
     params['account'] = current_user
 
-    return render_template('app/feed.html.j2', **params)
+    return render_template('app/feed.html', **params)

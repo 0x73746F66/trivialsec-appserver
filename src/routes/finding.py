@@ -56,4 +56,4 @@ def page_finding():
     #     finding.get_notes()
     #     params['findings'].append(finding)
 
-    return render_template('app/findings.html.j2', **params)
+    return render_template('app/findings.html', **params)

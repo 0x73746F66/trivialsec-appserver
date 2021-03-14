@@ -101,7 +101,7 @@ def page_project(project_id, page: int = 1):
 
     params['project'] = project_dict
 
-    return render_template('app/project.html.j2', **params)
+    return render_template('app/project.html', **params)
 
 @blueprint.route('/<project_id>/jobs', methods=['GET'])
 @login_required
@@ -186,7 +186,7 @@ def page_project_jobs(project_id, page: int = 1):
         ('project_id', project.project_id)
     ])
 
-    return render_template('app/project-jobs.html.j2', **params)
+    return render_template('app/project-jobs.html', **params)
 
 @blueprint.route('/<project_id>/reports', methods=['GET'])
 @blueprint.route('/<project_id>/reports/<page>', methods=['GET'])
@@ -242,4 +242,4 @@ def page_project_reports(project_id, page: int = 1):
 
     params['project'] = project_dict
 
-    return render_template('app/project-reports.html.j2', **params)
+    return render_template('app/project-reports.html', **params)

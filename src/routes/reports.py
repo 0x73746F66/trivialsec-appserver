@@ -13,4 +13,4 @@ def page_reports():
     params['page'] = 'reports'
     params['account'] = current_user
 
-    return render_template('app/reports.html.j2', **params)
+    return render_template('app/reports.html', **params)

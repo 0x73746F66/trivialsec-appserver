@@ -77,4 +77,4 @@ def page_projects():
         'options': domain_names
     }]
 
-    return render_template('app/projects.html.j2', **params)
+    return render_template('app/projects.html', **params)

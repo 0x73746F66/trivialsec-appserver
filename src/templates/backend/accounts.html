@@ -1,0 +1,99 @@
+{% extends 'backend/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/accounts.css')|autoversion }}">
+    <div class="table-wrapper">
+        <div class="table-inner">
+        <table id="account-list" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <th><input type="checkbox" id="table_accounts"/></th>
+                <th class="title-cell">Alias</th>
+                <th class="plan-cell">Plan</th>
+                <th class="apikey-cell">API Key</th>
+                <th class="registered-cell">Registered</th>
+            </tr>
+            {% for account in accounts %}
+            <tr class="highlight open-modal" data-modal-id="{{ account.account_id }}" data-account-id="{{ account.account_id }}">
+                <td><input type="checkbox" name="table_account" value="{{ account.account_id }}"/></td>
+                <td>{{ account.alias }}</td>
+                <td>{{ account.plan.name }}</td>
+                <td>{{ account.socket_key }}</td>
+                <td>{{ account.registered }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% include 'backend/pagination.html' %}
+    </div>
+        <div class="modal modal-container">
+        {% for account in accounts %}
+        <div class="modal-content" data-modal-id="{{ account.account_id }}">
+        <form method="post" action="/backend/accounts">
+            <input type="hidden" name="id" value="{{ account.account_id }}"/>
+            <div class="modal-header">
+                <i class="icofont-ui-close close"></i>
+                <h2>{{ account.alias }}</h2>
+            </div>
+            <div class="modal-messages"></div>
+            <div class="modal-body">
+                <div class="edit-alias">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="account-heading" for="alias{{ account.account_id }}">Alias</label>
+                        </div>
+                        <div class="modal-input">
+                            <input id="alias{{ account.account_id }}" name="alias" type="text" data-account-id="{{ account.account_id }}" value="{{ account.alias }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-abn">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="account-heading" for="abn{{ account.account_id }}">ABN</label>
+                        </div>
+                        <div class="modal-input">
+                            <input id="abn{{ account.account_id }}" name="abn" type="text" data-account-id="{{ account.account_id }}" value="{{ account.abn }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="edit-socket_key">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="account-heading" for="socket_key{{ account.account_id }}">API Key</label>
+                        </div>
+                        <div class="modal-input">
+                            <input id="socket_key{{ account.account_id }}" name="socket_key" type="text" data-account-id="{{ account.account_id }}" value="{{ account.socket_key }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-sidebar">
+                <div class="edit-plan">
+                    <div class="modal-group">
+                        <div class="modal-label">
+                            <label class="account-heading" for="plan{{ account.account_id }}">Plan</label>
+                        </div>
+                        <div class="modal-input">
+                            <select autocomplete="off" id="plan{{ account.account_id }}" name="plan_id">
+                                {% for plan in plans %}
+                                <option value="{{ plan.plan_id }}"{% if plan.plan_id == account.plan.plan_id %} selected{% endif %}>{{ plan.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="actions">
+                <button name="configure" value="{{ account.account_id }}" type="submit"><i class="icofont-submit"></i> Save</button>
+            </div>
+            <div class="modal-footer">
+                Registered <time datetime="{{ account.registered }}"></time>
+            </div>
+        </form>
+        </div>
+        {% endfor %}
+    </div>
+
+        <script type=text/javascript src="{{url_for('static', filename='js/backend/accounts.js')|autoversion }}"></script>
+{% endblock %}

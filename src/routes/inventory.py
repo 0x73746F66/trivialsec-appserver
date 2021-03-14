@@ -13,4 +13,4 @@ def page_inventory():
     params['page'] = 'inventory'
     params['account'] = current_user
 
-    return render_template('app/inventory.html.j2', **params)
+    return render_template('app/inventory.html', **params)

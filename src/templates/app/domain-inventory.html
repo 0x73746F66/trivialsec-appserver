@@ -1,0 +1,77 @@
+{% extends 'app/layout.html' %} 
+{% block body %}
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/domain.css')|autoversion }}">
+{% include 'app/domain-banner.html' %}
+<div class="domain-container">
+    <div class="container-tabs">
+        <a href="/domain/{{ domain.domain_id }}">Details</a>
+        <a href="/domain/{{ domain.domain_id }}/jobs">Jobs</a>
+        <a href="/domain/{{ domain.domain_id }}/inventory" class="active">Inventory</a>
+        <a href="/domain/{{ domain.domain_id }}/subdomains">Subdomains</a>
+        <a href="/domain/{{ domain.domain_id }}/findings">Findings</a>
+    </div>
+    <div class="domain-body">
+        <div class="fields" id="program-list"{% if not programs %} style="display: none;"{% endif %}>
+            <div class="fields-row">
+                <div class="input-column column">
+                    <div class="programs-list">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Program</th>
+                                <th>Version</th>
+                                <th>Source</th>
+                                <th>Category</th>
+                                <th colspan="2">Last Checked</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for program in programs %}
+                            <tr data-program-id="{{ program.program_id }}">
+                                <td>{{ program.name }}</td>
+                                <td>{{ program.version if program.version }}</td>
+                                <td>{{ program.source_description }}</td>
+                                <td>{{ program.category }}</td>
+                                <td><time datetime="{{ program.last_checked }}"></time></td>
+                                <td width="10px"><i class="icofont-curved-right"></i></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="fields" id="knownips-list"{% if not known_ips %} style="display: none;"{% endif %}>
+            <div class="fields-row">
+                <div class="input-column column">
+                    <div class="knownips-list">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>IP Address</th>
+                                <th>Source</th>
+                                <th>Last Checked</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for known_ip in known_ips %}
+                            <tr data-knownip-id="{{ known_ip.known_ip_id }}">
+                                <td>{{ known_ip.ip_address }}</td>
+                                <td>{{ known_ip.source }}</td>
+                                <td><time datetime="{{ known_ip.updated_at }}"></time></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+</div>
+<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/app/domain.js')|autoversion }}"></script>
+{% endblock %}

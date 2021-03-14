@@ -25,7 +25,7 @@ def account_preferences():
     if account_config.hydrate():
         params['account_config'] = account_config
 
-    return render_template('account/preferences.html.j2', **params)
+    return render_template('account/preferences.html', **params)
 
 @blueprint.route('/organisation/<page>', methods=['GET'])
 @blueprint.route('/organisation', methods=['GET'])
@@ -78,7 +78,7 @@ def account_organisation(page: int = 1):
         invitations_arr.append(invitation)
     params['invitations'] = invitations_arr
 
-    return render_template('account/organisation.html.j2', **params)
+    return render_template('account/organisation.html', **params)
 
 @blueprint.route('/member/<member_id>/<page>', methods=['GET'])
 @blueprint.route('/member/<member_id>', methods=['GET'])
@@ -114,7 +114,7 @@ def account_member(member_id: int, page: int = 1):
             roles_arr.append(role)
     params['roles'] = roles_arr
 
-    return render_template('account/member.html.j2', **params)
+    return render_template('account/member.html', **params)
 
 @blueprint.route('/subscription', methods=['GET'])
 @login_required
@@ -145,7 +145,7 @@ def account_subscription():
         ('action', ActivityLog.ACTION_ON_DEMAND_PASSIVE_SCAN)
     ])
 
-    return render_template('account/subscription.html.j2', **params)
+    return render_template('account/subscription.html', **params)
 
 @blueprint.route('/integrations', methods=['GET'])
 @login_required
@@ -158,7 +158,7 @@ def account_integrations():
     if account_config.hydrate(no_cache=True):
         params['account_config'] = account_config
 
-    return render_template('account/integrations.html.j2', **params)
+    return render_template('account/integrations.html', **params)
 
 @blueprint.route('/notifications', methods=['GET'])
 @login_required
@@ -171,7 +171,7 @@ def account_notifications():
     if account_config.hydrate():
         params['account_config'] = account_config
 
-    return render_template('account/notifications.html.j2', **params)
+    return render_template('account/notifications.html', **params)
 
 @blueprint.route('/setup/<step>', methods=['GET'])
 @login_required
@@ -186,7 +186,7 @@ def account_setup(step: int):
     plan = Plan(account_id=current_user.account_id)
     if not account_config.hydrate() or not plan.hydrate('account_id'):
         params['error'] = messages.ERR_LOGIN_FAILED
-        return render_template('public/login.html.j2', **params)
+        return render_template('public/login.html', **params)
 
     if current_user.account.is_setup:
         return redirect(url_for('dashboard.page_dashboard'))
@@ -199,4 +199,4 @@ def account_setup(step: int):
             roles_arr.append(role)
 
     params['roles'] = roles_arr
-    return render_template(f'account/setup-step-{step}.html.j2', **params)
+    return render_template(f'account/setup-step-{step}.html', **params)
