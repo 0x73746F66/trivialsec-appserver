@@ -40,12 +40,12 @@ COPY docker/entrypoint.sh /srv/app/entrypoint.sh
 RUN mkdir -p /var/log/uwsgi && \
     touch /tmp/application.log && \
     chmod a+x /srv/app/entrypoint.sh && \
-    aws s3 cp --only-show-errors s3://trivialsec-assets/dev/${COMMON_VERSION}/app.zip /tmp/trivialsec/app.zip && \
+    aws s3 cp --only-show-errors s3://trivialsec-assets/dev/${COMMON_VERSION}/appserver.tar.gz /tmp/trivialsec/appserver.tar.gz && \
     aws s3 cp --only-show-errors s3://trivialsec-assets/dev/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl \
         /srv/app/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl && \
     aws s3 cp --only-show-errors s3://trivialsec-assets/dev/${COMMON_VERSION}/build.tgz /tmp/trivialsec/build.tgz && \
     tar -xzvf /tmp/trivialsec/build.tgz -C /srv/app && \
-    unzip -qo /tmp/trivialsec/app.zip -d /tmp/trivialsec && \
+    tar -xzvf /tmp/trivialsec/appserver.tar.gz -d /tmp/trivialsec && \
     cp -nr /tmp/trivialsec/src/* /srv/app/ && \
     chown -R ec2-user: \
         /srv/app \

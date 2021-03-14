@@ -15,6 +15,11 @@ variables:
   PRIV_KEY_NAME: trivialsec-prod
   SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
 
+cache:
+  key: $CI_COMMIT_REF_SLUG
+  paths:
+    - "${APP_NAME}.tar.gz"
+
 before_script:
   - aws --version
   - pylint --version
@@ -28,7 +33,6 @@ stages:
   - upload
   - bake
   - deploy
-  - teardown
 
 prep:requirements:
   retry: 2
@@ -77,6 +81,10 @@ build:package:
     refs:
       - merge_request
       - master
+  artifacts:
+    name: "${APP_NAME}.tar.gz"
+    paths:
+      - "${APP_NAME}.tar.gz"
 
 upload:package:
   retry: 2
@@ -88,6 +96,8 @@ upload:package:
   only:
     refs:
       - master
+  dependencies: 
+    - build:package
 
 bake:ec2:
   retry: 2
@@ -96,6 +106,15 @@ bake:ec2:
   stage: bake
   script:
     - ./deploy/bake.sh
+  only:
+    refs:
+      - master
+
+bake:ec2:teardown:
+  retry: 2
+  stage: deploy
+  script:
+    - ./deploy/teardown.sh
   only:
     refs:
       - master
@@ -109,15 +128,7 @@ deploy:ec2:
     - export NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
     - echo NUM_INSTANCES ${NUM_INSTANCES}
     - ./deploy/launch.sh
-  only:
-    refs:
-      - master
-
-teardown:ec2:
-  retry: 2
-  stage: teardown
-  script:
-    - ./deploy/teardown.sh
+  when: manual
   only:
     refs:
       - master

@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
-APP_NAME = app
+APP_NAME = appserver
 LOCAL_CACHE = /tmp/trivialsec
 
 .PHONY: help
@@ -20,11 +20,11 @@ CMD_AWS += --region $(AWS_REGION)
 endif
 
 prep:
-	find . -type f -name '*.pyc' -delete 2>/dev/null || true
-	find . -type d -name '__pycache__' -delete 2>/dev/null || true
-	find . -type f -name '*.DS_Store' -delete 2>/dev/null || true
-	@rm *.zip *.whl || true
-	@rm -rf build || true
+	@find . -type f -name '*.pyc' -delete 2>/dev/null
+	@find . -type d -name '__pycache__' -delete 2>/dev/null
+	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
+	@rm -f **/*.zip **/*.tar **/*.tgz **/*.gz
+	@rm -rf build
 
 common: prep
 	yes | pip uninstall -q trivialsec-common
@@ -86,13 +86,16 @@ down: ## Stop the app
 restart: down run
 
 package: prep
-	zip -9rq $(APP_NAME).zip src -x '*.pyc' -x '__pycache__' -x '*.DS_Store'
-	zip -uj9q $(APP_NAME).zip docker/requirements.txt
+	tar --exclude '*.pyc' --exclude '__pycache__' --exclude '*.DS_Store' -cf $(APP_NAME).tar src
+	tar -rf $(APP_NAME).tar -C deploy requirements.txt
+	gzip appserver.tar
 
 package-upload:
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME).zip
+	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).tar.gz s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME).tar.gz
 	$(CMD_AWS) s3 cp --only-show-errors deploy/nginx.conf s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME)-nginx.conf
 
-package-dev: common-dev package
-	zip -d $(APP_NAME).zip src/.flaskenv
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).zip s3://trivialsec-assets/dev/${COMMON_VERSION}/$(APP_NAME).zip
+package-dev: prep common-dev
+	tar --exclude '.flaskenv' --exclude '*.pyc' --exclude '__pycache__' --exclude '*.DS_Store' -cf $(APP_NAME).tar src
+	tar -rf $(APP_NAME).tar -C docker requirements.txt
+	gzip appserver.tar
+	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).tar.gz s3://trivialsec-assets/dev/${COMMON_VERSION}/$(APP_NAME).tar.gz

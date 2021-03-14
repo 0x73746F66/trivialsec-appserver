@@ -18,4 +18,4 @@ README.md
 **/build/
 assets/
 deploy/
-**/*.zip
+**/*.tgz

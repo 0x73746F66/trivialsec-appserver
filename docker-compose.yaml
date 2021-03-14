@@ -9,7 +9,7 @@ x-defaults: &defaults
       max-file: "3"
 
 services:
-  app:
+  appserver:
     <<: *defaults
     image: trivialsec/appserver
     container_name: app
