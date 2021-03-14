@@ -148,18 +148,17 @@ if [[ ${image_id} != ami-* ]]; then
 fi
 
 aws ssm put-parameter --overwrite \
-    --name "/${TAG_ENV}/AMI/${APP_NAME}-latest" \
+    --name /${TAG_ENV}/AMI/${APP_NAME}-latest \
     --value ${image_id} \
     --type String \
-    --data-type "aws:ec2:image" \
-    --tags "[{Key=Name,Value=${APP_NAME}},{Key=Environment,Value=${TAG_ENV}},{Key=Purpose,Value=${TAG_PURPOSE}},{Key=cost-center,Value=${COST_CENTER}}]"
+    --data-type aws:ec2:image
 
-aws ssm put-parameter --overwrite \
-    --name "/${TAG_ENV}/AMI/${ami_name}" \
+aws ssm put-parameter \
+    --name /${TAG_ENV}/AMI/${ami_name} \
     --value ${image_id} \
     --type String \
-    --data-type "aws:ec2:image" \
-    --tags "[{Key=Name,Value=${APP_NAME}},{Key=Environment,Value=${TAG_ENV}},{Key=Purpose,Value=${TAG_PURPOSE}},{Key=cost-center,Value=${COST_CENTER}}]"
+    --data-type aws:ec2:image \
+    --tags '[{"Key": "Name", "Value": "appserver"},{"Key": "cost-center", "Value": "saas"}]' || true
 
 echo Baked ${image_id}
 exit 0
