@@ -81,7 +81,7 @@ def api_register():
             stripe_result = create_customer(member.email)
             plan.stripe_customer_id = stripe_result.get('id')
             plan.persist()
-            confirmation_url = f"{config.frontend.get('app_url')}{member.confirmation_url}"
+            confirmation_url = f"{config.get_app().get('app_url')}{member.confirmation_url}"
             send_email(
                 subject="TrivialSec Confirmation",
                 recipient=member.email,
@@ -167,17 +167,17 @@ def password_reset(confirmation_hash: str):
 def login(auth_hash: str):
     member = Member(confirmation_url=auth_hash)
     if not member.hydrate('confirmation_url'):
-        return redirect(f'{config.frontend.get("site_url")}', code=401)
+        return redirect(f'{config.get_app().get("site_url")}', code=401)
     account = Account(account_id=member.account_id)
     if not account.hydrate():
         logger.debug(f'unverified user {member.member_id}')
-        return redirect(f'{config.frontend.get("site_url")}', code=401)
+        return redirect(f'{config.get_app().get("site_url")}', code=401)
 
     login_user(member)
     apikey = ApiKey(member_id=member.member_id, comment='public-api')
     if not apikey.hydrate(['member_id', 'comment']):
         logger.debug(f'inactive public-api key for user {member.member_id}')
-        return redirect(f'{config.frontend.get("site_url")}', code=401)
+        return redirect(f'{config.get_app().get("site_url")}', code=401)
 
     ActivityLog(
         member_id=member.member_id,
@@ -233,7 +233,7 @@ def login_post():
 
     member.confirmation_url = oneway_hash(f'{random()}{remote_addr}')
     member.persist()
-    magic_link = f"{config.frontend.get('app_url')}/login/{member.confirmation_url}"
+    magic_link = f"{config.get_app().get('app_url')}/login/{member.confirmation_url}"
     send_email(
         subject="TrivialSec Magic Link",
         recipient=member.email,

@@ -66,7 +66,7 @@ login_manager.init_app(app)
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect(f'{config.frontend.get("site_url")}', code=401)
+    return redirect(f'{config.get_app().get("site_url")}', code=401)
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
