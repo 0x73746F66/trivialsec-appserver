@@ -1,6 +1,6 @@
 {% extends 'backend/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/services.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/backend/services.css">
     {# <div class="service-list">
     {{ list }}
     {% for service in services %}
@@ -21,5 +21,5 @@
     {% endfor %}
     </div> #}
 
-        <script type=text/javascript src="{{url_for('static', filename='js/backend/services.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/backend/services.js"></script>
 {% endblock %}

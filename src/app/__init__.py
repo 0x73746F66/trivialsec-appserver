@@ -4,6 +4,8 @@ from flask import Flask
 from flask_sessionstore import Session
 from trivialsec.helpers.log_manager import logger
 from trivialsec.helpers.config import config
+from templates import autoversion_filter, from_json_filter, http_code_group_filter
+
 
 logger.configure(log_level=config.log_level)
 logger.create_stream_logger()
@@ -19,6 +21,9 @@ app.config['SECRET_KEY'] = config.session_secret_key
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_REDIS'] = redis.Redis(host=config.redis.get('host'), ssl=bool(config.redis.get('ssl')))
+app.add_template_filter(autoversion_filter, name='autoversion')
+app.add_template_filter(from_json_filter, name='from_json')
+app.add_template_filter(http_code_group_filter, name='http_code_group')
 Session(app)
 with app.app_context():
     from routes.root import blueprint as public_blueprint

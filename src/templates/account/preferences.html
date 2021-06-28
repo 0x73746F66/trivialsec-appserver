@@ -1,6 +1,6 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/preferences.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/preferences.css">
 
     <section class="fields">
         <h2>Update Email</h2>
@@ -47,5 +47,5 @@
     </section>
     <br><br><br><br><br><br>
 
-<script type=text/javascript src="{{url_for('static', filename='js/account/preferences.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/account/preferences.js"></script>
 {% endblock %}

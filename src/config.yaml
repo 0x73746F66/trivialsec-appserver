@@ -1,12 +1,14 @@
 ---
 app:
   env: Prod
-  version: 21.3.20
+  version: 21.6.28
   log_file: /tmp/application.log
   log_level: WARNING
   http_proxy: proxy.trivialsec.local:3128
   https_proxy: proxy.trivialsec.local:3128
   frontend:
+    asset_scheme: "https://"
+    asset_domain: www.trivialsec.com
     site_scheme: "https://"
     site_domain: www.trivialsec.com
     app_scheme: "https://"
@@ -37,9 +39,9 @@ mysql:
 
 aws:
   region_name: ap-southeast-2
-  archive_bucket: trivialsec-assets
+  archive_bucket: static-trivialsec
   archive_object_prefix: archive/
-  public_bucket: trivialsec-assets
+  public_bucket: static-trivialsec
   public_object_prefix: static/
 
 sendgrid:

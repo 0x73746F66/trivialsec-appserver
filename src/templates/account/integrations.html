@@ -1,6 +1,6 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/integrations.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/integrations.css">
 
     <section class="fields">
         <h2>Source Code Repositories</h2>
@@ -246,5 +246,5 @@
         </div>
     </section>
 
-<script type=text/javascript src="{{url_for('static', filename='js/account/integrations.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/account/integrations.js"></script>
 {% endblock %}

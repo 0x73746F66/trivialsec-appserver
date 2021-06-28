@@ -1,6 +1,6 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/setup.css')|autoversion }}">
+<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/setup.css">
 <section class="wrapper">
     <ul class="steps">
         <li class="step-1 even current">
@@ -46,5 +46,5 @@
         </div>
     </div>
 </section>
-<script type=text/javascript src="{{url_for('static', filename='js/account/setup-1.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/account/setup-1.js"></script>
 {% endblock %}

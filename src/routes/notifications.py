@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint
 from flask_login import current_user, login_required
 from trivialsec.models.notification import Notifications
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('notifications', __name__)
@@ -21,7 +21,7 @@ def page_notifications():
             'created_at': noti.created_at
         })
 
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
     params['account'] = current_user

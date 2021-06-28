@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>  
+<html lang="en">  
     <head>    
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/vendor/icofont.min.css')|autoversion }}" />
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/main.css')|autoversion }}" />
-        <script type=text/javascript src="{{url_for('static', filename='js/vendor/timeago.min.js')|autoversion }}"></script>
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/icofont.min.css" />
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/main.css" />
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
         <script type=text/javascript>
             window.recaptcha_site_key = '{{ recaptcha_site_key }}'
             window.app = {
@@ -21,23 +21,23 @@
                 }
             }
         </script>
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static',filename='images/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static',filename='images/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static',filename='images/favicon-16x16.png') }}">
-        <link rel="manifest" href="{{ url_for('static',filename='site.webmanifest')|autoversion }}">
-        <link rel="mask-icon" href="{{ url_for('static',filename='images/safari-pinned-tab.svg') }}" color="#5bbad5">
-        <link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ asset_url }}/site.webmanifest">
+        <link rel="mask-icon" href="{{ asset_url }}/images/safari-pinned-tab.svg') }}" color="#5bbad5">
+        <link rel="shortcut icon" href="{{ asset_url }}/favicon.ico') }}">
         <meta name="msapplication-TileColor" content="#494949">
-        <meta name="msapplication-config" content="{{ url_for('static',filename='browserconfig.xml') }}">
+        <meta name="msapplication-config" content="{{ asset_url }}/browserconfig.xml') }}">
         <meta name="theme-color" content="#1ABB9C">
-        <script type=text/javascript src="{{url_for('static', filename='js/site.js')|autoversion }}"></script>
-        <script type=text/javascript src="{{url_for('static', filename='js/public/main.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/site.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/public/main.js"></script>
     </head>  
     <body>
         <div class="top-nav">
             <a href="/" class="title-link-side">
                 <div class="banner-logo">
-                    <img id="logo" src="{{ url_for('static',filename='images/icon-64x64.png') }}"/>
+                    <img id="logo" src="{{ asset_url }}/images/icon-64x64.png') }}"/>
                 </div>
                 <h1 class="banner-heading">Trivial Security</h1>
             </a>

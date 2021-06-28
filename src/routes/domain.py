@@ -10,7 +10,7 @@ from trivialsec.models.job_run import JobRuns
 from trivialsec.models.program import InventoryItems
 from trivialsec.models.project import Project
 from actions import charts
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('domain', __name__)
@@ -18,7 +18,7 @@ blueprint = Blueprint('domain', __name__)
 @blueprint.route('/<domain_id>', methods=['GET'])
 @login_required
 def page_domain(domain_id):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'domains'
     params['account'] = current_user
     domain = Domain(domain_id=int(domain_id))
@@ -77,7 +77,7 @@ def page_domain(domain_id):
 @blueprint.route('/<domain_id>/jobs', methods=['GET'])
 @login_required
 def page_domain_jobs(domain_id):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'domains'
     params['account'] = current_user
     domain = Domain(domain_id=int(domain_id))
@@ -136,7 +136,7 @@ def page_domain_jobs(domain_id):
 @blueprint.route('/<domain_id>/findings', methods=['GET'])
 @login_required
 def page_domain_findings(domain_id):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'domains'
     params['account'] = current_user
     domain = Domain(domain_id=int(domain_id))
@@ -192,7 +192,7 @@ def page_domain_findings(domain_id):
 @blueprint.route('/<domain_id>/inventory', methods=['GET'])
 @login_required
 def page_domain_inventory(domain_id):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'domains'
     params['account'] = current_user
     domain = Domain(domain_id=int(domain_id))
@@ -253,7 +253,7 @@ def page_domain_inventory(domain_id):
 @blueprint.route('/<domain_id>/subdomains', methods=['GET'])
 @login_required
 def page_domain_subdomains(domain_id, page=1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'domains'
     params['uri_page'] = 'domain'
     params['account'] = current_user

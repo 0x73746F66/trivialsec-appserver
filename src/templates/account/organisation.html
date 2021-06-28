@@ -1,6 +1,6 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/organisation.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/organisation.css">
     <template id="tmpl-invitation-list">
         <td><%= invite_email %></td>
         <td><%= role_name %></td>
@@ -162,5 +162,5 @@
     </section>
     <br><br><br><br><br><br>
 
-<script type=text/javascript src="{{url_for('static', filename='js/account/organisation.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/account/organisation.js"></script>
 {% endblock %}

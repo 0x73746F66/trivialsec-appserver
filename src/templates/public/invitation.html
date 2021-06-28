@@ -10,7 +10,7 @@
             {% endif %}{% if warning %}
             <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
 {% endif %}</div>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/invitation.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/invitation.css">
     <div class="flex-outer">
         <h2>Create a Password</h2>
         <ul class="flex-inner">
@@ -30,5 +30,5 @@
     <input type="hidden" id="confirmation_url" value="{{ invitee.confirmation_url }}">
     <input type="hidden" name="recaptcha_token" id="recaptcha_token">
     <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
-    <script type=text/javascript src="{{url_for('static', filename='js/public/invitation.js')|autoversion }}"></script>
+    <script type=text/javascript src="{{ asset_url }}/js/public/invitation.js"></script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/account/subscription.css')|autoversion }}">
+<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/subscription.css">
 <script type=text/javascript>
 charts_data = {
     domains: {
@@ -92,6 +92,6 @@ charts_data = {
     </table>
 </div>
 
-<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
-<script type=text/javascript src="{{url_for('static', filename='js/account/subscription.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/account/subscription.js"></script>
 {% endblock %}

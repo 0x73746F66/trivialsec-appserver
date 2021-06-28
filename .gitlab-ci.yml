@@ -1,57 +1,17 @@
 variables:
-  COMMON_VERSION: 0.4.4
-  APP_NAME: appserver
+  COMMON_VERSION: 0.5.0
+  PACKAGE_NAME: appserver
   TAG_ENV: Prod
   TAG_PURPOSE: Deploy
-  TARGET_GROUP_ARN: arn:aws:elasticloadbalancing:ap-southeast-2:814504268053:targetgroup/trivialsec-prod/fcf5cd3c70ceb857
-  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-  AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-  BASE_AMI: ami-09f765d333a8ebb4b
-  SUBNET_ID: subnet-8b05e8c3
-  DEFAULT_INSTANCE_TYPE: t3a.medium
-  IAM_INSTANCE_PROFILE: EC2-TrivialSec
-  COST_CENTER: saas
-  PRIV_KEY_NAME: trivialsec-prod
-  SECURITY_GROUP_IDS: sg-04a8dac724adcad3c sg-01bbdeecc61359d59 sg-0652a48752a2da5a8
 
 before_script:
-  - aws --version
   - pylint --version
   - echo semgrep $(semgrep --version)
-  - pip --version
 
 stages:
-  - prep
   - tests
   - build
-  - upload
-  - bake
   - deploy
-
-prep:requirements:
-  retry: 2
-  tags:
-    - python
-  stage: prep
-  script:
-    - pip install -q -r docker/requirements.txt
-  only:
-    refs:
-      - merge_request
-      - master
-
-prep:common:
-  retry: 2
-  tags:
-    - python
-  stage: prep
-  script:
-    - make common
-  only:
-    refs:
-      - merge_request
-      - master
 
 test:sast:
   retry: 2
@@ -63,7 +23,7 @@ test:sast:
   only:
     refs:
       - merge_request
-      - master
+      - main
   artifacts:
     name: sast-results
     paths:
@@ -79,7 +39,7 @@ test:xss:
   only:
     refs:
       - merge_request
-      - master
+      - main
   artifacts:
     name: sast-results
     paths:
@@ -95,66 +55,33 @@ test:lint:
   only:
     refs:
       - merge_request
-      - master
+      - main
   artifacts:
     name: lint-results
     paths:
       - pylint.json
 
-build:package:
+build:docker:
   retry: 2
   tags:
     - python
   stage: build
   script:
-    - make package
+    - make docker-login
+    - make build
   only:
     refs:
       - merge_request
-      - master
+      - main
 
-upload:package:
-  retry: 2
-  tags:
-    - python
-  stage: upload
-  script:
-    - make package
-    - make package-upload
-  only:
-    refs:
-      - master
-
-bake:ec2:
-  retry: 2
-  tags:
-    - python
-  stage: bake
-  script:
-    - ./deploy/bake.sh
-  only:
-    refs:
-      - master
-
-bake:ec2:teardown:
-  retry: 2
-  stage: deploy
-  script:
-    - ./deploy/teardown.sh
-  only:
-    refs:
-      - master
-
-deploy:ec2:
+push:docker:
   retry: 2
   tags:
     - python
   stage: deploy
   script:
-    - export NUM_INSTANCES=$(aws elbv2 describe-target-health --target-group-arn ${TARGET_GROUP_ARN} --query 'TargetHealthDescriptions[]' | jq '. | length')
-    - echo NUM_INSTANCES ${NUM_INSTANCES}
-    - ./deploy/launch.sh
-  when: manual
+    - make docker-login
+    - make push
   only:
     refs:
-      - master
+      - main

@@ -8,7 +8,7 @@ from trivialsec.models.role import Role, Roles
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.plan import Plan, PlanInvoices
 from trivialsec.helpers import messages
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('account', __name__)
@@ -17,7 +17,7 @@ blueprint = Blueprint('account', __name__)
 @blueprint.route('/preferences', methods=['GET'])
 @login_required
 def account_preferences():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
     params['account'] = current_user
@@ -31,7 +31,7 @@ def account_preferences():
 @blueprint.route('/organisation', methods=['GET'])
 @login_required
 def account_organisation(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
     params['account'] = current_user
@@ -84,7 +84,7 @@ def account_organisation(page: int = 1):
 @blueprint.route('/member/<member_id>', methods=['GET'])
 @login_required
 def account_member(member_id: int, page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
     params['account'] = current_user
@@ -119,7 +119,7 @@ def account_member(member_id: int, page: int = 1):
 @blueprint.route('/subscription', methods=['GET'])
 @login_required
 def account_subscription():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Subscription'
     params['page'] = 'subscription'
     params['account'] = current_user
@@ -150,7 +150,7 @@ def account_subscription():
 @blueprint.route('/integrations', methods=['GET'])
 @login_required
 def account_integrations():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Integrations'
     params['page'] = 'integrations'
     params['account'] = current_user
@@ -163,7 +163,7 @@ def account_integrations():
 @blueprint.route('/notifications', methods=['GET'])
 @login_required
 def account_notifications():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
     params['account'] = current_user
@@ -176,7 +176,7 @@ def account_notifications():
 @blueprint.route('/setup/<step>', methods=['GET'])
 @login_required
 def account_setup(step: int):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'setup'
     params['step'] = step
     params['page_title'] = 'Account Setup'

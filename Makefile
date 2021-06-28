@@ -1,8 +1,7 @@
 SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
-APP_NAME = appserver
-LOCAL_CACHE = /tmp/trivialsec
+PACKAGE_NAME = appserver
 
 .PHONY: help
 
@@ -11,13 +10,9 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
-CMD_AWS := aws
-ifdef AWS_PROFILE
-CMD_AWS += --profile $(AWS_PROFILE)
-endif
-ifdef AWS_REGION
-CMD_AWS += --region $(AWS_REGION)
-endif
+setup-stripe-linux:
+	wget -qO - https://github.com/stripe/stripe-cli/releases/download/v1.6.1/stripe_1.6.1_linux_x86_64.tar.gz | tar xvz && ./stripe
+	./stripe login
 
 prep:
 	@find . -type f -name '*.pyc' -delete 2>/dev/null
@@ -26,22 +21,22 @@ prep:
 	@rm -f **/*.zip **/*.tar **/*.tgz **/*.gz
 	@rm -rf build
 
-common: prep
+python-libs: prep
 	yes | pip uninstall -q trivialsec-common
-	aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-	aws s3 cp --only-show-errors s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/build.tgz build.tgz
+ifdef AWS_PROFILE
+	aws --profile $(AWS_PROFILE) s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
+	aws --profile $(AWS_PROFILE) s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/${COMMON_VERSION}/build.tgz build.tgz
+else
+	aws s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
+	aws s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/${COMMON_VERSION}/build.tgz build.tgz
+endif
 	tar -xzvf build.tgz
 	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
+	@rm -rf build || true
+	@rm build.tgz trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl || true
 
-common-dev: ## Install trivialsec_common lib from local build
-	yes | pip uninstall -q trivialsec-common
-	cp -fu $(LOCAL_CACHE)/build.tgz build.tgz
-	cp -fu $(LOCAL_CACHE)/trivialsec_common-$(COMMON_VERSION)-py2.py3-none-any.whl trivialsec_common-$(COMMON_VERSION)-py2.py3-none-any.whl
-	tar -xzvf build.tgz
-	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-
-install-dev:
-	pip install -q -U pip setuptools pylint wheel awscli semgrep
+install-dev: python-libs
+	pip install -q -U pip setuptools wheel
 	pip install -q -U --no-cache-dir --isolated -r ./docker/requirements.txt
 
 test-local:
@@ -61,15 +56,21 @@ xss:
 test-all: xss sast lint
 
 stripe-dev:
-	stripe listen --forward-to localhost:5000/webhook/stripe
+	./stripe listen --forward-to localhost:5000/webhook/stripe
 
-build: prep package-dev ## Build compressed container
+build: ## Build compressed container
 	docker-compose build --compress
 
-buildnc: prep package-dev ## Clean build docker
+buildnc: python-libs ## Clean build docker
 	docker-compose build --no-cache --compress
 
 rebuild: down build
+
+push:
+	docker-compose push
+
+docker-login:
+	@echo ${GITLAB_TOKEN} | docker login --password-stdin -u ${GITLAB_USER} registry.gitlab.com
 
 docker-clean: ## Fixes some issues with docker
 	docker rmi $(docker images -qaf "dangling=true")
@@ -86,27 +87,9 @@ docker-purge: ## tries to compeltely remove all docker files and start clean
 	sudo service docker start
 
 up: prep ## Start the app
-	docker-compose up -d $(APP_NAME)
-
-run: prep
-	docker-compose run -d --rm -p "5000:5000" --name $(APP_NAME) --entrypoint python3.8 $(APP_NAME) run.py
+	docker-compose up -d
 
 down: ## Stop the app
-	@docker-compose down
+	@docker-compose down --remove-orphans
 
-restart: down run
-
-package: prep
-	tar --exclude '*.pyc' --exclude '__pycache__' --exclude '*.DS_Store' -cf $(APP_NAME).tar src
-	tar -rf $(APP_NAME).tar -C deploy requirements.txt
-	gzip appserver.tar
-
-package-upload:
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).tar.gz s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME).tar.gz
-	$(CMD_AWS) s3 cp --only-show-errors deploy/nginx.conf s3://trivialsec-assets/deploy-packages/${COMMON_VERSION}/$(APP_NAME)-nginx.conf
-
-package-dev: prep common-dev
-	tar --exclude '.flaskenv' --exclude '*.pyc' --exclude '__pycache__' --exclude '*.DS_Store' -cf $(APP_NAME).tar src
-	tar -rf $(APP_NAME).tar -C docker requirements.txt
-	gzip appserver.tar
-	$(CMD_AWS) s3 cp --only-show-errors $(APP_NAME).tar.gz s3://trivialsec-assets/dev/${COMMON_VERSION}/$(APP_NAME).tar.gz
+restart: down up

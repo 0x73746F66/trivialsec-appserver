@@ -1,6 +1,6 @@
 {% extends 'backend/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/links.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/backend/links.css">
     <div class="table-inner">
         <table id="link-list" cellspacing="0" cellpadding="0">
             <tbody>
@@ -38,5 +38,5 @@
         {% include 'backend/pagination.html' %}
     </div>
 
-        <script type=text/javascript src="{{url_for('static', filename='js/backend/links.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/backend/links.js"></script>
 {% endblock %}

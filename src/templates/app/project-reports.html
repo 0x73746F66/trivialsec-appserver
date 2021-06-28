@@ -1,6 +1,6 @@
 {% extends 'app/layout.html' %} 
 {% block body %}
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/project.css')|autoversion }}">
+<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/project.css">
 <script type=text/javascript>
 findings_severity = {
 {% for domain in project.domains if domain.domain_id %}
@@ -17,6 +17,6 @@ findings_severity = {
     </div>
 
 </div>
-<script type=text/javascript src="{{url_for('static', filename='js/vendor/chart.min.js') }}"></script>
-<script type=text/javascript src="{{url_for('static', filename='js/app/project.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/vendor/chart.min.js') }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/app/project.js"></script>
 {% endblock %}

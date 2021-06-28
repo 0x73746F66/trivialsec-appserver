@@ -1,6 +1,6 @@
 {% extends 'public/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/faq.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/faq.css">
 
     <div class="section subscribe">
         <div class="message">
@@ -70,5 +70,5 @@
     </div>
     <input type="hidden" name="recaptcha_token" id="recaptcha_token" />
     <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
-    <script type=text/javascript src="{{url_for('static', filename='js/public/faq.js')|autoversion }}"></script>
+    <script type=text/javascript src="{{ asset_url }}/js/public/faq.js"></script>
 {% endblock %}

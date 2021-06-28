@@ -1,6 +1,6 @@
 {% extends 'backend/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/subscriptions.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/backend/subscriptions.css">
     <div class="table-wrapper">
         <div class="table-inner">
         <table id="subscription-list" cellspacing="0" cellpadding="0">
@@ -33,5 +33,5 @@
         {% include 'backend/pagination.html' %}
     </div>
 
-        <script type=text/javascript src="{{url_for('static', filename='js/backend/subscriptions.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/backend/subscriptions.js"></script>
 {% endblock %}

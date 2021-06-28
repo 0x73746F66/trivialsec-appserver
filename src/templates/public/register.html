@@ -10,7 +10,7 @@
             {% endif %}{% if warning %}
             <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
 {% endif %}</div>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/public/register.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/register.css">
 
     <section class="registration-wrapper">
         <h2>Organisation Registration</h2>
@@ -48,5 +48,5 @@
     </section>
 
     <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
-    <script type=text/javascript src="{{url_for('static', filename='js/public/register.js')|autoversion }}"></script>
+    <script type=text/javascript src="{{ asset_url }}/js/public/register.js"></script>
 {% endblock %}

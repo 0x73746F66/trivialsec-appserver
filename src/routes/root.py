@@ -16,7 +16,7 @@ from trivialsec.models.invitation import Invitation
 from trivialsec.models.plan import Plan
 from trivialsec.models.subscriber import Subscriber
 from trivialsec.services.accounts import register, generate_api_key_secret
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('root', __name__)
@@ -29,7 +29,7 @@ def page_dashboard():
 @blueprint.route('/campaign/<slug>', methods=['GET'])
 @blueprint.route('/', methods=['GET'])
 def landing(slug: str = None):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'home'
     params['account'] = current_user
     if slug:
@@ -131,7 +131,7 @@ def confirmation_link(confirmation_hash: str):
 @control_timing_attacks(seconds=2)
 @blueprint.route('/invitation/<confirmation_hash>', methods=['GET'])
 def invitation(confirmation_hash: str):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'invitation'
     params['page_title'] = 'Complete Invitation'
 
@@ -150,7 +150,7 @@ def invitation(confirmation_hash: str):
 @control_timing_attacks(seconds=2)
 @blueprint.route('/password-reset/<confirmation_hash>', methods=['GET'])
 def password_reset(confirmation_hash: str):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'password-reset'
     params['page_title'] = 'Password Reset'
 

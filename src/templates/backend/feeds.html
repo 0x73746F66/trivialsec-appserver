@@ -1,6 +1,6 @@
 {% extends 'backend/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/backend/feeds.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/backend/feeds.css">
     
     {% include 'backend/datalists.html' %}
     <button type="button" class="open-modal" data-modal-id="add-feed" style="margin-bottom: 15px"><i class="icofont-ui-add"></i> Create</button>
@@ -362,5 +362,5 @@
         </div>
     </div>
 
-        <script type=text/javascript src="{{url_for('static', filename='js/backend/feeds.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/backend/feeds.js"></script>
 {% endblock %}
