@@ -5,6 +5,8 @@ variables:
   TAG_PURPOSE: Deploy
 
 before_script:
+  - docker info
+  - apk add --no-cache docker-compose
   - pylint --version
   - echo semgrep $(semgrep --version)
 
@@ -75,11 +77,13 @@ build:docker:
       - main
 
 push:docker:
-  retry: 2
-  tags:
-    - python
+  image: docker:latest
+  services:
+    - docker:dind
   stage: deploy
   script:
+    - docker info
+    - apk add --no-cache docker-compose
     - make docker-login
     - make push
   only:
