@@ -10,7 +10,7 @@ variables:
   APP_NAME: appserver
 
 before_script:
-  - id
+  - touch .env
   - make --version
   - aws --version
   - docker --version
