@@ -3,6 +3,7 @@ variables:
   PACKAGE_NAME: appserver
   TAG_ENV: Prod
   TAG_PURPOSE: Deploy
+  BUILD_ENV: production
 
 before_script:
   - id
