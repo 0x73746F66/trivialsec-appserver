@@ -5,10 +5,14 @@ variables:
   TAG_PURPOSE: Deploy
   BUILD_ENV: production
   DOCKER_USER: ci
+  AWS_REGION: ap-southeast-2
+  APP_ENV: Dev
+  APP_NAME: appserver
 
 before_script:
   - id
   - make --version
+  - aws --version
   - docker --version
   - docker-compose --version
   - pylint --version
