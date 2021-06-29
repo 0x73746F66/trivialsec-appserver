@@ -5,7 +5,10 @@ variables:
   TAG_PURPOSE: Deploy
 
 before_script:
-  - docker info
+  - make --version
+  - newgrp docker
+  - docker --version
+  - docker-compose --version
   - pylint --version
   - echo semgrep $(semgrep --version)
 
