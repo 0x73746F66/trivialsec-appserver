@@ -5,8 +5,8 @@ variables:
   TAG_PURPOSE: Deploy
 
 before_script:
+  - id
   - make --version
-  - newgrp docker
   - docker --version
   - docker-compose --version
   - pylint --version
