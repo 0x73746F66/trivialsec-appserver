@@ -70,7 +70,9 @@ push:
 	docker-compose push
 
 docker-login:
-	@echo ${GITLAB_TOKEN} | docker login --password-stdin -u ${GITLAB_USER} registry.gitlab.com
+	@echo $(shell [ -z "${DOCKER_PASSWORD}" ] && echo "DOCKER_PASSWORD missing" )
+	@echo $(shell [ -z "${DOCKER_USER}" ] && echo "DOCKER_USER missing" )
+	docker login registry.gitlab.com
 
 docker-clean: ## Fixes some issues with docker
 	docker rmi $(docker images -qaf "dangling=true")
