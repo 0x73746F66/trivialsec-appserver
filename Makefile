@@ -2,7 +2,7 @@ SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
 PACKAGE_NAME = appserver
-
+.ONESHELL: # Applies to every targets in the file!
 .PHONY: help
 
 help: ## This help.
