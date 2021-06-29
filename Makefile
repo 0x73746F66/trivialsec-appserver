@@ -71,8 +71,7 @@ push:
 
 docker-login:
 	@echo $(shell [ -z "${DOCKER_PASSWORD}" ] && echo "DOCKER_PASSWORD missing" )
-	@echo $(shell [ -z "${DOCKER_USER}" ] && echo "DOCKER_USER missing" )
-	docker login registry.gitlab.com
+	@echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USER} --password-stdin registry.gitlab.com
 
 docker-clean: ## Fixes some issues with docker
 	docker rmi $(docker images -qaf "dangling=true")

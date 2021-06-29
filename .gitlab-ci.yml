@@ -4,6 +4,7 @@ variables:
   TAG_ENV: Prod
   TAG_PURPOSE: Deploy
   BUILD_ENV: production
+  DOCKER_USER: ci
 
 before_script:
   - id
@@ -72,7 +73,6 @@ build:docker:
     - python
   stage: build
   script:
-    - make docker-login
     - make build
   only:
     refs:
@@ -85,6 +85,7 @@ push:docker:
   stage: deploy
   script:
     - make docker-login
+    - make build
     - make push
   only:
     refs:
