@@ -1,6 +1,5 @@
 import json
 from datetime import date
-from flask import current_app as app
 from flask_login import current_user
 from trivialsec.helpers.config import config
 from trivialsec.services.roles import is_internal_member, is_audit_member, is_billing_member, is_owner_member, is_support_member, is_readonly_member

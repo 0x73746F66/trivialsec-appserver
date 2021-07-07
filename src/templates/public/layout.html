@@ -7,55 +7,26 @@
         <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/icofont.min.css" />
         <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/main.css" />
         <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
-        <script type=text/javascript>
-            window.recaptcha_site_key = '{{ recaptcha_site_key }}'
-            window.app = {
-                page: '{{ page }}',
-                domain: {
-                    name: '{{ app_domain }}',
-                    scheme: '{{ app_scheme }}',
-                },
-                websocket: {
-                    domain: '{{ socket_domain }}',
-                    scheme: '{{ socket_scheme }}',
-                }
-            }
-        </script>
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png') }}">
-        <link rel="manifest" href="{{ asset_url }}/site.webmanifest">
-        <link rel="mask-icon" href="{{ asset_url }}/images/safari-pinned-tab.svg') }}" color="#5bbad5">
-        <link rel="shortcut icon" href="{{ asset_url }}/favicon.ico') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png">
+        <link rel="mask-icon" href="{{ asset_url }}/images/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="{{ asset_url }}/favicon.ico">
         <meta name="msapplication-TileColor" content="#494949">
-        <meta name="msapplication-config" content="{{ asset_url }}/browserconfig.xml') }}">
+        <meta name="msapplication-config" content="{{ asset_url }}/browserconfig.xml">
         <meta name="theme-color" content="#1ABB9C">
-        <script type=text/javascript src="{{ asset_url }}/js/site.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/public/main.js"></script>
+        <meta name="application-name" content="Trivial Security"
+            data-recaptcha-site-key="{{ recaptcha_site_key }}"
+            data-domain-name="{{ app_domain }}"
+            data-domain-scheme="{{ app_scheme }}"
+            data-websocket-domain="{{ socket_domain }}"
+            data-websocket-scheme="{{ socket_scheme }}"
+            data-api-domain="{{ api_domain }}"
+            data-api-scheme="{{ api_scheme }}">
+        <script type=text/javascript src="{{ asset_url }}/js/site.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/public/main.min.js"></script>
     </head>  
-    <body>
-        <div class="top-nav">
-            <a href="/" class="title-link-side">
-                <div class="banner-logo">
-                    <img id="logo" src="{{ asset_url }}/images/icon-64x64.png') }}"/>
-                </div>
-                <h1 class="banner-heading">Trivial Security</h1>
-            </a>
-            <nav role="navigation">
-            <ul>
-                <li class="{% if page == 'home' %}active {% endif %}nav-home">
-                <a href="/">
-                    <span>Home</span>
-                </a>
-                </li>
-                <li class="{% if page == 'faq' %}active {% endif %}nav-faq">
-                <a href="/faq">
-                    <span>FAQ</span>
-                </a>
-                </li>
-            </ul>
-            </nav>
-        </div>
+    <body></body>
         <section class="container">
             {% block body %}{% endblock %}
         </section>

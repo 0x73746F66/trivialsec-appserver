@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 -include .env
 export $(shell sed 's/=.*//' .env)
-PACKAGE_NAME = appserver
-.ONESHELL: # Applies to every targets in the file!
+CONAINER_NAME	= registry.gitlab.com/trivialsec/appserver/${BUILD_ENV}
+.ONESHELL:
 .PHONY: help
 
 help: ## This help.
@@ -10,82 +10,88 @@ help: ## This help.
 
 .DEFAULT_GOAL := help
 
-setup-stripe-linux:
-	wget -qO - https://github.com/stripe/stripe-cli/releases/download/v1.6.1/stripe_1.6.1_linux_x86_64.tar.gz | tar xvz && ./stripe
-	./stripe login
+ifndef CI_BUILD_REF
+	CI_BUILD_REF = local
+endif
 
-prep:
+prep: ## Cleanup tmp files
 	@find . -type f -name '*.pyc' -delete 2>/dev/null
 	@find . -type d -name '__pycache__' -delete 2>/dev/null
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 	@rm -f **/*.zip **/*.tar **/*.tgz **/*.gz
-	@rm -rf build
+	@rm -rf build python-libs
 
-python-libs: prep
+setup-stripe-linux: ## Install latest stripe webhooks cli
+	wget -qO - https://github.com/stripe/stripe-cli/releases/download/v1.6.1/stripe_1.6.1_linux_x86_64.tar.gz | tar xvz
+	./stripe login
+
+stripe-dev: ## listen for stripe webhooks
+	./stripe listen --forward-to localhost:5000/webhook/stripe
+
+python-libs: prep ## download and install the trivialsec python libs locally (for IDE completions)
 	yes | pip uninstall -q trivialsec-common
-ifdef AWS_PROFILE
-	aws --profile $(AWS_PROFILE) s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-	aws --profile $(AWS_PROFILE) s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/${COMMON_VERSION}/build.tgz build.tgz
-else
-	aws s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-	aws s3 cp --only-show-errors s3://static-trivialsec/deploy-packages/${COMMON_VERSION}/build.tgz build.tgz
-endif
-	tar -xzvf build.tgz
-	pip install -q --no-cache-dir --find-links=build/wheel --no-index trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl
-	@rm -rf build || true
-	@rm build.tgz trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl trivialsec_common-${COMMON_VERSION}-py2.py3-none-any.whl || true
+	@$(shell git clone https://${DOCKER_USER}:${DOCKER_PASSWORD}@gitlab.com/trivialsec/python-common.git python-libs)
+	cd python-libs
+	make install
 
-install-dev: python-libs
-	pip install -q -U pip setuptools wheel
-	pip install -q -U --no-cache-dir --isolated -r ./docker/requirements.txt
+install-deps: python-libs ## Just the minimal local deps for IDE completions
+	pip install -q -U pip setuptools wheel semgrep pylint
+	pip install -q -U --no-cache-dir --find-links=python-libs/build/wheel --no-index --isolated -r requirements.txt
 
-test-local:
+test-local: ## Prettier test outputs
 	pylint --exit-zero -f colorized --persistent=y -r y --jobs=0 src/**/*.py
 	semgrep -q --strict --timeout=0 --config=p/ci --lang=py src/**/*.py
 	semgrep -q --strict --config p/minusworld.flask-xss --lang=py src/**/*.py
 
-lint:
+pylint-ci: ## run pylint for CI
 	pylint --exit-zero --persistent=n -f json -r n --jobs=0 --errors-only src/**/*.py > pylint.json
 
-sast:
+semgrep-sast-ci: ## run core semgrep rules for CI
 	semgrep --disable-version-check -q --strict --error -o semgrep-ci.json --json --timeout=0 --config=p/ci --lang=py src/**/*.py
 
-xss:
+semgrep-xss-ci: ## run Flask XSS semgrep rules for CI
 	semgrep --disable-version-check -q --strict --error -o semgrep-flask-xss.json --json --config p/minusworld.flask-xss --lang=py src/**/*.py
 
-test-all: xss sast lint
+test-all: semgrep-xss-ci semgrep-sast-ci pylint-ci ## Run all CI tests
 
-stripe-dev:
-	./stripe listen --forward-to localhost:5000/webhook/stripe
+build: ## Builds images using docker cli directly for CI
+	@docker build --compress $(BUILD_ARGS) \
+		-t $(CONAINER_NAME):$(CI_BUILD_REF) \
+		--cache-from $(CONAINER_NAME):latest \
+        --build-arg COMMON_VERSION=$(COMMON_VERSION) \
+        --build-arg BUILD_ENV=$(BUILD_ENV) \
+        --build-arg GITLAB_USER=$(DOCKER_USER) \
+        --build-arg GITLAB_PASSWORD=$(DOCKER_PASSWORD) \
+		--build-arg PYTHONUNBUFFERED=1 \
+        --build-arg PYTHONUTF8=1 \
+        --build-arg CFLAGS='-O0' \
+        --build-arg STATICBUILD=1 \
+        --build-arg LC_ALL=C.UTF-8 \
+        --build-arg LANG=C.UTF-8 .
 
-build: ## Build compressed container
-	docker-compose build --compress
+push-tagged: ## Push tagged image
+	docker push $(CONAINER_NAME):${CI_BUILD_REF}
 
-buildnc: python-libs ## Clean build docker
-	docker-compose build --no-cache --compress
+push-ci: ## Push latest image using docker cli directly for CI
+	docker tag $(CONAINER_NAME):${CI_BUILD_REF} $(CONAINER_NAME):latest
+	docker push $(CONAINER_NAME):latest
 
-rebuild: down build
+pull-base: ## pulls latest base image
+	docker pull registry.gitlab.com/trivialsec/containers-common/python:latest
 
-push:
-	docker-compose push
+build-ci: pull pull-base build ## Builds from latest base image
 
-docker-login:
+pull: ## pulls latest image
+	docker pull $(CONAINER_NAME):latest
+
+rebuild: down build-ci ## Brings down the stack and builds it anew
+
+debug:
+	docker-compose run appserver python3 -u -d -X dev uwsgi.py
+
+docker-login: ## login to docker cli using $DOCKER_USER and $DOCKER_PASSWORD
 	@echo $(shell [ -z "${DOCKER_PASSWORD}" ] && echo "DOCKER_PASSWORD missing" )
 	@echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USER} --password-stdin registry.gitlab.com
-
-docker-clean: ## Fixes some issues with docker
-	docker rmi $(docker images -qaf "dangling=true")
-	yes | docker system prune
-	sudo service docker restart
-
-docker-purge: ## tries to compeltely remove all docker files and start clean
-	docker rmi $(docker images -qa)
-	yes | docker system prune
-	sudo service docker stop
-	sudo rm -rf /tmp/docker.backup/
-	sudo cp -Pfr /var/lib/docker /tmp/docker.backup
-	sudo rm -rf /var/lib/docker
-	sudo service docker start
 
 up: prep ## Start the app
 	docker-compose up -d
@@ -93,4 +99,4 @@ up: prep ## Start the app
 down: ## Stop the app
 	@docker-compose down --remove-orphans
 
-restart: down up
+restart: down up ## restarts the app

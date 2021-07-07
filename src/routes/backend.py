@@ -7,7 +7,6 @@ from trivialsec.models.domain import Domains
 from trivialsec.models.project import Project
 from trivialsec.models.finding import FindingDetails
 from trivialsec.models.link import Links
-from trivialsec.models.subscriber import Subscribers
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.account import Account, Accounts
 from trivialsec.models.plan import Plan, Plans
@@ -168,20 +167,20 @@ def subscribers_backend(page: int = 1):
     params['page'] = 'subscribers'
     params['account'] = current_user
     subscribers_arr = []
-    page_size = 20
-    page = int(page)
-    page_num = max(1, page)
-    offset = max(0, page-1) * page_size
-    params['pagination'] = Subscribers().pagination(page_size=page_size, page_num=page_num)
-    subscribers = Subscribers().load(limit=page_size, offset=offset)
+    # page_size = 20
+    # page = int(page)
+    # page_num = max(1, page)
+    # offset = max(0, page-1) * page_size
+    # params['pagination'] = Subscribers().pagination(page_size=page_size, page_num=page_num)
+    # subscribers = Subscribers().load(limit=page_size, offset=offset)
 
-    for subscriber in subscribers:
-        subscribers_arr.append({
-            'id': subscriber.subscriber_id,
-            'email': subscriber.email,
-            'deleted': subscriber.deleted,
-            'created_at': subscriber.created_at,
-        })
+    # for subscriber in subscribers:
+    #     subscribers_arr.append({
+    #         'id': subscriber.subscriber_id,
+    #         'email': subscriber.email,
+    #         'deleted': subscriber.deleted,
+    #         'created_at': subscriber.created_at,
+    #     })
 
     params['subscriptions'] = subscribers_arr
 

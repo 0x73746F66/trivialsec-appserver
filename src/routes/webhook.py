@@ -2,13 +2,14 @@ from decimal import Decimal, ROUND_DOWN
 import json
 import stripe
 from flask import Blueprint, jsonify, request
-from trivialsec.helpers.log_manager import logger
+from gunicorn.glogging import logging
 from trivialsec.helpers.config import config
 from trivialsec.models.account import Account
 from trivialsec.models.plan import Plan
 from trivialsec.helpers.payments import upsert_plan_invoice, payment_intent_succeeded, invoice_paid, subscription_created
 
 
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('webhook', __name__)
 
 @blueprint.route('/stripe', methods=['POST'])

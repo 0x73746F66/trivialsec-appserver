@@ -1,7 +1,6 @@
 version: '3.6'
 x-defaults: &defaults
   env_file: .env
-  # network_mode: host
   restart: unless-stopped
   logging:
     options:
@@ -11,50 +10,34 @@ x-defaults: &defaults
 services:
   appserver:
     <<: *defaults
-    image: "registry.gitlab.com/trivialsec/appserver/${BUILD_ENV}"
+    image: "registry.gitlab.com/trivialsec/appserver/${BUILD_ENV}:${IMAGE_TAG:-latest}"
     container_name: app
-    entrypoint: python3.8
-    command: ["-u", "-d", "-X", "dev", "run.py"]
-    build:
-      network: trivialsec
-      context: ./
-      dockerfile: Dockerfile
-      args:
-        COMMON_VERSION: ${COMMON_VERSION}
-        PACKAGE_NAME: ${PACKAGE_NAME}
-        PYTHONUNBUFFERED: 1
-        PYTHONUTF8: 1
-        CFLAGS: '-O0'
-        STATICBUILD: 1
-        LC_ALL: C.UTF-8
-        LANG: C.UTF-8
-        BUILD_ENV: ${BUILD_ENV}
-        AWS_REGION: ${AWS_REGION}
-        AWS_ACCESS_KEY_ID: ${TF_VAR_aws_access_key_id}
-        AWS_SECRET_ACCESS_KEY: ${TF_VAR_aws_secret_access_key}
     environment:
-      - CONFIG_FILE=${CONFIG_FILE}
-      - APP_ENV=${APP_ENV}
+      - CONFIG_FILE=${CONFIG_FILE:-config.yaml}
+      - APP_ENV=${APP_ENV:-Dev}
       - APP_NAME=${APP_NAME}
-      - FLASK_RUN_PORT=5000
+      - LOG_LEVEL=${LOG_LEVEL}
+      - AWS_ACCESS_KEY_ID=${TF_VAR_aws_access_key_id}
+      - AWS_SECRET_ACCESS_KEY=${TF_VAR_aws_secret_access_key}
+      - AWS_REGION=${AWS_REGION}
       - FLASK_DEBUG=1
       - FLASK_ENV=development
+      - FLASK_RUN_PORT=5000
     ports:
       - 5000:5000
-    # volumes:
-    #   - ./src/actions:/srv/app/actions
-    #   - ./src/app:/srv/app/app
-    #   - ./src/routes:/srv/app/routes
-    #   - ./src/static:/srv/app/static
-    #   - ./src/templates:/srv/app/templates
-    #   - ./src/config-local.yaml:/srv/app/config-local.yaml
+    volumes:
+      - ./src/actions:/srv/app/actions
+      - ./src/app:/srv/app/app
+      - ./src/routes:/srv/app/routes
+      - ./src/static:/srv/app/static
+      - ./src/templates:/srv/app/templates
     cap_drop:
       - ALL
     cap_add:
       - DAC_OVERRIDE
       - NET_BIND_SERVICE
     healthcheck:
-      test: curl -f http://localhost:5000 || exit 1
+      test: curl -f http://localhost:5000/healthcheck || exit 1
       timeout: 20s
       retries: 10
     networks:

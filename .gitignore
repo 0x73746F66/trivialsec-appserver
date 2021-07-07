@@ -90,3 +90,4 @@ cert_dot_sh/*.csv.part
 *.gz
 *.json
 stripe
+python-libs/

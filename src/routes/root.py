@@ -4,8 +4,8 @@ from flask import session, request, redirect, url_for, render_template, abort, j
 from flask_login import current_user, logout_user, login_user, login_required
 from trivialsec.helpers import messages, oneway_hash, check_password_policy, check_email_rules, hash_password
 from trivialsec.helpers.config import config
-from trivialsec.helpers.log_manager import logger
-from trivialsec.helpers.payments import create_customer
+from gunicorn.glogging import logging
+
 from trivialsec.helpers.sendgrid import send_email, upsert_contact
 from trivialsec.decorators import control_timing_attacks, require_recaptcha
 from trivialsec.models.apikey import ApiKey
@@ -13,12 +13,12 @@ from trivialsec.models.activity_log import ActivityLog
 from trivialsec.models.account import Account
 from trivialsec.models.member import Member
 from trivialsec.models.invitation import Invitation
-from trivialsec.models.plan import Plan
 from trivialsec.models.subscriber import Subscriber
 from trivialsec.services.accounts import register, generate_api_key_secret
 from templates import public_params
 
 
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('root', __name__)
 
 @blueprint.route('/', methods=['GET'])
@@ -47,82 +47,19 @@ def landing(slug: str = None):
     return render_template('public/landing.html', **params)
 
 @control_timing_attacks(seconds=2)
-@blueprint.route('/register', methods=['POST'])
-@require_recaptcha(action='public_action')
-def api_register():
-    errors = []
-    params = request.get_json()
-    del params['recaptcha_token']
-    try:
-        logout_user()
-    except Exception as ex:
-        logger.warning(ex)
-
-    if not params.get('privacy'):
-        params['status'] = 'warning'
-        params['message'] = 'Please accept the Terms of Service and Privacy Policy'
-        return jsonify(params)
-
-    if len(errors) > 0:
-        params['status'] = 'error'
-        params['message'] = "\n".join(errors)
-        return jsonify(params)
-
-    try:
-        member = register(
-            email_addr=params.get('email'),
-            company=params.get('company', params.get('email'))
-        )
-        if not isinstance(member, Member):
-            errors.append(messages.ERR_VALIDATION_EMAIL_RULES)
-        else:
-            plan = Plan(account_id=member.account_id)
-            plan.hydrate('account_id')
-            stripe_result = create_customer(member.email)
-            plan.stripe_customer_id = stripe_result.get('id')
-            plan.persist()
-            confirmation_url = f"{config.get_app().get('app_url')}{member.confirmation_url}"
-            send_email(
-                subject="TrivialSec Confirmation",
-                recipient=member.email,
-                template='registrations',
-                data={
-                    "invitation_message": "Please click the Activation link below, or copy and paste it into a browser if you prefer.",
-                    "activation_url": confirmation_url
-                }
-            )
-            member.confirmation_sent = True
-            member.persist()
-
-    except Exception as err:
-        logger.exception(err)
-        params['error'] = str(err)
-        errors.append(messages.ERR_ACCOUNT_UPDATE)
-
-    if len(errors) > 0:
-        params['status'] = 'error'
-        params['message'] = "\n".join(errors)
-    else:
-        params['status'] = 'success'
-        params['message'] = messages.OK_REGISTERED
-
-    del params['password']
-    del params['password2']
-
-    return jsonify(params)
-
-@control_timing_attacks(seconds=2)
 @blueprint.route('/confirmation/<confirmation_hash>', methods=['GET'])
 def confirmation_link(confirmation_hash: str):
+    params = public_params()
+    params['page'] = 'confirmation'
+    params['page_title'] = 'Complete Registration'
     try:
         member = Member()
         member.confirmation_url = f'/confirmation/{confirmation_hash}'
         if member.exists(['confirmation_url']):
             member.hydrate()
-            member.verified = True
-            member.persist()
+            params['account'] = member
+            return render_template('public/confirmation.html', **params)
 
-            return redirect(url_for('root.login'))
     except Exception as err:
         logger.error(err)
 
@@ -298,23 +235,14 @@ def api_subscribe():
         return jsonify(params)
 
     try:
-        subscriber = Subscriber()
-        subscriber.email = params['email']
-        exists = subscriber.exists(['email'])
-        if exists:
-            old_subscriber = Subscriber(subscriber_id=subscriber.subscriber_id)
-            old_subscriber.hydrate()
-            subscriber.created_at = old_subscriber.created_at
-        upsert_contact(recipient_email=subscriber.email)
-        saved = subscriber.persist()
-        if saved:
-            send_email(
-                subject="Subscribed to TrivialSec updates",
-                recipient=subscriber.email,
-                template='subscriptions',
-                group='subscriptions',
-                data=dict()
-            )
+        upsert_contact(recipient_email=params.get('email'))
+        send_email(
+            subject="Subscribed to TrivialSec updates",
+            recipient=params.get('email'),
+            template='subscriptions',
+            group='subscriptions',
+            data=dict()
+        )
 
     except Exception as err:
         logger.exception(err)

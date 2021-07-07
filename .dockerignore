@@ -1,3 +1,10 @@
+.repo/
+bin/
+plans/
+.env-example
+.gitignore
+.gitlab-ci.yml
+LICENSE.md
 .vscode/
 .vscode*
 .git/

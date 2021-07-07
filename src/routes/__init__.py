@@ -69,41 +69,30 @@ def before_request():
 @app.after_request
 def after_request(response):
     if request.method in ["GET", "POST"]:
-        allowed_origin = config.get_app().get("site_url")
-        allowed_origin_img = config.get_app().get('asset_url')
-        allowed_origin_media = config.get_app().get('asset_url')
-        allowed_origin_script = config.get_app().get('asset_url')
-        allowed_origin_font = config.get_app().get('asset_url')
-        allowed_origin_style = config.get_app().get('asset_url')
+        allowed_origin_assets = config.get_app().get("asset_url")
+        allowed_origin_site = config.get_app().get("site_url")
         if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
-            allowed_origin = config.get_app().get("app_url")
+            allowed_origin_site = config.get_app().get("app_url")
         elif request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
-            allowed_origin = config.get_app().get("site_url")
+            allowed_origin_site = config.get_app().get("site_url")
         if hasattr(current_user, 'apikey'):
-            allowed_origin = current_user.apikey.allowed_origin
-            if current_user.apikey.allowed_origin not in [config.get_app().get("site_url"), config.get_app().get("app_url")]:
-                allowed_origin_img = current_user.apikey.allowed_origin
-                allowed_origin_media = current_user.apikey.allowed_origin
-                allowed_origin_script = current_user.apikey.allowed_origin
-                allowed_origin_font = current_user.apikey.allowed_origin
-                allowed_origin_style = current_user.apikey.allowed_origin
+            allowed_origin_site = current_user.apikey.allowed_origin
 
-        response.headers.add('Access-Control-Allow-Origin', allowed_origin)
+        response.headers.add('Access-Control-Allow-Origin', allowed_origin_site)
         if request.method == "GET":
             response.headers.add('Content-Security-Policy', '; '.join([
-                f"default-src 'self' {allowed_origin}",
-                "block-all-mixed-content",
-                "frame-src 'none'",
-                "manifest-src 'self'",
+                f"default-src 'self' {allowed_origin_assets}",
+                f"frame-src https://www.google.comsession_secret_key",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
-                f"navigate-to 'self' {allowed_origin}",
-                f"img-src {allowed_origin_img}",
-                f"media-src {allowed_origin_media}",
-                f"object-src {allowed_origin_media}",
-                f"script-src {allowed_origin_script}",
-                f"font-src fonts.gstatic.com {allowed_origin_font}",
-                f"style-src fonts.googleapis.com {allowed_origin_style}"
+                f"manifest-src 'self' {allowed_origin_assets}",
+                f"navigate-to 'self' {allowed_origin_site}",
+                f"img-src {allowed_origin_assets}",
+                f"media-src {allowed_origin_assets}",
+                f"object-src {allowed_origin_assets}",
+                f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
+                f"font-src https://fonts.gstatic.com {allowed_origin_assets}",
+                f"style-src https://fonts.googleapis.com {allowed_origin_assets}"
             ]))
 
     return response

@@ -1,20 +1,16 @@
 variables:
-  COMMON_VERSION: 0.5.0
-  PACKAGE_NAME: appserver
-  TAG_ENV: Prod
-  TAG_PURPOSE: Deploy
-  BUILD_ENV: production
   DOCKER_USER: ci
+  COMMON_VERSION: 0.5.0
+  APP_ENV: Prod
+  APP_NAME: trivialsec
+  BUILD_ENV: production
   AWS_REGION: ap-southeast-2
-  APP_ENV: Dev
-  APP_NAME: appserver
 
 before_script:
   - touch .env
   - make --version
   - aws --version
   - docker --version
-  - docker-compose --version
   - pylint --version
   - echo semgrep $(semgrep --version)
 
@@ -24,12 +20,11 @@ stages:
   - deploy
 
 test:sast:
-  retry: 2
   tags:
-    - python
+    - linode
   stage: tests
   script:
-    - make sast
+    - make semgrep-sast-ci
   only:
     refs:
       - merge_request
@@ -40,28 +35,26 @@ test:sast:
       - semgrep-ci.json
 
 test:xss:
-  retry: 2
   tags:
-    - python
+    - linode
   stage: tests
   script:
-    - make xss
+    - make semgrep-xss-ci
   only:
     refs:
       - merge_request
       - main
   artifacts:
-    name: sast-results
+    name: xss-results
     paths:
       - semgrep-flask-xss.json
 
 test:lint:
-  retry: 2
   tags:
-    - python
+    - linode
   stage: tests
   script:
-    - make lint
+    - make pylint-ci
   only:
     refs:
       - merge_request
@@ -72,12 +65,12 @@ test:lint:
       - pylint.json
 
 build:docker:
-  retry: 2
   tags:
-    - python
+    - linode
   stage: build
   script:
-    - make build
+    - make docker-login
+    - make build-ci
   only:
     refs:
       - merge_request
@@ -85,12 +78,11 @@ build:docker:
 
 push:docker:
   tags:
-    - python
+    - linode
   stage: deploy
   script:
     - make docker-login
-    - make build
-    - make push
+    - make push-ci
   only:
     refs:
       - main
