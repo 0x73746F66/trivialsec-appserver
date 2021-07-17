@@ -1,77 +1,37 @@
-import json
-from datetime import date
-from flask import send_from_directory, make_response, request, abort, redirect, current_app as app
+from gunicorn.glogging import logging
+from flask import make_response, request, abort, redirect, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.account import Account
 from trivialsec.models.plan import Plan
 from trivialsec.models.apikey import ApiKey
 from trivialsec.helpers.config import config
-from trivialsec.services.roles import is_internal_member, is_audit_member, is_billing_member, is_owner_member, is_support_member, is_readonly_member
-from trivialsec.helpers.log_manager import logger
 
 
-def get_frontend_conf() -> dict:
-    conf = {
-        'app_version': config.app_version,
-        'recaptcha_site_key': config.recaptcha_site_key,
-        'public_bucket': config.aws.get('public_bucket'),
-        'public_object_prefix': config.aws.get('public_object_prefix'),
-        'stripe_publishable_key': config.stripe_publishable_key,
-        'year': date.today().year,
-        'roles': {
-            'is_internal_member': is_internal_member(current_user),
-            'is_support_member': is_support_member(current_user),
-            'is_billing_member': is_billing_member(current_user),
-            'is_audit_member': is_audit_member(current_user),
-            'is_owner_member': is_owner_member(current_user),
-            'is_readonly_member': is_readonly_member(current_user),
-        }
-    }
-    return {**conf, **config.get_app()}
+logger = logging.getLogger(__name__)
+login_manager = LoginManager()
+login_manager.init_app(app)
+unauthenticated_paths = [
+    '/confirmation',
+    '/login',
+    '/logout',
+    '/recovery',
+]
 
 @app.teardown_request
 def teardown_request_func(error: Exception = None):
     if error:
-        print(error)
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(filename='favicon.ico', directory='/srv/app/static', mimetype='image/vnd.microsoft.icon')
-
-@app.template_filter('autoversion')
-def autoversion_filter(filename: str) -> str:
-    return f"{filename}?v={config.app_version}"
-
-@app.template_filter('from_json')
-def reverse_filter(s):
-    return json.loads(s)
-
-@app.template_filter('http_code_group')
-def http_code_group(s):
-    if str(s).startswith('1'):
-        return 'info'
-    if str(s).startswith('2'):
-        return 'success'
-    if str(s).startswith('3'):
-        return 'redirect'
-    if str(s).startswith('4'):
-        return 'error'
-    if str(s).startswith('5'):
-        return 'critical'
-    return ''
-
-login_manager = LoginManager()
-login_manager.init_app(app)
+        logger.error(error)
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect(f'{config.get_app().get("site_url")}', code=401)
+    return redirect(config.get_app().get("site_url"), code=401)
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
-    if request.path in ['/faq', '/login', '/logout', '/register']:
-        return None
+    for unauthenticated_path in unauthenticated_paths:
+        if request.path.startswith(unauthenticated_path):
+            return None
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)
     if not isinstance(member, Member):
@@ -104,19 +64,30 @@ def before_request():
         response = make_response()
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("site_url"))
+        response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
         return response
     return None
 
 @app.after_request
 def after_request(response):
     if request.method in ["GET", "POST"]:
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("site_url"))
+        allowed_origin_assets = config.get_app().get("asset_url")
+        allowed_origin_api = config.get_app().get("api_url")
+        allowed_origin_site = config.get_app().get("app_url")
+        if hasattr(current_user, 'apikey'):
+            allowed_origin_site = current_user.apikey.allowed_origin
+
+        response.headers.add('Access-Control-Allow-Origin', allowed_origin_site)
+        if request.method == "GET":
+            response.headers.add('Content-Security-Policy', '; '.join([
+                f"default-src 'self' {allowed_origin_assets}",
+                "frame-src https://www.google.com https://recaptcha.google.com",
+                "form-action 'none'",
+                "frame-ancestors 'none'",
+                f"connect-src {allowed_origin_api}",
+                f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
+                f"font-src https://fonts.gstatic.com {allowed_origin_assets} {allowed_origin_site}",
+                f"style-src https://fonts.googleapis.com {allowed_origin_assets} {allowed_origin_site}"
+            ]))
 
     return response

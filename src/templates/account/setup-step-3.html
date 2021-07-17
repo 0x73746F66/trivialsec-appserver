@@ -1,0 +1,71 @@
+{% extends 'account/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/setup.css">
+    <ul class="steps">
+        <li class="step-1 even">
+            <span>
+            <strong>Step 1</strong>
+            Account Details
+            </span><i></i>
+        </li>
+        <li class="step-2 odd">
+            <span>
+            <strong>Step 2</strong>
+            Subscription
+            </span><i></i>
+        </li>
+        <li class="step-3 even current">
+            <span>
+            <strong>Step 3</strong>
+            Getting Started
+            </span><i></i>
+        </li>
+    </ul>
+
+    <div class="last-step">
+        <div class="complete">
+            <h2>Congratulations</h2>
+            <p>
+                Trivial Security is now all set up. The following are some suggested next steps;
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Invite and Manage Members</h2>
+            <p>
+                Go to: <a href="/account/organisation">Organisation</a> page
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Review Subscription and download invoice</h2>
+            <p>
+                Go to: <a href="/account/subscription">Subscription</a> page
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Integrate other services with Trivial Security</h2>
+            <p>
+                Go to: <a href="/account/integrations">Integrations</a> page
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Update Account Preferences</h2>
+            <p>
+                Go to: <a href="/account/preferences">Preferences</a> page
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Update Notifications and Webhooks</h2>
+            <p>
+                Go to: <a href="/account/notifications">Notifications</a> page
+            </p>
+        </div>
+        <div class="complete">
+            <h2>Create your first project scope</h2>
+            <p>
+                Go to: <a href="/scopes">Scopes</a> page
+            </p>
+        </div>
+    </div>
+
+    <script type=text/javascript src="{{ asset_url }}/js/account/setup-3.js"></script>
+{% endblock %}
