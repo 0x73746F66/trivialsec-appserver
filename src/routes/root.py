@@ -5,7 +5,6 @@ from trivialsec.helpers import messages
 from trivialsec.helpers.config import config
 from gunicorn.glogging import logging
 
-from trivialsec.decorators import control_timing_attacks
 from trivialsec.models.apikey import ApiKey
 from trivialsec.models.activity_log import ActivityLog
 from trivialsec.models.account import Account
@@ -23,26 +22,6 @@ blueprint = Blueprint('root', __name__)
 @login_required
 def page_dashboard():
     return redirect(url_for('dashboard.page_dashboard'))
-
-@blueprint.route('/campaign/<slug>', methods=['GET'])
-@blueprint.route('/', methods=['GET'])
-def landing(slug: str = None):
-    params = public_params()
-    params['page'] = 'home'
-    params['account'] = current_user
-    if slug:
-        session['slug'] = slug
-        # check_link = Link(slug=params.get('slug'))
-        # if check_link.exists(['slug']):
-        #     check_link.hydrate('slug')
-        # if check_link.expires > datetime.utcnow():
-        #     params['link'] = check_link
-        #     render_template('public/login.html', **params)
-    redis_value = session.get('slug')
-    if redis_value:
-        params['slug'] = redis_value
-
-    return render_template('public/landing.html', **params)
 
 @blueprint.route('/confirmation/<confirmation_hash>', methods=['GET'])
 def confirmation_link(confirmation_hash: str):
@@ -97,7 +76,7 @@ def password_reset(confirmation_hash: str):
 
 @blueprint.route('/login/<auth_hash>', methods=['GET'])
 def login(auth_hash: str):
-    member = Member(confirmation_url=auth_hash)
+    member = Member(confirmation_url=f'/login/{auth_hash}')
     if not member.hydrate('confirmation_url'):
         return redirect(f'{config.get_app().get("site_url")}', code=401)
     if not member.verified:
@@ -153,4 +132,4 @@ def logout():
         logout_user()
     except Exception:
         pass
-    return redirect(url_for('.landing'))
+    return redirect(config.get_app().get("site_url"))

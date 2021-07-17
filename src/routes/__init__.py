@@ -11,6 +11,12 @@ from trivialsec.helpers.config import config
 logger = logging.getLogger(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
+unauthenticated_paths = [
+    '/confirmation',
+    '/login',
+    '/logout',
+    '/recovery',
+]
 
 @app.teardown_request
 def teardown_request_func(error: Exception = None):
@@ -19,12 +25,13 @@ def teardown_request_func(error: Exception = None):
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect(f'{config.get_app().get("site_url")}', code=401)
+    return redirect(config.get_app().get("site_url"), code=401)
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
-    if request.path == '/logout' or request.path.startswith('/confirmation') or request.path.startswith('/login'):
-        return None
+    for unauthenticated_path in unauthenticated_paths:
+        if request.path.startswith(unauthenticated_path):
+            return None
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)
     if not isinstance(member, Member):
@@ -57,10 +64,7 @@ def before_request():
         response = make_response()
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
-            response.headers.add('Access-Control-Allow-Origin', config.get_app().get("site_url"))
+        response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
         return response
     return None
 
@@ -69,11 +73,7 @@ def after_request(response):
     if request.method in ["GET", "POST"]:
         allowed_origin_assets = config.get_app().get("asset_url")
         allowed_origin_api = config.get_app().get("api_url")
-        allowed_origin_site = config.get_app().get("site_url")
-        if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
-            allowed_origin_site = config.get_app().get("app_url")
-        elif request.environ.get('HTTP_ORIGIN') == config.get_app().get("site_url"):
-            allowed_origin_site = config.get_app().get("site_url")
+        allowed_origin_site = config.get_app().get("app_url")
         if hasattr(current_user, 'apikey'):
             allowed_origin_site = current_user.apikey.allowed_origin
 

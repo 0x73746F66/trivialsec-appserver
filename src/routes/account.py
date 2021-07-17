@@ -7,7 +7,7 @@ from trivialsec.models.member import Member, Members
 from trivialsec.models.role import Role, Roles
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.plan import Plan, PlanInvoices
-from trivialsec.helpers import messages
+from trivialsec.helpers.config import config
 from templates import public_params
 
 
@@ -185,8 +185,7 @@ def account_setup(step: int):
     account_config = AccountConfig(account_id=current_user.account_id)
     plan = Plan(account_id=current_user.account_id)
     if not account_config.hydrate() or not plan.hydrate('account_id'):
-        params['error'] = messages.ERR_LOGIN_FAILED
-        return render_template('public/login.html', **params)
+        return redirect(config.get_app().get("site_url"), code=401)
 
     if current_user.account.is_setup:
         return redirect(url_for('dashboard.page_dashboard'))
