@@ -1,7 +1,7 @@
 {% extends 'app/layout.html' %} 
 {% block body %}
 {% include 'app/datalists.html' %}
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/projects.css')|autoversion }}">
+<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/projects.css">
 
 <div class="projects-container">
     {% if not roles.is_readonly_member %}
@@ -52,5 +52,5 @@
     {% endif %}
 </div>
 
-<script type=text/javascript src="{{url_for('static', filename='js/app/projects.js')|autoversion }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/app/projects.js"></script>
 {% endblock %}

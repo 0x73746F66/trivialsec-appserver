@@ -1,7 +1,7 @@
 <div class="navbar-row">
     <nav role="navigation" class="navigation-top">
       <a href="{{ site_url }}" class="title-link-top">
-        <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+        <img src="{{ asset_url }}/images/icon-64x64.png">
         <span>Trivial Security</span>
       </a>
       {% if account.is_authenticated %}
@@ -18,7 +18,7 @@
 <div class="sidebar-column">
   <div class="navigation-bar">
     <a href="/" class="title-link-side">
-      <img src="{{ url_for('static',filename='images/icon-64x64.png') }}">
+      <img src="{{ asset_url }}/images/icon-64x64.png">
       <span>Trivial Security</span>
     </a>
     <div class="menu-opener">
@@ -45,12 +45,12 @@
             <span>Users</span>
           </a>
         </li>
-        <li class="{% if page == 'subscribers' %}active {% endif %}nav-subscribers">
+        <!-- <li class="{% if page == 'subscribers' %}active {% endif %}nav-subscribers">
           <a href="/backend/subscribers">
             <i class="icofont-users-social"></i>
             <span>Subscribers</span>
           </a>
-        </li>
+        </li> -->
         <li class="{% if page == 'invitations' %}active {% endif %}nav-invitations">
           <a href="/backend/invitations">
             <i class="icofont-share-alt"></i>

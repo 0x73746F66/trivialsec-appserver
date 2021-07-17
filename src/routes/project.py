@@ -6,7 +6,7 @@ from trivialsec.models.domain import Domains
 from trivialsec.models.job_run import JobRuns
 from trivialsec.models.project import Project
 from trivialsec.models.finding import Findings
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('project', __name__)
@@ -15,7 +15,7 @@ blueprint = Blueprint('project', __name__)
 @blueprint.route('/<project_id>', methods=['GET'])
 @login_required
 def page_project(project_id, page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'scopes'
     params['uri_page'] = 'scope'
     params['account'] = current_user
@@ -106,7 +106,7 @@ def page_project(project_id, page: int = 1):
 @blueprint.route('/<project_id>/jobs', methods=['GET'])
 @login_required
 def page_project_jobs(project_id, page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'scopes'
     params['uri_page'] = 'scope'
     params['account'] = current_user
@@ -192,7 +192,7 @@ def page_project_jobs(project_id, page: int = 1):
 @blueprint.route('/<project_id>/reports/<page>', methods=['GET'])
 @login_required
 def page_project_reports(project_id, page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page'] = 'scopes'
     params['uri_page'] = 'scope'
     params['account'] = current_user
