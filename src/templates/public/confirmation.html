@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/main.css" />
 <link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/confirmation.css" />
 <input type="hidden" id="recaptcha_token" name="recaptcha_token">
-<input type="hidden" id="confirmation_url" value="{{ account.confirmation_url }}">
+<input type="hidden" id="confirmation_hash" value="{{ confirmation_hash }}">
 
 <div id="app-messages">
     {% if error %}<div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>{% endif %}
@@ -26,21 +26,54 @@
         <div class="main__jumbo-title">
             Complete Registration
         </div>
-        <div class="main__blurb">
-            <div class="main__blurb--parra">
-                <ul>
-                    <li>
-                        <label for="new_password">New Password</label>
-                        <input type="password" id="new_password" name="new_password" placeholder="Enter your new password here">
-                    </li>
-                    <li>
-                        <label for="repeat_password">Repeat Password</label>
-                        <input type="password" id="repeat_password" name="repeat_password" placeholder="Repeat your new password here">
-                    </li>
-                    <li>
-                        <button class="wait_recaptcha" id="save_password" type="submit" disabled>Save Password</button>
-                    </li>
-                </ul>
+    </div>
+    <div class="ChooseMfa__formContainer">
+        <div class="Card__card LoginCard__card choose-mfa">
+            <h1 class="LoginCard__header">
+                Passwordless Authentication
+            </h1>
+            <div class="Card__card--inner">
+                <h2 class="ChooseMfa__subheader">
+                    Choose one of the following methods:
+                </h2>
+                <fieldset class="ChooseMfa__fieldset">
+                    <label class="ChooseMfa__label totp">
+                        <input name="mfaType" type="radio" value="totp">
+                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt>
+                        Software/App Verification Code
+                    </label>
+                </fieldset>
+                <fieldset class="ChooseMfa__fieldset">
+                    <label class="ChooseMfa__label webauthn">
+                        <input name="mfaType" type="radio" value="webauthn">
+                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                        Hardware Security Key
+                    </label>
+                </fieldset>
+                <button id="choose-mfa" type="button" class="LoginActionButton__button wait_recaptcha">Next</button>
+            </div>
+        </div>
+        <div class="Card__card LoginCard__card confirm-webauthn hide">
+            <h1 class="LoginCard__header">
+                Final Step - Verification
+            </h1>
+            <div>
+                <div class="success-checkmark_off hide">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <h2 class="ChooseMfa__subheader">
+                    Verify your Hardware Security Key Registration with Trivial Security
+                </h2>
+                <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                <p class="ChooseMfa__parra">
+                    Touch sensor
+                </p>
+                <button id="retry-webauthn" type="button" class="LoginActionButton__button wait_recaptcha">Verify</button>
             </div>
         </div>
     </div>
@@ -54,5 +87,8 @@
     </div>
 </div>
 <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/utils.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/api.min.js"></script>
 <script type=text/javascript src="{{ asset_url }}/js/public/confirmation.min.js"></script>
 {% endblock %}

@@ -30,7 +30,7 @@ stripe-dev: ## listen for stripe webhooks
 
 python-libs: prep ## download and install the trivialsec python libs locally (for IDE completions)
 	yes | pip uninstall -q trivialsec-common
-	@$(shell git clone https://${DOCKER_USER}:${DOCKER_PASSWORD}@gitlab.com/trivialsec/python-common.git python-libs)
+	@$(shell git clone --depth 1 --branch ${COMMON_VERSION} --single-branch https://${DOCKER_USER}:${DOCKER_PASSWORD}@gitlab.com/trivialsec/python-common.git python-libs)
 	cd python-libs
 	make install
 
@@ -40,14 +40,14 @@ install-deps: python-libs ## Just the minimal local deps for IDE completions
 
 test-local: ## Prettier test outputs
 	pylint --exit-zero -f colorized --persistent=y -r y --jobs=0 src/**/*.py
-	semgrep -q --strict --timeout=0 --config=p/ci --lang=py src/**/*.py
+	semgrep -q --strict --timeout=0 --config=p/r2c-ci --lang=py src/**/*.py
 	semgrep -q --strict --config p/minusworld.flask-xss --lang=py src/**/*.py
 
 pylint-ci: ## run pylint for CI
 	pylint --exit-zero --persistent=n -f json -r n --jobs=0 --errors-only src/**/*.py > pylint.json
 
 semgrep-sast-ci: ## run core semgrep rules for CI
-	semgrep --disable-version-check -q --strict --error -o semgrep-ci.json --json --timeout=0 --config=p/ci --lang=py src/**/*.py
+	semgrep --disable-version-check -q --strict --error -o semgrep-ci.json --json --timeout=0 --config=p/r2c-ci --lang=py src/**/*.py
 
 semgrep-xss-ci: ## run Flask XSS semgrep rules for CI
 	semgrep --disable-version-check -q --strict --error -o semgrep-flask-xss.json --json --config p/minusworld.flask-xss --lang=py src/**/*.py
@@ -55,7 +55,7 @@ semgrep-xss-ci: ## run Flask XSS semgrep rules for CI
 test-all: semgrep-xss-ci semgrep-sast-ci pylint-ci ## Run all CI tests
 
 build: ## Builds images using docker cli directly for CI
-	@docker build --compress $(BUILD_ARGS) \
+	@docker build -q --compress $(BUILD_ARGS) \
 		-t $(CONAINER_NAME):$(CI_BUILD_REF) \
 		--cache-from $(CONAINER_NAME):latest \
         --build-arg COMMON_VERSION=$(COMMON_VERSION) \
@@ -70,19 +70,19 @@ build: ## Builds images using docker cli directly for CI
         --build-arg LANG=C.UTF-8 .
 
 push-tagged: ## Push tagged image
-	docker push $(CONAINER_NAME):${CI_BUILD_REF}
+	docker push -q $(CONAINER_NAME):${CI_BUILD_REF}
 
 push-ci: ## Push latest image using docker cli directly for CI
 	docker tag $(CONAINER_NAME):${CI_BUILD_REF} $(CONAINER_NAME):latest
-	docker push $(CONAINER_NAME):latest
+	docker push -q $(CONAINER_NAME):latest
 
 pull-base: ## pulls latest base image
-	docker pull registry.gitlab.com/trivialsec/containers-common/python:latest
+	docker pull -q registry.gitlab.com/trivialsec/containers-common/python:latest
 
 build-ci: pull pull-base build ## Builds from latest base image
 
 pull: ## pulls latest image
-	docker pull $(CONAINER_NAME):latest
+	docker pull -q $(CONAINER_NAME):latest
 
 rebuild: down build-ci ## Brings down the stack and builds it anew
 

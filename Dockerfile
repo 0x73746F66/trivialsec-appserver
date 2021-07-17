@@ -22,7 +22,7 @@ ENV FLASK_RUN_PORT ${FLASK_RUN_PORT}
 
 COPY --chown=trivialsec:trivialsec requirements.txt .
 RUN echo "Cloning Python Libs Package from Gitlab" \
-    && git clone https://${GITLAB_USER}:${GITLAB_PASSWORD}@gitlab.com/trivialsec/python-common.git /tmp/trivialsec/python-libs \
+    && git clone --depth 1 --branch ${COMMON_VERSION} --single-branch https://${GITLAB_USER}:${GITLAB_PASSWORD}@gitlab.com/trivialsec/python-common.git /tmp/trivialsec/python-libs \
     && cd /tmp/trivialsec/python-libs \
     && echo "Installing Packages" \
     && make install \
