@@ -61,10 +61,10 @@ def confirmation_link(confirmation_hash: str):
     return abort(403)
 
 @blueprint.route('/recovery', methods=['GET'])
-def password_reset(confirmation_hash: str):
+def recovery_reset(confirmation_hash: str):
     params = public_params()
-    params['page'] = 'password-reset'
-    params['page_title'] = 'Password Reset'
+    params['page'] = 'recovery'
+    params['page_title'] = 'Recovery'
 
     member = Member()
     member.confirmation_url = f'/recovery/{confirmation_hash}'
