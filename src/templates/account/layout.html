@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">  
+    <head>    
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/icofont.min.css" />
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/choices.9.0.1.min.css" />
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/main.css" />
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/tables.css" />
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/scaffolding.css" />
+        {% if page == 'setup' %}
+        <script type=text/javascript src="https://js.stripe.com/v3"></script>
+        {% endif  %}
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/site.js"></script>
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png">
+        <link rel="mask-icon" href="{{ asset_url }}/images/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="{{ asset_url }}/favicon.ico">
+        <meta name="msapplication-TileColor" content="#494949">
+        <meta name="msapplication-config" content="{{ asset_url }}/browserconfig.xml">
+        <meta name="theme-color" content="#1ABB9C">
+        <meta name="application-name" content="Trivial Security"
+            data-recaptcha-site-key="{{ recaptcha_site_key }}"
+            data-domain-name="{{ app_domain }}"
+            data-domain-scheme="{{ app_scheme }}"
+            data-websocket-domain="{{ socket_domain }}"
+            data-websocket-scheme="{{ socket_scheme }}"
+            data-api-domain="{{ api_domain }}"
+            data-api-scheme="{{ api_scheme }}"
+        {% if stripe_publishable_key %}
+            data-stripe-publishable-key="{{ stripe_publishable_key }}"
+        {% endif %}
+        {% if account %}
+            data-account-id="{{ account.account_id }}"
+            data-account-email="{{ account.email }}"
+        {% endif %}
+        {% if account.apikey %}
+            data-api-key-id="{{ account.apikey.api_key }}"
+        {% endif %}>
+    </head>
+    <body class="sidenav-closed">
+    {% include 'account/navbar.html' %}
+    <div class="container">
+        <div id="app-messages">
+            {% if error %}
+            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
+            {% endif %}
+            {% if success %}
+            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
+            {% endif %}
+            {% if info %}
+            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
+            {% endif %}
+            {% if warning %}
+            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
+            {% endif %}
+        </div>
+        {% block body %}{% endblock %}
+        {% if account.is_authenticated %}
+        <input name="socketio_token" type="hidden" value="{{ account.account.socket_key }}"/>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/socket.io.2.3.0.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/choices.9.0.1.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/ejs.3.0.2.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/forge.0.10.0.min.js"></script>
+        {% endif %}
+    </div>
+    </body>
+</html>

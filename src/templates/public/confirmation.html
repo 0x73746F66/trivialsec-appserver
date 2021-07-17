@@ -1,0 +1,94 @@
+{% extends 'public/layout.html' %} 
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/main.css" />
+<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/confirmation.css" />
+<input type="hidden" id="recaptcha_token" name="recaptcha_token">
+<input type="hidden" id="confirmation_hash" value="{{ confirmation_hash }}">
+
+<div id="app-messages">
+    {% if error %}<div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>{% endif %}
+    {% if success %}<div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>{% endif %}
+    {% if info %}<div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>{% endif %}
+    {% if warning %}<div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>{% endif %}
+</div>
+<section class="main bg-dark">
+    <i class="icofont-square-left sign-up-icon open-sign-up" title="Open Sign up section"></i>
+    <div class="main__top">
+        <a class="main__logo" href="/">
+            <img alt="icon" src="{{ asset_url }}/images/icon-64x64.png">
+            <div>Trivial Security</div>
+        </a>
+        <div class="main__links">
+            
+        </div>
+    </div>
+    <div class="main__jumbo">
+        <div class="main__jumbo-title">
+            Complete Registration
+        </div>
+    </div>
+    <div class="ChooseMfa__formContainer">
+        <div class="Card__card LoginCard__card choose-mfa">
+            <h1 class="LoginCard__header">
+                Passwordless Authentication
+            </h1>
+            <div class="Card__card--inner">
+                <h2 class="ChooseMfa__subheader">
+                    Choose one of the following methods:
+                </h2>
+                <fieldset class="ChooseMfa__fieldset">
+                    <label class="ChooseMfa__label totp">
+                        <input name="mfaType" type="radio" value="totp">
+                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt>
+                        Software/App Verification Code
+                    </label>
+                </fieldset>
+                <fieldset class="ChooseMfa__fieldset">
+                    <label class="ChooseMfa__label webauthn">
+                        <input name="mfaType" type="radio" value="webauthn">
+                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                        Hardware Security Key
+                    </label>
+                </fieldset>
+                <button id="choose-mfa" type="button" class="LoginActionButton__button wait_recaptcha">Next</button>
+            </div>
+        </div>
+        <div class="Card__card LoginCard__card confirm-webauthn hide">
+            <h1 class="LoginCard__header">
+                Final Step - Verification
+            </h1>
+            <div>
+                <div class="success-checkmark_off hide">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <h2 class="ChooseMfa__subheader">
+                    Verify your Hardware Security Key Registration with Trivial Security
+                </h2>
+                <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                <p class="ChooseMfa__parra">
+                    Touch sensor
+                </p>
+                <button id="retry-webauthn" type="button" class="LoginActionButton__button wait_recaptcha">Verify</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="footer__spacer"></div>
+<div class="footer">
+    <div>
+        © 2021 Trivial Security. All Rights Reserved.<br>
+        <a href="/terms.html">Terms of Service</a> | <a href="/privacy.html">Privacy Policy</a>
+    </div>
+</div>
+<script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/utils.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/api.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/public/confirmation.min.js"></script>
+{% endblock %}

@@ -1,0 +1,121 @@
+<div class="navbar-row">
+    <nav role="navigation" class="navigation-top">
+      <a href="{{ site_url }}" class="title-link-top">
+        <img src="{{ asset_url }}/images/icon-64x64.png">
+        <span>Trivial Security</span>
+      </a>
+
+      {% if account.is_authenticated %}
+      <div class="user-profile-wrapper">
+        <a href="javascript:void(0)" class="user-profile">
+          <span>{{ account.email }}</span>
+        </a>
+      </div>
+      {% endif %}
+
+    </nav>
+    <div class="toggle-sidenav"><i class="icofont-rounded-double-left"></i></div>
+</div>
+<div class="sidebar-column">
+  <div class="navigation-bar">
+    <a href="/" class="title-link-side">
+      <img src="{{ asset_url }}/images/icon-64x64.png">
+      <span>Trivial Security</span>
+    </a>
+    <div class="menu-opener">
+      <i class="icofont-rounded-double-right"></i>
+    </div>
+    <nav role="navigation" class="navigation-menu">
+      <ul>
+        {% if account.is_authenticated and not page == 'setup' %}
+        <li class="{% if page == 'panel' %}active {% endif %}nav-panel">
+          <a href="/dashboard">
+            <i class="icofont-arrow-left"></i>
+            <span>Back to Application</span>
+          </a>
+        </li>
+        <li class="{% if page == 'organisation' %}active {% endif %}nav-organisation">
+          <a href="/account/organisation">
+            <i class="icofont-group"></i>
+            <span>Organisation</span>
+          </a>
+        </li>
+        <li class="{% if page == 'preferences' %}active {% endif %}nav-preferences">
+          <a href="/account/preferences">
+            <i class="icofont-user-alt-2"></i>
+            <span>Preferences</span>
+          </a>
+        </li>
+        <li class="{% if page == 'subscription' %}active {% endif %}nav-subscription">
+          <a href="/account/subscription">
+            <i class="icofont-coins"></i>
+            <span>Subscription</span>
+          </a>
+        </li>
+        <li class="{% if page == 'integrations' %}active {% endif %}nav-integrations">
+          <a href="/account/integrations">
+            <i class="icofont-addons"></i>
+            <span>Integrations</span>
+          </a>
+        </li>
+        <li class="{% if page == 'notifications' %}active {% endif %}nav-notifications">
+          <a href="/account/notifications">
+            <i class="icofont-alarm"></i>
+            <span>Notifications</span>
+          </a>
+        </li>
+        {% elif page == 'setup' %}
+        <li class="{% if page == 'setup' %}active {% endif %}nav-setup">
+          <a href="/account/setup/{{step}}">
+            <i class="icofont-options"></i>
+            <span>Account Setup</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+
+    </nav>
+  </div>
+  <div class="sidebar-footer">
+    {% if account.is_authenticated and not page == 'setup' %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/account/preferences" title="Preferences">
+      <i class="icofont-options"></i>
+    </a>
+    <a data-toggle="tooltip" href="/notifications" title="Notifications">
+      <i class="icofont-notification"></i>
+    </a>
+    <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
+      <i class="icofont-logout"></i>
+    </a>
+    {% elif page == 'setup' %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/account/setup/1" title="Setup">
+      <i class="icofont-options"></i>
+    </a>
+    <a data-toggle="tooltip" href="/contact" title="Contact">
+      <i class="icofont-headphone-alt-2"></i>
+    </a>
+    <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
+      <i class="icofont-logout"></i>
+    </a>
+    {% else %}
+    <a data-toggle="tooltip" href="/support" title="Support">
+      <i class="icofont-question-circle"></i>
+    </a>
+    <a data-toggle="tooltip" href="/contact" title="Contact">
+      <i class="icofont-headphone-alt-2"></i>
+    </a>
+    <a data-toggle="tooltip" href="/register" title="Register">
+      <i class="icofont-sign-out"></i>
+    </a>
+    <a data-toggle="tooltip" href="/login" title="Login">
+      <i class="icofont-sign-in"></i>
+    </a>
+    {% endif %}
+  </div>
+</div>

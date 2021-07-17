@@ -1,7 +1,7 @@
 {% extends 'app/layout.html' %} 
 {% block body %}
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app/reports.css')|autoversion }}">
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/reports.css">
 
 
-        <script type=text/javascript src="{{url_for('static', filename='js/app/reports.js')|autoversion }}"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/app/reports.js"></script>
 {% endblock %}

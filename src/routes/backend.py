@@ -7,14 +7,13 @@ from trivialsec.models.domain import Domains
 from trivialsec.models.project import Project
 from trivialsec.models.finding import FindingDetails
 from trivialsec.models.link import Links
-from trivialsec.models.subscriber import Subscribers
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.account import Account, Accounts
 from trivialsec.models.plan import Plan, Plans
 from trivialsec.models.member import Member, Members
 from trivialsec.models.key_value import KeyValues
 from trivialsec.models.feed import Feeds
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('backend', __name__)
@@ -23,7 +22,7 @@ blueprint = Blueprint('backend', __name__)
 @login_required
 @internal_users
 def backend():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Backend'
     params['page'] = 'backend'
     params['account'] = current_user
@@ -35,7 +34,7 @@ def backend():
 @login_required
 @internal_users
 def domains_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Domains'
     params['page'] = 'domains'
     params['account'] = current_user
@@ -73,7 +72,7 @@ def domains_backend(page: int = 1):
 @login_required
 @internal_users
 def recommendations(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Recommendations'
     params['page'] = 'recommendations'
     params['account'] = current_user
@@ -101,7 +100,7 @@ def recommendations(page: int = 1):
 @login_required
 @internal_users
 def services():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Services'
     params['page'] = 'services'
     params['account'] = current_user
@@ -132,7 +131,7 @@ def services():
 @login_required
 @internal_users
 def links_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Links'
     params['page'] = 'links'
     params['account'] = current_user
@@ -163,25 +162,25 @@ def links_backend(page: int = 1):
 @login_required
 @internal_users
 def subscribers_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Subscribers'
     params['page'] = 'subscribers'
     params['account'] = current_user
     subscribers_arr = []
-    page_size = 20
-    page = int(page)
-    page_num = max(1, page)
-    offset = max(0, page-1) * page_size
-    params['pagination'] = Subscribers().pagination(page_size=page_size, page_num=page_num)
-    subscribers = Subscribers().load(limit=page_size, offset=offset)
+    # page_size = 20
+    # page = int(page)
+    # page_num = max(1, page)
+    # offset = max(0, page-1) * page_size
+    # params['pagination'] = Subscribers().pagination(page_size=page_size, page_num=page_num)
+    # subscribers = Subscribers().load(limit=page_size, offset=offset)
 
-    for subscriber in subscribers:
-        subscribers_arr.append({
-            'id': subscriber.subscriber_id,
-            'email': subscriber.email,
-            'deleted': subscriber.deleted,
-            'created_at': subscriber.created_at,
-        })
+    # for subscriber in subscribers:
+    #     subscribers_arr.append({
+    #         'id': subscriber.subscriber_id,
+    #         'email': subscriber.email,
+    #         'deleted': subscriber.deleted,
+    #         'created_at': subscriber.created_at,
+    #     })
 
     params['subscriptions'] = subscribers_arr
 
@@ -192,7 +191,7 @@ def subscribers_backend(page: int = 1):
 @login_required
 @internal_users
 def invitations_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Invitations'
     params['page'] = 'invitations'
     params['account'] = current_user
@@ -225,7 +224,7 @@ def invitations_backend(page: int = 1):
 @login_required
 @internal_users
 def accounts_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Accounts'
     params['page'] = 'accounts'
     params['account'] = current_user
@@ -259,7 +258,7 @@ def accounts_backend(page: int = 1):
 @login_required
 @internal_users
 def users(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Users'
     params['page'] = 'users'
     params['account'] = current_user
@@ -291,7 +290,7 @@ def users(page: int = 1):
 @login_required
 @internal_users
 def keyvalues(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Public Content'
     params['page'] = 'keyvalues'
     params['account'] = current_user
@@ -322,7 +321,7 @@ def keyvalues(page: int = 1):
 @login_required
 @internal_users
 def feeds_backend(page: int = 1):
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Data Sources'
     params['page'] = 'feeds'
     params['account'] = current_user

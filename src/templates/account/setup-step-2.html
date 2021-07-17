@@ -1,0 +1,187 @@
+{% extends 'account/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/setup.css">
+    <ul class="steps">
+        <li class="step-1 even">
+            <a href="/account/setup/1">
+            <strong>Step 1</strong>
+            Account Details
+            </a><i></i>
+        </li>
+        <li class="step-2 odd current">
+            <span>
+            <strong>Step 2</strong>
+            Subscription
+            </span><i></i>
+        </li>
+        <li class="step-3 even next">
+            <span>
+            <strong>Step 3</strong>
+            Getting Started
+            </span><i></i>
+        </li>
+    </ul>
+
+    <div class="step-2">
+        <div class="setup-section">
+            <div class="plan-col">
+                <div class="generic_content clearfix">
+                    <div class="generic_head_price clearfix">
+                        <div class="generic_head_content clearfix">
+                            <div class="head_bg"></div>
+                            <div class="head">
+                                <span>Standard</span>
+                            </div>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="sign">$</span>
+                                <span class="currency">29</span>
+                                <span class="cent">.99</span>
+                                <span class="month">/MONTH</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">&nbsp;</div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="cent">10% discount for Annual Billing</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="generic_price_btn clearfix">
+                        <button type="button" id="plan_standard_monthly">$29.99/MON</button>
+                    </div>
+                    <div class="generic_price_btn clearfix">
+                        <button type="button" id="plan_standard_annual">$323.89/YR</button>
+                    </div>
+                    <div class="generic_feature_list">
+                        <ul>
+                            <li><span>10/DAY</span> On-demand Passive Domain Scans</li>
+                            <li><span>1/DAY</span> On-demand Active Domain Scans</li>
+                            <li><span>1</span> Domain Monitored</li>x
+                            <li><span>√</span> Webhooks</li>x
+                            <li><span>√</span> ThreatIntel</li>x
+                            <li><span>√</span> Common Vulnerabilities</li>
+                            <li><span>X</span> Brand Protection</li>x
+                            <li><span>X</span> IOC</li>x
+                            <li><span>X</span> SCA</li>x
+                            <li><span>X</span> SAST</li>
+                            <li><span>X</span> Compliance Reports</li>
+                            <li><span>X</span> SLA</li>x
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="plan-col">
+                <div class="generic_content clearfix">
+                    <div class="generic_head_price clearfix">
+                        <div class="generic_head_content clearfix">
+                            <div class="head_bg"></div>
+                            <div class="head">
+                                <span>Professional</span>
+                            </div>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="sign">$</span>
+                                <span class="currency">185</span>
+                                <span class="cent"></span>
+                                <span class="month">/MONTH</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="cent">800% Additional Value</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="cent">30% discount for Annual Billing</span>
+                            </span>
+                        </div>
+                    </div>                            
+                    <div class="generic_price_btn clearfix">
+                        <button type="button" id="plan_professional_monthly">$185/MON</button>
+                    </div>
+                    <div class="generic_price_btn clearfix">
+                        <button type="button" id="plan_professional_annual">$1554/YR</button>
+                    </div>
+                    <div class="generic_feature_list">
+                        <ul>
+                            <li><span>500/DAY</span> On-demand Passive Domain Scans</li>
+                            <li><span>50/DAY</span> On-demand Active Domain Scans</li>
+                            <li><span>10</span> Domains Monitored</li>
+                            <li><span>√</span> Webhooks</li>
+                            <li><span>√</span> ThreatIntel</li>
+                            <li><span>√</span> Common Vulnerabilities</li>
+                            <li><span>√</span> Brand Protection</li>
+                            <li><span>√</span> IOC</li>
+                            <li><span>√</span> SCA</li>
+                            <li><span>√</span> SAST</li>
+                            <li><span>√</span> Reports</li>
+                            <li><span>√</span> SLA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="plan-col">
+                <div class="generic_content clearfix">
+                    <div class="generic_head_price clearfix">
+                        <div class="generic_head_content clearfix">
+                            <div class="head_bg"></div>
+                            <div class="head">
+                                <span>Enterprise</span>
+                            </div>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="sign">Contact Us</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">
+                            <span class="price">
+                                <span class="month">Data Retention and Sovereignty</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">
+                            <span class="price">
+                                <span class="month">Dedicated Options</span>
+                            </span>
+                        </div>
+                        <div class="generic_price_tag clearfix">	
+                            <span class="price">
+                                <span class="month">Unlimited Options</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="generic_price_btn clearfix">
+                        <button type="button" id="plan_enterprise">Contact Us</button>
+                    </div>
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="generic_feature_list">
+                        <ul>
+                            <li><span>~</span> On-demand Passive Domain Scans</li>
+                            <li><span>~</span> On-demand Active Domain Scans</li>
+                            <li><span>~</span> Domains Monitored</li>
+                            <li><span>√</span> Webhooks</li>
+                            <li><span>√</span> ThreatIntel</li>
+                            <li><span>√</span> Common Vulnerabilities</li>
+                            <li><span>√</span> Brand Protection</li>
+                            <li><span>√</span> IOC</li>
+                            <li><span>√</span> SCA</li>
+                            <li><span>√</span> SAST</li>
+                            <li><span>√</span> Reports</li>
+                            <li><span>√</span> SLA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type=text/javascript src="{{ asset_url }}/js/account/setup-2.js"></script>
+{% endblock %}

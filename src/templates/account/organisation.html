@@ -1,0 +1,166 @@
+{% extends 'account/layout.html' %} 
+{% block body %}
+    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/organisation.css">
+    <template id="tmpl-invitation-list">
+        <td><%= invite_email %></td>
+        <td><%= role_name %></td>
+        <td><%= invited_by %></td>
+        <td><time datetime="<%= created_at %>"></time></td>
+    </template>
+    <ul class="breadcrumbs">
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/account/organisation">Organisation</a></li>
+        <li>{{ account.account.alias }}</li>
+    </ul>
+    <section class="fields">
+        <h2>Organisation Settings</h2>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="alias">Organisation Name</label>
+            </div>
+            <div class="input-column column">
+                <input id="alias" type="text" name="account_alias" value="{{ account.account.alias }}">
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="permit_domains">Restrict user emails to permitted domains</label>
+            </div>
+            <div class="input-column column">
+                <textarea id="permit_domains" name="permit_domains" placeholder="separate each domain on a new line">{{ account_config.permit_domains if account_config.permit_domains }}</textarea>
+                <button id="settings-button" type="button">Update</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="fields">
+        <h2>Scanner Lists</h2>
+        <p>Add domain names, IPv4, or IPv6 addresses you would like Trivial Security never scan</p>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="ignore_list">Ignored Targets List</label>
+            </div>
+            <div class="input-column column">
+                <textarea id="ignore_list" name="ignore_list" placeholder="separate each target on a new line">{{ account_config.blacklisted_ips if account_config.blacklisted_ips }}
+{{ account_config.blacklisted_domains if account_config.blacklisted_domains }}</textarea>
+            </div>
+            <div class="label-column column">
+                <label for="nameservers">Preferred DNS nameservers (Enterprise Only)</label>
+            </div>
+            <div class="input-column column">
+                <textarea id="nameservers" name="nameservers" placeholder="separate each IP address on a new line">{{ account_config.nameservers if account_config.nameservers }}</textarea>
+                <button id="scanner-lists-button" type="button">Update</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="fields">
+        <h2>Invite Organisation Members</h2>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="default_role_id">Default role</label>
+            </div>
+            <div class="input-column column">
+                <select autocomplete="off" id="default_role_id" name="default_role_id">
+                {% for role in roles %}
+                <option {% if role.role_id == account_config.default_role_id %}selected="selected" {% endif %}value="{{ role.role_id }}">{{ role.name }}</option>
+                {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="invite_message">Personalised Message</label>
+            </div>
+            <div class="input-column column">
+                <textarea id="invite_message" name="invite_message" placeholder="Personalised message"></textarea>
+            </div>
+        </div>
+        <div class="fields-row">
+            <div class="label-column column">
+                <label for="bulk_invite">Organisation Name</label>
+            </div>
+            <div class="input-column column">
+                <textarea id="bulk_invite" name="bulk_invite" placeholder="add one email per line"></textarea>
+                <button id="bulk_invite_button" type="button">Invite</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="fields" id="invitation-list"{% if not invitations %} style="display: none;"{% endif %}>
+        <h2>Invited Members</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="invitation-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invitee Email</th>
+                                <th>Role Name</th>
+                                <th>Invited By</th>
+                                <th>Invitation Sent</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invitation_list">
+                        {% for invitation in invitations %}
+                        <tr>
+                            <td>{{ invitation.email }}</td>
+                            <td>{% if invitation.role.name == 'Read Only' %}
+                                <i class="icofont-book" title="{{ invitation.role.name }}"></i>
+                                {% elif invitation.role.name == 'Audit' %}
+                                <i class="icofont-briefcase-2" title="{{ invitation.role.name }}"></i>
+                                {% elif invitation.role.name == 'Owner' %}
+                                <i class="icofont-safety-hat" title="{{ invitation.role.name }}"></i>
+                                {% elif invitation.role.name == 'Billing' %}
+                                <i class="icofont-coins" title="{{ invitation.role.name }}"></i>
+                                {% endif %}
+                            </td>
+                            <td>{{ invitation.invited_by.email }}</td>
+                            <td><time datetime="{{ invitation.created_at }}"></time></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% include 'account/pagination.html' %}
+            </div>
+        </div>
+    </section>
+
+    <section class="fields" id="members-list"{% if not members %} style="display: none;"{% endif %}>
+        <h2>Members</h2>
+        <div class="fields-row">
+            <div class="input-column column">
+                <div class="members-list">
+                    <table>
+                        <tbody>
+                        {% for member in members %}
+                        <tr data-member-id="{{ member.member_id }}">
+                            <td>{{ member.email }}</td>
+                            <td>{% if member.verified %}Verified{% else %}Unverified{% endif %}</td>
+                            <td>{% for role in member.roles %}
+                                {% if role.name == 'Read Only' %}
+                                <i class="icofont-book" title="{{ role.name }}"></i>
+                                {% elif role.name == 'Audit' %}
+                                <i class="icofont-briefcase-2" title="{{ role.name }}"></i>
+                                {% elif role.name == 'Owner' %}
+                                <i class="icofont-safety-hat" title="{{ role.name }}"></i>
+                                {% elif role.name == 'Billing' %}
+                                <i class="icofont-coins" title="{{ role.name }}"></i>
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>registered <time datetime="{{ member.registered }}"></time></td>
+                            <td width="10px"><i class="icofont-curved-right"></i></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br><br><br><br><br><br>
+
+<script type=text/javascript src="{{ asset_url }}/js/account/organisation.js"></script>
+{% endblock %}

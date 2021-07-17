@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from trivialsec.models.domain import Domains
 from trivialsec.models.project import Projects
 from trivialsec.models.finding import Findings
-from . import get_frontend_conf
+from templates import public_params
 
 
 blueprint = Blueprint('projects', __name__)
@@ -11,7 +11,7 @@ blueprint = Blueprint('projects', __name__)
 @blueprint.route('/', methods=['GET'])
 @login_required
 def page_projects():
-    params = get_frontend_conf()
+    params = public_params()
     params['page_title'] = 'Scopes'
     params['page'] = 'scopes'
     params['account'] = current_user
