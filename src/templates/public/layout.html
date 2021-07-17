@@ -4,9 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/icofont.min.css" />
         <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/main.css" />
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/cryptojs.3.1.2.min.js"></script>
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png">
@@ -22,9 +21,10 @@
             data-websocket-domain="{{ socket_domain }}"
             data-websocket-scheme="{{ socket_scheme }}"
             data-api-domain="{{ api_domain }}"
-            data-api-scheme="{{ api_scheme }}">
-        <script type=text/javascript src="{{ asset_url }}/js/site.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/public/main.min.js"></script>
+            data-api-scheme="{{ api_scheme }}"{% if account %}
+            data-account-id="{{ account.account_id }}"
+            data-account-email="{{ account.email }}"{% endif %}{% if apikey %}
+            data-api-key-id="{{ apikey.api_key }}"{% endif %}/>
     </head>  
     <body></body>
         <section class="container">

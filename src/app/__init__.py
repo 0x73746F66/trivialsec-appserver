@@ -3,12 +3,22 @@ import redis
 from flask import Flask
 from flask_sessionstore import Session
 from werkzeug.debug import DebuggedApplication
+from werkzeug.middleware.proxy_fix import ProxyFix
 from trivialsec.helpers.config import config
-from templates import autoversion_filter, from_json_filter, http_code_group_filter
+from templates import from_json_filter, http_code_group_filter
 
+
+app = Flask(__name__, root_path='/srv/app', instance_relative_config=False)
 
 def create_app() -> Flask:
     app = Flask(__name__, root_path='/srv/app', instance_relative_config=False)
+    app.config.update(
+        PREFERRED_URL_SCHEME='https',
+        SECRET_KEY=config.session_secret_key,
+        SESSION_TYPE='redis',
+        SESSION_USE_SIGNER=True,
+        SESSION_REDIS=redis.Redis(host=config.redis.get('host'), ssl=bool(config.redis.get('ssl')))
+    )
 
     if getenv('FLASK_DEBUG') == '1':
         app.config.update(
@@ -17,10 +27,7 @@ def create_app() -> Flask:
         )
         app.wsgi_app = DebuggedApplication(app.wsgi_app, True)
 
-    app.config['SECRET_KEY'] = config.session_secret_key
-    app.config['SESSION_TYPE'] = 'redis'
-    app.config['SESSION_USE_SIGNER'] = True
-    app.config['SESSION_REDIS'] = redis.Redis(host=config.redis.get('host'), ssl=bool(config.redis.get('ssl')))
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
     Session(app)
     with app.app_context():
         from routes.root import blueprint as public_blueprint
@@ -38,7 +45,6 @@ def create_app() -> Flask:
         from routes.tasks import blueprint as tasks_blueprint
         from routes.backend import blueprint as backend_blueprint
         from routes.webhook import blueprint as webhook_blueprint
-        app.add_template_filter(autoversion_filter, name='autoversion')
         app.add_template_filter(from_json_filter, name='from_json')
         app.add_template_filter(http_code_group_filter, name='http_code_group')
         app.register_blueprint(public_blueprint, url_prefix='/')

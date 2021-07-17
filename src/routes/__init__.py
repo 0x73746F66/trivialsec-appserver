@@ -1,4 +1,5 @@
-from flask import send_from_directory, make_response, request, abort, redirect, current_app as app
+from gunicorn.glogging import logging
+from flask import make_response, request, abort, redirect, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.account import Account
@@ -7,17 +8,14 @@ from trivialsec.models.apikey import ApiKey
 from trivialsec.helpers.config import config
 
 
+logger = logging.getLogger(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 @app.teardown_request
 def teardown_request_func(error: Exception = None):
     if error:
-        print(error)
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(filename='favicon.ico', directory='/srv/app', path='/static', mimetype='image/vnd.microsoft.icon')
+        logger.error(error)
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -25,7 +23,7 @@ def unauthorized_callback():
 
 @login_manager.user_loader
 def load_user(user_id: int) -> Member:
-    if request.path in ['/faq', '/login', '/logout', '/register']:
+    if request.path == '/logout' or request.path.startswith('/confirmation') or request.path.startswith('/login'):
         return None
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)
@@ -70,6 +68,7 @@ def before_request():
 def after_request(response):
     if request.method in ["GET", "POST"]:
         allowed_origin_assets = config.get_app().get("asset_url")
+        allowed_origin_api = config.get_app().get("api_url")
         allowed_origin_site = config.get_app().get("site_url")
         if request.environ.get('HTTP_ORIGIN') == config.get_app().get("app_url"):
             allowed_origin_site = config.get_app().get("app_url")
@@ -82,17 +81,13 @@ def after_request(response):
         if request.method == "GET":
             response.headers.add('Content-Security-Policy', '; '.join([
                 f"default-src 'self' {allowed_origin_assets}",
-                f"frame-src https://www.google.comsession_secret_key",
+                "frame-src https://www.google.com https://recaptcha.google.com",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
-                f"manifest-src 'self' {allowed_origin_assets}",
-                f"navigate-to 'self' {allowed_origin_site}",
-                f"img-src {allowed_origin_assets}",
-                f"media-src {allowed_origin_assets}",
-                f"object-src {allowed_origin_assets}",
+                f"connect-src {allowed_origin_api}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
-                f"font-src https://fonts.gstatic.com {allowed_origin_assets}",
-                f"style-src https://fonts.googleapis.com {allowed_origin_assets}"
+                f"font-src https://fonts.gstatic.com {allowed_origin_assets} {allowed_origin_site}",
+                f"style-src https://fonts.googleapis.com {allowed_origin_assets} {allowed_origin_site}"
             ]))
 
     return response
