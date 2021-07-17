@@ -82,7 +82,7 @@ pull-base: ## pulls latest base image
 build-ci: pull pull-base build ## Builds from latest base image
 
 pull: ## pulls latest image
-	docker pull -q $(CONAINER_NAME):latest
+	docker pull -q $(CONAINER_NAME):latest || true
 
 rebuild: down build-ci ## Brings down the stack and builds it anew
 
