@@ -76,9 +76,52 @@
                 <button id="retry-webauthn" type="button" class="LoginActionButton__button wait_recaptcha">Verify</button>
             </div>
         </div>
+        <div class="Card__card LoginCard__card verify-totp hide">
+            <h1 class="LoginCard__header">
+                Final Step - Verification
+            </h1>
+            <div>
+                <div class="success-checkmark_off hide">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <div class="img-wrapper--container">
+                    <div class="img-wrapper--inner">
+                        <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">
+                            <img src="{{ asset_url }}/images/google_play.svg" class="img-wrapper" alt="Google Authenticator on Play Store">
+                        </a>
+                    </div>
+                    <div class="img-wrapper--inner">
+                        <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank">
+                            <img src="{{ asset_url }}/images/app_store.svg" class="img-wrapper" alt="Google Authenticator in App Store">
+                        </a>        
+                    </div>    
+                </div>
+                <div class="ChooseMfa__parra">
+                    Can't scan the image and need the code?
+                </div>
+                <div id="totp-secret-code" class="scratch-code"></div>
+                <div id="totp-message" class="ChooseMfa__parra">
+                    ...
+                </div>
+                <fieldset class="totp__fieldset">
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                    <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
+                </fieldset>
+                <button id="verify-totp" type="button" class="LoginActionButton__button wait_recaptcha verify-code hide">Verify Code</button>
+            </div>
+        </div>
     </div>
 </section>
-
+<a id="temporary"></a>
 <div class="footer__spacer"></div>
 <div class="footer">
     <div>

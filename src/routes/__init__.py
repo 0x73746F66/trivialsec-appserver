@@ -85,6 +85,7 @@ def after_request(response):
                 "form-action 'none'",
                 "frame-ancestors 'none'",
                 f"connect-src {allowed_origin_api}",
+                f"img-src 'self' data: {allowed_origin_assets}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
                 f"font-src https://fonts.gstatic.com {allowed_origin_assets} {allowed_origin_site}",
                 f"style-src https://fonts.googleapis.com {allowed_origin_assets} {allowed_origin_site}"
