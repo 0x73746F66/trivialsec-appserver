@@ -5,7 +5,7 @@ from trivialsec.helpers.config import config
 from trivialsec.helpers.datalists import namespaces, software_and_configuration_checks, ttps, effects, unusual_behaviors, sensitive_data_identifications, vulnerabilities, aws_security_best_practices, industry_and_regulatory_standards, methods, types, categories
 from trivialsec.models.domain import Domains
 from trivialsec.models.project import Project
-from trivialsec.models.finding import FindingDetails
+from trivialsec.models.finding_detail import FindingDetails
 from trivialsec.models.link import Links
 from trivialsec.models.invitation import Invitations
 from trivialsec.models.account import Account, Accounts

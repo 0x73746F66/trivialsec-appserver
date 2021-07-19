@@ -1,12 +1,13 @@
 from flask import render_template, Blueprint, redirect, url_for
 from flask_login import current_user, login_required
-from trivialsec.models.account import AccountConfig
+from trivialsec.models.account_config import AccountConfig
 from trivialsec.models.activity_log import ActivityLog, ActivityLogs
 from trivialsec.models.domain import Domains
 from trivialsec.models.member import Member, Members
 from trivialsec.models.role import Role, Roles
 from trivialsec.models.invitation import Invitations
-from trivialsec.models.plan import Plan, PlanInvoices
+from trivialsec.models.plan import Plan
+from trivialsec.models.plan_invoice import PlanInvoices
 from trivialsec.helpers.config import config
 from templates import public_params
 

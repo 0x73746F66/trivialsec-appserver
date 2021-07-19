@@ -27,7 +27,7 @@ RUN echo "Cloning Python Libs Package from Gitlab" \
     && echo "Installing Packages" \
     && make install \
     && cd /srv/app \
-    && python3 -m pip install -q -U --no-cache-dir --find-links=/tmp/trivialsec/python-libs/build/wheel --no-index --isolated -r requirements.txt \
+    && python3 -m pip install -q -U --no-cache-dir -r /srv/app/requirements.txt \
     && echo "Clean up..." \
     && rm -rf /tmp/trivialsec
 

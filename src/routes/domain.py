@@ -7,7 +7,7 @@ from trivialsec.models.finding import Findings
 from trivialsec.models.dns_record import DnsRecords
 from trivialsec.models.known_ip import KnownIps
 from trivialsec.models.job_run import JobRuns
-from trivialsec.models.program import InventoryItems
+from trivialsec.models.inventory import InventoryItems
 from trivialsec.models.project import Project
 from actions import charts
 from templates import public_params

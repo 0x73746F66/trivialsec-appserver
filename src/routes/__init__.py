@@ -13,6 +13,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 unauthenticated_paths = [
     '/confirmation',
+    '/verify',
     '/login',
     '/logout',
     '/recovery',
@@ -84,7 +85,7 @@ def after_request(response):
                 "frame-src https://www.google.com https://recaptcha.google.com",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
-                f"connect-src {allowed_origin_api}",
+                f"connect-src 'self' {allowed_origin_api}",
                 f"img-src 'self' data: {allowed_origin_assets}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
                 f"font-src https://fonts.gstatic.com {allowed_origin_assets} {allowed_origin_site}",
