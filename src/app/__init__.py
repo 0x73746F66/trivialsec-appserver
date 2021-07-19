@@ -5,7 +5,7 @@ from flask_sessionstore import Session
 from werkzeug.debug import DebuggedApplication
 from werkzeug.middleware.proxy_fix import ProxyFix
 from trivialsec.helpers.config import config
-from templates import from_json_filter, http_code_group_filter
+from templates import from_json_filter, to_json_filter, http_code_group_filter
 
 
 app = Flask(__name__, root_path='/srv/app', instance_relative_config=False)
@@ -45,6 +45,7 @@ def create_app() -> Flask:
         from routes.tasks import blueprint as tasks_blueprint
         from routes.backend import blueprint as backend_blueprint
         from routes.webhook import blueprint as webhook_blueprint
+        app.add_template_filter(to_json_filter, name='to_json')
         app.add_template_filter(from_json_filter, name='from_json')
         app.add_template_filter(http_code_group_filter, name='http_code_group')
         app.register_blueprint(public_blueprint, url_prefix='/')

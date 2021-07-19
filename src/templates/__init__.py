@@ -30,6 +30,9 @@ def autoversion_filter(filename: str) -> str:
 def from_json_filter(s: str) -> dict:
     return json.loads(s)
 
+def to_json_filter(s: str) -> dict:
+    return json.dumps(s)
+
 def http_code_group_filter(s: int) -> str:
     if str(s).startswith('1'):
         return 'info'

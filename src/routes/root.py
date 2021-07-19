@@ -6,6 +6,7 @@ from trivialsec.helpers import messages
 from trivialsec.helpers.config import config
 from gunicorn.glogging import logging
 from pyotp import TOTP
+import webauthn
 
 from trivialsec.decorators import control_timing_attacks, require_recaptcha, prepared_json
 from trivialsec.models.apikey import ApiKey
@@ -92,13 +93,13 @@ def login(auth_hash: str):
             return redirect(f"{www}?{urlencode({'error': error401})}", code=401)
 
         u2f_keys = MemberMfas()
-        for u2f_key in u2f_keys.find_by([('member_id', member.member_id), ('type', 'webauthn')], limit=1000):
+        for u2f_key in u2f_keys.find_by([('member_id', member.member_id), ('type', 'webauthn'), ('active', True)], limit=1000):
             params['keys'].append({
                 'name': u2f_key.name,
-                'webauthn_id': u2f_key.webauthn_id,
-                'webauthn_public_key': u2f_key.webauthn_public_key,
-                'webauthn_challenge': u2f_key.webauthn_challenge,
+                'webauthn_id': u2f_key.webauthn_id
             })
+        params['account'] = member
+        params['apikey'] = get_public_api_key(member.member_id)
 
     except Exception as err:
         logger.exception(err)
@@ -110,7 +111,7 @@ def login(auth_hash: str):
 @require_recaptcha(action='login_action')
 @blueprint.route('/verify/totp', methods=['POST'])
 @prepared_json
-def api_mfa_totp(params):
+def api_verify_totp(params):
     try:
         member = Member(confirmation_url=f"/login/{params.get('auth_hash')}")
         if not member.exists(['confirmation_url']):
@@ -164,10 +165,97 @@ def api_mfa_totp(params):
         apikey.active = True
         apikey.api_key_secret = generate_api_key_secret()
         apikey.persist()
+        member.confirmation_url = None
+        member.persist()
         params['hawk_key'] = apikey.api_key_secret
         params['status'] = 'success'
         params['message'] = messages.OK_AUTHENTICATED
-        params['redirect'] = url_for('dashboard.page_dashboard')
+
+    except Exception as err:
+        logger.exception(err)
+        if app.debug:
+            params['error'] = str(err)
+
+    return jsonify(params)
+
+@control_timing_attacks(seconds=2)
+@require_recaptcha(action='login_action')
+@blueprint.route('/verify/webauthn', methods=['POST'])
+@prepared_json
+def api_verify_webauthn(params):
+    try:
+        member = Member(confirmation_url=f"/login/{params.get('auth_hash')}")
+        if not member.exists(['confirmation_url']):
+            logger.info(f'user doesnt exist {member.confirmation_url}')
+            return jsonify(params)
+
+        member.hydrate()
+        if not member.verified:
+            logger.info(f'unverified user {member.member_id}')
+            return jsonify(params)
+
+        account = Account(account_id=member.account_id)
+        if not account.hydrate():
+            logger.info(f'unverified user {member.member_id}')
+            return jsonify(params)
+
+        mfa = MemberMfa()
+        mfa.member_id = member.member_id
+        mfa.webauthn_id = params['assertion_response'].get('rawId')
+        if not mfa.exists(['member_id', 'webauthn_id']):
+            params['message'] = messages.ERR_ORG_MEMBER
+            return jsonify(params)
+
+        mfa.hydrate()
+        if not mfa.active:
+            logger.info(f'mfa isnt active member: {member.member_id} mfa: {mfa.mfa_id}')
+            return jsonify(params)
+
+        webauthn_user = webauthn.WebAuthnUser(
+            user_id=member.email.encode('utf8'),
+            username=member.email,
+            display_name=member.email,
+            icon_url=None,
+            sign_count=0,
+            credential_id=str(webauthn.webauthn._webauthn_b64_decode(mfa.webauthn_id)),
+            public_key=mfa.webauthn_public_key,
+            rp_id=config.get_app().get("app_domain")
+        )
+        webauthn_assertion_response = webauthn.WebAuthnAssertionResponse(
+            webauthn_user,
+            assertion_response=params['assertion_response'],
+            challenge=mfa.webauthn_challenge,
+            origin=config.get_app().get("app_url"),
+            uv_required=False
+        )
+        webauthn_assertion_response.verify()
+
+        apikey = ApiKey(member_id=member.member_id, comment='public-api')
+        if not apikey.exists(['member_id', 'comment']):
+            logger.info(f'inactive public-api key for user {member.member_id}')
+            return jsonify(params)
+        apikey.hydrate()
+        if request.headers.getlist("X-Forwarded-For"):
+            remote_addr = '\t'.join(request.headers.getlist("X-Forwarded-For"))
+        else:
+            remote_addr = request.remote_addr
+
+        ActivityLog(
+            member_id=member.member_id,
+            action=ActivityLog.ACTION_USER_LOGIN,
+            description=f'{remote_addr}\t{request.user_agent}'
+        ).persist()
+        login_user(member)
+        session.permanent = True # pylint: disable=assigning-non-slot
+        session.session_start = datetime.utcnow().isoformat() # pylint: disable=assigning-non-slot
+        apikey.active = True
+        apikey.api_key_secret = generate_api_key_secret()
+        apikey.persist()
+        member.confirmation_url = None
+        member.persist()
+        params['hawk_key'] = apikey.api_key_secret
+        params['status'] = 'success'
+        params['message'] = messages.OK_AUTHENTICATED
 
     except Exception as err:
         logger.exception(err)
