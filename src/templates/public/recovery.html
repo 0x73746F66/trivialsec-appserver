@@ -1,34 +1,155 @@
 {% extends 'public/layout.html' %} 
-{% block body %}  
-    <div class="section faq">
-        <div id="app-messages">{% if error %}
-            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
-            {% endif %}{% if success %}
-            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
-            {% endif %}{% if info %}
-            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
-            {% endif %}{% if warning %}
-            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
-{% endif %}</div>
-    <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/public/password-reset.css">
-    <div class="flex-outer">
-        <h2>Create a new Password</h2>
-        <ul class="flex-inner">
-            <li>
-                <label for="new_password">New Password</label>
-                <input type="password" id="new_password" name="new_password" placeholder="Enter your new password here">
-            </li>
-            <li>
-                <label for="repeat_password">Repeat Password</label>
-                <input type="password" id="repeat_password" name="repeat_password" placeholder="Repeat your new password here">
-            </li>
-            <li>
-                <button class="wait_recaptcha" id="save_password" type="submit" disabled>Save Password</button>
-            </li>
-        </ul>
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/main.css" />
+<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/recovery.css" />
+<input type="hidden" id="auth_hash" value="{{ auth_hash }}">
+
+<div id="app-messages">
+    {% if error %}<div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>{% endif %}
+    {% if success %}<div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>{% endif %}
+    {% if info %}<div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>{% endif %}
+    {% if warning %}<div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>{% endif %}
+</div>
+<section class="main bg-dark">
+    <div class="main__top">
+        <a class="main__logo" href="{{ site_url }}">
+            <img alt="icon" src="{{ asset_url }}/images/icon-64x64.png">
+            <div>Trivial Security</div>
+        </a>
+        <div class="main__links">
+            <a id="home-link" href="{{ site_url }}">Homepage</a>
+        </div>
+        <div class="main__links">
+            <a id="app-link" href="{{ app_url }}/dashboard">Dashboard</a>
+        </div>
     </div>
-    <input type="hidden" id="confirmation_url" value="{{ account.confirmation_url }}">
-    <input type="hidden" name="recaptcha_token" id="recaptcha_token">
-    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
-    <script type=text/javascript src="{{ asset_url }}/js/public/password-reset.js"></script>
+    <div class="main__jumbo">
+        <div class="main__jumbo-title">
+            Account Recovery
+        </div>
+    </div>
+    <div class="recovery__formContainer">
+    {% if invitation_hash %}
+        {% if approved %}
+        <div class="Card__card recoveryCard__card request-approved">
+            <h1 class="recoveryCard__header">
+                Recovery Request Approved
+            </h1>
+            <div class="Card__card--inner">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="Card__card recoveryCard__card request-denied">
+            <h1 class="recoveryCard__header">
+                Recovery Request Denied
+            </h1>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="Card__card recoveryCard__card choose-method">
+            <h1 class="recoveryCard__header">
+                Recovery Method
+            </h1>
+            <div class="Card__card--inner">
+                <h2 class="recovery__subheader">
+                    Choose one of the following options:
+                </h2>
+                <fieldset class="recovery__fieldset">
+                    <label class="recovery__label webauthn">
+                        <input name="recoveryType" type="radio" value="scratch">
+                        <img src="{{ asset_url }}/images/icon-scratch.svg" class="recovery__factorIconWrapper recovery__iconWrapper" alt>
+                        <legend>One-time Account Recovery Code</legend>
+                    </label>
+                </fieldset>
+                <fieldset class="recovery__fieldset">
+                    <label class="recovery__label totp">
+                        <input name="recoveryType" type="radio" value="email">
+                        <img src="{{ asset_url }}/images/icon-admin.svg" class="recovery__factorIconWrapper recovery__iconWrapper" alt>
+                        <legend>Request an 'Organisation Owner' to change your Email Address</legend>
+                    </label>
+                </fieldset>
+                <button id="choose-method" type="button" class="recovery_actionButton__button wait_recaptcha">Next</button>
+            </div>
+        </div>
+        <div class="Card__card recoveryCard__card request-email hide">
+            <h1 class="recoveryCard__header">
+                Change Email Method
+            </h1>
+            <div class="Card__card--inner">
+                <div class="recovery__subheader request">
+                    Make a Request to update your Email Address.
+                </div>
+                <div class="recovery__subheader">
+                    You will be sent the Magic Link if approved.
+                </div>
+                <div class="success-checkmark_off hide">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <div id="recovery-message" class="hide"></div>
+                <fieldset class="recovery__fieldset">
+                    <legend>Previous Email</legend>
+                    <label class="recovery__label">
+                        <input id="old-email" name="previousEmail" type="email" placeholder="old_user@example.com">
+                    </label>
+                </fieldset>
+                <fieldset class="recovery__fieldset">
+                    <legend>New Email</legend>
+                        <label class="recovery__label">
+                        <input id="new-email" name="newEmail" type="email" placeholder="user@example.com">
+                    </label>
+                </fieldset>
+                <button id="recover-email" type="button" class="recovery_actionButton__button wait_recaptcha">Next</button>
+            </div>
+        </div>
+        <div class="Card__card recoveryCard__card confirm-scratch hide">
+            <h1 class="recoveryCard__header">
+                Recovery Code
+            </h1>
+            <div class="Card__card--inner">
+                <div class="success-checkmark_off hide">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
+                <div id="scratch-message" class="hide"></div>
+                <fieldset class="recovery__fieldset">
+                    <legend>Enter your One-time Recovery Code</legend>
+                    <label class="recovery__label">
+                        <input id="scratch-code" name="scratch-code" type="text" placeholder="ABC1-23DEF4-56GHI789-JKL0MN">
+                    </label>
+                </fieldset>
+                <button id="recover-scratch" type="button" class="recovery_actionButton__button wait_recaptcha">Next</button>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+</section>
+<div class="footer__spacer"></div>
+<div class="footer">
+    <div>
+        © 2021 Trivial Security. All Rights Reserved.<br>
+        <a href="/terms.html">Terms of Service</a> | <a href="/privacy.html">Privacy Policy</a>
+    </div>
+</div>
+<script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+<script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/utils.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/api.min.js"></script>
+<script type=text/javascript src="{{ asset_url }}/js/public/recovery.min.js"></script>
 {% endblock %}

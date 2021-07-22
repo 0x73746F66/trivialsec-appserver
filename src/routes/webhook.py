@@ -38,7 +38,7 @@ def wh_stripe():
     logger.warning(f'[{event_type}]\n{data}')
     return jsonify({'plan_id': webhook_received(event_type, data)})
 
-def webhook_received(event_type: str, stripe_data: dict) -> int:
+def webhook_received(event_type :str, stripe_data :dict) -> int:
     if event_type == 'payment_intent.succeeded':
         return payment_intent_succeeded(stripe_data.get('customer'), stripe_data['charges']['data'][0])
 

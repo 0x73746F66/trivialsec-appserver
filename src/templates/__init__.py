@@ -24,13 +24,13 @@ def public_params() -> dict:
     }
     return {**conf, **config.get_app()}
 
-def autoversion_filter(filename: str) -> str:
+def autoversion_filter(filename :str) -> str:
     return f"{filename}?v={config.app_version}"
 
-def from_json_filter(s: str) -> dict:
+def from_json_filter(s :str) -> dict:
     return json.loads(s)
 
-def to_json_filter(s: str) -> dict:
+def to_json_filter(s :str) -> dict:
     return json.dumps(s)
 
 def http_code_group_filter(s: int) -> str:

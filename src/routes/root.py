@@ -8,6 +8,7 @@ from gunicorn.glogging import logging
 from pyotp import TOTP
 import webauthn
 
+from trivialsec.helpers.sendgrid import send_email, upsert_contact
 from trivialsec.decorators import control_timing_attacks, require_recaptcha, prepared_json
 from trivialsec.models.apikey import ApiKey
 from trivialsec.models.activity_log import ActivityLog
@@ -15,7 +16,8 @@ from trivialsec.models.account import Account
 from trivialsec.models.member import Member
 from trivialsec.models.member_mfa import MemberMfa, MemberMfas
 from trivialsec.models.invitation import Invitation
-from trivialsec.services.accounts import register, generate_api_key_secret
+from trivialsec.models.role import Role
+from trivialsec.services.accounts import generate_api_key, generate_api_key_secret
 from trivialsec.services.apikey import get_public_api_key
 from templates import public_params
 
@@ -30,32 +32,42 @@ def page_dashboard():
 
 @control_timing_attacks(seconds=2)
 @blueprint.route('/confirmation/<confirmation_hash>', methods=['GET'])
-def confirmation_link(confirmation_hash: str):
+def confirmation_link(confirmation_hash :str):
     params = public_params()
     params['page'] = 'confirmation'
     params['page_title'] = 'Complete Registration'
     params['confirmation_hash'] = confirmation_hash
     try:
+        confirmation_url = f'/confirmation/{confirmation_hash}'
         member = Member()
+        member.confirmation_url = confirmation_url
+        member.exists(['confirmation_url'])
         invitee = Invitation()
-        invitee.confirmation_url = f'/confirmation/{confirmation_hash}'
+        invitee.confirmation_url = confirmation_url
         if invitee.exists(['confirmation_url']):
             invitee.hydrate()
+            member.member_id = invitee.member_id
             if invitee.member_id is None:
-                member = register(
-                    account_id=invitee.account_id,
-                    role_id=invitee.role_id,
-                    email_addr=invitee.email,
-                    verified=True # emailed confirmation_hash verifies email access
-                )
-                if not isinstance(member, Member):
-                    raise ValueError(messages.ERR_ACCOUNT_UPDATE)
+                member.account_id = invitee.account_id
+                member.email = invitee.email
+                member.verified = True # emailed confirmation_hash verifies email access
+                member.persist()
+                member.add_role(Role(role_id=invitee.role_id))
+                member.get_roles()
+                upsert_contact(recipient_email=member.email, list_name='members')
+                #TODO Welcome Email
                 invitee.member_id = member.member_id
                 invitee.persist()
+                ApiKey(
+                    api_key=generate_api_key(),
+                    api_key_secret=generate_api_key_secret(),
+                    member_id=member.member_id,
+                    comment='public-api',
+                    allowed_origin=config.get_app().get("app_domain"),
+                    active=True
+                ).persist()
 
-        member = Member()
-        member.confirmation_url = f'/confirmation/{confirmation_hash}'
-        if member.exists(['confirmation_url']):
+        if member.member_id:
             member.hydrate()
             params['account'] = member
             params['apikey'] = get_public_api_key(member.member_id)
@@ -68,7 +80,7 @@ def confirmation_link(confirmation_hash: str):
 
 @control_timing_attacks(seconds=2)
 @blueprint.route('/login/<auth_hash>', methods=['GET'])
-def login(auth_hash: str):
+def login(auth_hash :str):
     params = public_params()
     params['page'] = 'login'
     params['page_title'] = 'Magic Link Login'
@@ -264,6 +276,7 @@ def api_verify_webauthn(params):
 
     return jsonify(params)
 
+@control_timing_attacks(seconds=2)
 @blueprint.route('/logout', methods=['GET'])
 def logout():
     if hasattr(current_user, 'member_id'):
@@ -290,18 +303,84 @@ def logout():
         logout_user()
     except Exception:
         pass
+
     return redirect(config.get_app().get("site_url"))
 
+@control_timing_attacks(seconds=2)
 @blueprint.route('/recovery', methods=['GET'])
-def recovery_reset(confirmation_hash: str):
+def account_recovery():
     params = public_params()
     params['page'] = 'recovery'
-    params['page_title'] = 'Recovery'
+    params['page_title'] = 'Account Recovery'
+    return render_template('public/recovery.html', **params)
 
-    member = Member()
-    member.confirmation_url = f'/recovery/{confirmation_hash}'
-    if member.exists(['confirmation_url']):
-        member.hydrate()
-        params['account'] = member
-        return render_template('public/recovery.html', **params)
-    return abort(403)
+@blueprint.route('/invitation-request/approve/<invitation_hash>', methods=['GET'])
+@login_required
+def account_recovery_accept(invitation_hash :str):
+    params = public_params()
+    params['page'] = 'recovery'
+    params['page_title'] = 'Account Recovery'
+    try:
+        params['invitation_hash'] = invitation_hash
+        invitee = Invitation()
+        invitee.confirmation_url = f'/confirmation/{invitation_hash}'
+        if not invitee.exists(['confirmation_url']):
+            raise ValueError(messages.ERR_INVITATION_FAILED)
+        invitee.hydrate()
+
+        account = Account()
+        account.account_id = current_user.account_id
+        account.hydrate()
+
+        invitee.invited_by_member_id = current_user.member_id
+        invitee.message = f'Your account Owner {current_user.email} approved your Recovery Request'
+        send_email(
+            subject=f"Invitation to join TrivialSec organisation {account.alias}",
+            recipient=invitee.email,
+            template='invitations',
+            data={
+                "invitation_message": invitee.message,
+                "activation_url": f"{config.get_app().get('app_url')}{invitee.confirmation_url}"
+            }
+        )
+        invitee.confirmation_sent = True
+        invitee.persist()
+        ActivityLog(
+            member_id=current_user.member_id,
+            action=ActivityLog.ACTION_APPROVED_RECOVERY_REQUEST,
+            description=invitee.email
+        ).persist()
+        params['approved'] = True
+        params['status'] = 'success'
+        params['message'] = messages.OK_INVITED
+
+    except Exception as err:
+        logger.exception(err)
+
+    return render_template('public/recovery.html', **params)
+
+@blueprint.route('/invitation-request/deny/<invitation_hash>', methods=['GET'])
+@login_required
+def account_recovery_deny(invitation_hash :str):
+    params = public_params()
+    params['page'] = 'recovery'
+    params['page_title'] = 'Account Recovery'
+    try:
+        params['invitation_hash'] = invitation_hash
+        invitee = Invitation()
+        invitee.confirmation_url = f'/confirmation/{invitation_hash}'
+        if not invitee.exists(['confirmation_url']):
+            raise ValueError(messages.ERR_INVITATION_FAILED)
+        invitee.hydrate()
+
+        ActivityLog(
+            member_id=current_user.member_id,
+            action=ActivityLog.ACTION_DENY_RECOVERY_REQUEST,
+            description=invitee.email
+        ).persist()
+        params['approved'] = False
+
+    except Exception as err:
+        logger.exception(err)
+
+    return render_template('public/recovery.html', **params)

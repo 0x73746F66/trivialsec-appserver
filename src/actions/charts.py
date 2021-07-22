@@ -3,7 +3,7 @@ import json
 from trivialsec.models.finding import Finding
 from trivialsec.services.findings import aggregate_sum
 
-def findings_severity_horizontal_bar(findings: list):
+def findings_severity_horizontal_bar(findings :list):
     info = aggregate_sum(findings, Finding.RATING_INFO, 'severity_normalized', 'score_to_rating')
     low = aggregate_sum(findings, Finding.RATING_LOW, 'severity_normalized', 'score_to_rating')
     medium = aggregate_sum(findings, Finding.RATING_MEDIUM, 'severity_normalized', 'score_to_rating')
