@@ -4,16 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/icofont.min.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/choices.9.0.1.min.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/main.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/tables.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/scaffolding.css" />
-        {% if page == 'setup' %}
-        <script type=text/javascript src="https://js.stripe.com/v3"></script>
-        {% endif  %}
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/site.js"></script>
+        {% if css_includes %}
+        {% for css_include in css_includes %}
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/{{ css_include }}" />
+        {% endfor %}
+        {% endif %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png">
@@ -37,9 +32,18 @@
             data-account-id="{{ account.account_id }}"
             data-account-email="{{ account.email }}"
         {% endif %}
+        {% if account.u2f_keys %}
+            data-keys="{{ account.u2f_keys | to_json }}"
+        {% endif %}
         {% if account.apikey %}
             data-api-key-id="{{ account.apikey.api_key }}"
         {% endif %}>
+        <script type=text/javascript src="{{ asset_url }}/js/site.min.js"></script>
+        {% if js_includes %}
+        {% for js_include in js_includes %}
+        <script type=text/javascript src="{{ asset_url }}/js/{{ js_include }}"></script>
+        {% endfor %}
+        {% endif %}
     </head>
     <body class="sidenav-closed">
     {% include 'account/navbar.html' %}
@@ -62,9 +66,6 @@
         {% if account.is_authenticated %}
         <input name="socketio_token" type="hidden" value="{{ account.account.socket_key }}"/>
         <script type=text/javascript src="{{ asset_url }}/js/vendor/socket.io.2.3.0.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/choices.9.0.1.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/ejs.3.0.2.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/forge.0.10.0.min.js"></script>
         {% endif %}
     </div>
     </body>

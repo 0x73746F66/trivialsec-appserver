@@ -21,6 +21,14 @@ def account_preferences():
     params = public_params()
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
+    params['js_includes'] = ["account/preferences.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/preferences.css"
+    ]
     params['account'] = current_user
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
@@ -35,6 +43,14 @@ def account_organisation(page: int = 1):
     params = public_params()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
+    params['js_includes'] = ["account/organisation.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/organisation.css"
+    ]
     params['account'] = current_user
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
@@ -88,6 +104,14 @@ def account_member(member_id: int, page: int = 1):
     params = public_params()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
+    params['js_includes'] = ["account/organisation.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/organisation.css"
+    ]
     params['account'] = current_user
 
     member = Member(member_id=member_id, account_id=current_user.account_id)
@@ -123,6 +147,20 @@ def account_subscription():
     params = public_params()
     params['page_title'] = 'Subscription'
     params['page'] = 'subscription'
+    params['js_includes'] = [
+        "vendor/timeago.min.js",
+        "vendor/chart.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "account/subscription.min.js",
+    ]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/subscription.css"
+    ]
     params['account'] = current_user
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
@@ -154,6 +192,14 @@ def account_integrations():
     params = public_params()
     params['page_title'] = 'Integrations'
     params['page'] = 'integrations'
+    params['js_includes'] = ["account/integrations.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/integrations.css"
+    ]
     params['account'] = current_user
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate(no_cache=True):
@@ -167,6 +213,14 @@ def account_notifications():
     params = public_params()
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
+    params['js_includes'] = ["account/notifications.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        "account/notifications.css"
+    ]
     params['account'] = current_user
     account_config = AccountConfig(account_id=current_user.account_id)
     if account_config.hydrate():
@@ -181,6 +235,17 @@ def account_setup(step: int):
     params['page'] = 'setup'
     params['step'] = step
     params['page_title'] = 'Account Setup'
+    params['js_includes'] = [
+        f"account/setup-{step}.min.js",
+        "vendor/stripe-v3.min.js"
+    ]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/tables.css",
+        "account/main.css",
+        f"account/setup-{step}.css",
+    ]
     params['account'] = current_user
 
     account_config = AccountConfig(account_id=current_user.account_id)

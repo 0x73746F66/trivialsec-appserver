@@ -1,22 +1,14 @@
 {% extends 'account/layout.html' %} 
 {% block body %}
-<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/account/subscription.css">
-<script type=text/javascript>
-charts_data = {
-    domains: {
-        used: {{ monitored_domains | default(0) }},
-        total: {{ account.account.plan.domains_monitored | default(0) }},
-    },
-    scans: {
-        used: {{ on_demand_active | default(0) + on_demand_passive | default(0) }},
-        total: {{ account.account.plan.on_demand_passive_daily | default(0) + account.account.plan.on_demand_active_daily | default(0) }},
-    },
-}
-</script>
+<input type="hidden" name="domains-used" value="{{ monitored_domains | default(0) }}"/>
+<input type="hidden" name="domains-total" value="{{ account.account.plan.domains_monitored | default(0) }}"/>
+<input type="hidden" name="scans-used" value="{{ on_demand_active | default(0) + on_demand_passive | default(0) }}"/>
+<input type="hidden" name="scans-total" value="{{ account.account.plan.on_demand_passive_daily | default(0) + account.account.plan.on_demand_active_daily | default(0) }}"/>
+
 <section>
     <div class="billing-details">
         <div class="billing-general">
-            <h2>General Details</h2>
+            <h1>General Details</h1>
         </div>
         <div class="col-20" title="Enter your billing email here">
             <label class="field-label field-heading" for="billing_email">Billing Email</label>
@@ -24,12 +16,14 @@ charts_data = {
         <div class="col-80" title="Enter your billing email here">
             <input id="billing_email" type="email" name="billing_email" placeholder="Enter your billing email here" value="{{ account.account.billing_email }}">
         </div>
+        {# TODO: enterprise plan
         <div class="col-20" title="How long should we retain your scan data?">
             <label class="field-label field-heading" for="retention_days">Data Retention (days)</label>
         </div>
         <div class="col-80" title="How long should we retain your scan data?">
             <input id="retention_days" type="number" step="1" min="5" max="2555" name="retention_days" placeholder="How long should we retain your scan data?" value="{{ account.account.plan.retention_days }}">
         </div>
+        #}
         <div class="col-20">
             <div class="field-label field-heading">Subscription</div>
         </div>
@@ -65,14 +59,14 @@ charts_data = {
     </div>
 </section>
 <div class="invoices">
-    <h3>Invoices</h3>
     <table>
+    <caption><h2>Invoices</h2></caption>
     <thead>
-        <th>Due Date</th>
-        <th>Status</th>
-        <th>Invoice Total</th>
-        <th>Coupon</th>
-        <th>PDF</th>
+        <th scope="col">Due Date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Invoice Total</th>
+        <th scope="col">Coupon</th>
+        <th scope="col">PDF</th>
     </thead>
     <tbody>
         {% for invoice in invoices %}
@@ -91,7 +85,4 @@ charts_data = {
     </tbody>
     </table>
 </div>
-
-<script type=text/javascript src="{{ asset_url }}/js/vendor/chart.min.js"></script>
-<script type=text/javascript src="{{ asset_url }}/js/account/subscription.js"></script>
 {% endblock %}

@@ -63,7 +63,6 @@ def confirmation_link(confirmation_hash :str):
                     api_key_secret=generate_api_key_secret(),
                     member_id=member.member_id,
                     comment='public-api',
-                    allowed_origin=config.get_app().get("app_domain"),
                     active=True
                 ).persist()
 
@@ -179,7 +178,7 @@ def api_verify_totp(params):
         apikey.persist()
         member.confirmation_url = None
         member.persist()
-        params['hawk_key'] = apikey.api_key_secret
+        params['api_key_secret'] = apikey.api_key_secret
         params['status'] = 'success'
         params['message'] = messages.OK_AUTHENTICATED
 
@@ -265,7 +264,7 @@ def api_verify_webauthn(params):
         apikey.persist()
         member.confirmation_url = None
         member.persist()
-        params['hawk_key'] = apikey.api_key_secret
+        params['api_key_secret'] = apikey.api_key_secret
         params['status'] = 'success'
         params['message'] = messages.OK_AUTHENTICATED
 

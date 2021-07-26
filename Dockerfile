@@ -33,5 +33,6 @@ RUN echo "Cloning Python Libs Package from Gitlab" \
 
 COPY --chown=trivialsec:trivialsec src .
 COPY --chown=trivialsec:trivialsec conf/config-${BUILD_ENV}.yaml config.yaml
+COPY --chown=trivialsec:trivialsec conf/app-${BUILD_ENV}.ini app.ini
 
 CMD ["gunicorn", "--config=gunicorn.conf.py"]
