@@ -23,8 +23,8 @@
             data-api-scheme="{{ api_scheme }}"{% if account %}
             data-account-id="{{ account.account_id }}"
             data-account-email="{{ account.email }}"{% endif %}{% if apikey %}
-            data-api-key-id="{{ apikey.api_key }}"{% endif %}{% if keys %}
-            data-keys="{{ keys | to_json }}"{% endif %}/>
+            data-api-key-id="{{ apikey.api_key }}"{% endif %}{% if account.u2f_keys %}
+            data-keys="{{ account.u2f_keys | to_json }}"{% endif %}/>
     </head>  
     <body></body>
         <section class="container">

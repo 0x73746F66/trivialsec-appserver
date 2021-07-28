@@ -21,11 +21,14 @@ def account_preferences():
     params = public_params()
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
-    params['js_includes'] = ["account/preferences.min.js"]
+    params['js_includes'] = [
+        "vendor/timeago.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "account/preferences.min.js"
+    ]
     params['css_includes'] = [
-        "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/preferences.css"
     ]
@@ -47,7 +50,6 @@ def account_organisation(page: int = 1):
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/organisation.css"
     ]
@@ -104,11 +106,12 @@ def account_member(member_id: int, page: int = 1):
     params = public_params()
     params['page_title'] = 'Organisation'
     params['page'] = 'organisation'
-    params['js_includes'] = ["account/organisation.min.js"]
+    params['js_includes'] = [
+        "account/organisation.min.js"
+    ]
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/organisation.css"
     ]
@@ -157,7 +160,6 @@ def account_subscription():
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/subscription.css"
     ]
@@ -196,7 +198,6 @@ def account_integrations():
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/integrations.css"
     ]
@@ -217,7 +218,6 @@ def account_notifications():
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         "account/notifications.css"
     ]
@@ -242,7 +242,6 @@ def account_setup(step: int):
     params['css_includes'] = [
         "vendor/choices.9.0.1.min.css",
         "account/scaffolding.css",
-        "account/tables.css",
         "account/main.css",
         f"account/setup-{step}.css",
     ]

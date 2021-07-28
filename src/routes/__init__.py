@@ -1,5 +1,5 @@
 from gunicorn.glogging import logging
-from flask import make_response, request, abort, redirect, current_app as app
+from flask import Response, request, redirect, current_app as app
 from flask_login import LoginManager, current_user
 from trivialsec.models.member import Member
 from trivialsec.models.member_mfa import MemberMfa, MemberMfas
@@ -27,23 +27,24 @@ def load_user(user_id: int) -> Member:
     for unauthenticated_path in config.public_endpoints:
         if request.path.startswith(unauthenticated_path):
             return None
+    resp_401 = Response(None, 401)
     member = Member(member_id=user_id)
     member.hydrate(ttl_seconds=30)
     if not isinstance(member, Member):
-        return abort(401)
+        return resp_401
     member.get_roles()
     apikey = ApiKey(member_id=member.member_id, comment='public-api')
     apikey.hydrate(['member_id', 'comment'], ttl_seconds=10)
     if apikey.api_key_secret is None or apikey.active is not True:
-        return abort(401)
+        return resp_401
     account = Account(account_id=member.account_id)
     account.hydrate(ttl_seconds=30)
     if not isinstance(account, Account):
-        return abort(401)
+        return resp_401
     plan = Plan(account_id=account.account_id)
     plan.hydrate('account_id', ttl_seconds=30)
     if not isinstance(plan, Plan):
-        return abort(401)
+        return resp_401
 
     totp_mfa = MemberMfa()
     totp_mfa.member_id = member.member_id
@@ -51,19 +52,22 @@ def load_user(user_id: int) -> Member:
     totp_mfa.active = True
     if totp_mfa.exists(['member_id', 'type', 'active']):
         totp_mfa.hydrate()
-        setattr(member, 'totp_mfa', totp_mfa)
+        setattr(member, 'totp_mfa', totp_mfa.created_at.isoformat())
 
     u2f_keys = []
+    index = 0
     for u2f_key in MemberMfas().find_by([('member_id', member.member_id), ('type', 'webauthn'), ('active', True)], limit=1000):
+        index += 1
         u2f_keys.append({
-            'name': u2f_key.name,
-            'webauthn_id': u2f_key.webauthn_id
+            'mfa_id': u2f_key.mfa_id,
+            'name': u2f_key.name or f'Key {index}',
+            'webauthn_id': u2f_key.webauthn_id,
+            'registered': u2f_key.created_at.isoformat()
         })
 
     setattr(account, 'plan', plan)
     setattr(member, 'account', account)
     setattr(member, 'apikey', apikey)
-    setattr(member, 'totp_mfa', totp_mfa)
     setattr(member, 'u2f_keys', u2f_keys)
 
     return member
@@ -71,14 +75,14 @@ def load_user(user_id: int) -> Member:
 @app.before_request
 def before_request():
     if request.path in ['/', '/healthcheck']:
-        return make_response(), 204
+        return Response(None, 204)
 
     if request.method == "OPTIONS":
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-        response.headers.add('Access-Control-Allow-Origin', config.get_app().get("app_url"))
-        return response
+        return Response(None, 200, {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            'Access-Control-Allow-Origin': config.get_app().get("app_url")
+        })
     return None
 
 @app.after_request

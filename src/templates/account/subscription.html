@@ -4,6 +4,11 @@
 <input type="hidden" name="domains-total" value="{{ account.account.plan.domains_monitored | default(0) }}"/>
 <input type="hidden" name="scans-used" value="{{ on_demand_active | default(0) + on_demand_passive | default(0) }}"/>
 <input type="hidden" name="scans-total" value="{{ account.account.plan.on_demand_passive_daily | default(0) + account.account.plan.on_demand_active_daily | default(0) }}"/>
+<ul class="breadcrumbs">
+    <li><a href="/dashboard">Home</a></li>
+    <li><a href="/account/organisation">{{ account.account.alias }}</a></li>
+    <li>Subscription</li>
+</ul>
 
 <section>
     <div class="billing-details">
@@ -15,6 +20,7 @@
         </div>
         <div class="col-80" title="Enter your billing email here">
             <input id="billing_email" type="email" name="billing_email" placeholder="Enter your billing email here" value="{{ account.account.billing_email }}">
+            <span class="msg"></span>
         </div>
         {# TODO: enterprise plan
         <div class="col-20" title="How long should we retain your scan data?">

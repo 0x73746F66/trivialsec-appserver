@@ -73,7 +73,29 @@ def confirmation_link(confirmation_hash :str):
             return render_template('public/confirmation.html', **params)
 
     except Exception as err:
-        logger.error(err)
+        logger.exception(err)
+
+    return abort(403)
+
+@control_timing_attacks(seconds=2)
+@blueprint.route('/verify/<verify_hash>', methods=['GET'])
+def verify_link(verify_hash :str):
+    try:
+        verify_url = f'/verify/{verify_hash}'
+        member = Member()
+        member.confirmation_url = verify_url
+        member.exists(['confirmation_url'])
+        if member.member_id is None:
+            raise ValueError(f'no verify_url {verify_url}')
+        member.hydrate()
+        member.confirmation_url = None
+        member.verified = True
+        member.persist()
+        login_user(member)
+        return redirect(url_for('dashboard.page_dashboard'))
+
+    except Exception as err:
+        logger.exception(err)
 
     return abort(403)
 
@@ -85,7 +107,7 @@ def login(auth_hash :str):
     params['page_title'] = 'Magic Link Login'
     params['auth_hash'] = auth_hash
     params['totp_message'] = messages.INFO_TOTP_GENERATION
-    params['keys'] = []
+    params['u2f_keys'] = []
     try:
         www = config.get_app().get('site_url')
         error401 = messages.ERR_ACCESS_DENIED
@@ -104,10 +126,13 @@ def login(auth_hash :str):
             return redirect(f"{www}?{urlencode({'error': error401})}", code=401)
 
         u2f_keys = MemberMfas()
+        index = 0
         for u2f_key in u2f_keys.find_by([('member_id', member.member_id), ('type', 'webauthn'), ('active', True)], limit=1000):
-            params['keys'].append({
-                'name': u2f_key.name,
-                'webauthn_id': u2f_key.webauthn_id
+            index += 1
+            params['u2f_keys'].append({
+                'name': u2f_key.name or f'Key {index}',
+                'webauthn_id': u2f_key.webauthn_id,
+                'registered': u2f_key.created_at.isoformat()
             })
         params['account'] = member
         params['apikey'] = get_public_api_key(member.member_id)

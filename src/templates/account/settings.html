@@ -1,0 +1,94 @@
+{% extends 'account/layout.html' %} 
+{% block body %}
+<ul class="breadcrumbs">
+    <li><a href="/dashboard">Home</a></li>
+    <li><a href="/account/organisation">{{ account.account.alias }}</a></li>
+    <li>Settings</li>
+</ul>
+<section class="fields">
+    <h2>Organisation Settings</h2>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="alias">Organisation Name</label>
+        </div>
+        <div class="input-column column">
+            <input id="alias" type="text" name="account_alias" value="{{ account.account.alias }}">
+        </div>
+    </div>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="permit_domains">Restrict user emails to permitted domains</label>
+        </div>
+        <div class="input-column column">
+            <textarea id="permit_domains" name="permit_domains" placeholder="separate each domain on a new line">{{ account_config.permit_domains if account_config.permit_domains }}</textarea>
+            <button id="settings-button" type="button">Update</button>
+        </div>
+    </div>
+</section>
+
+<section class="fields">
+    <h2>Scanner Lists</h2>
+    <p>Add domain names, IPv4, or IPv6 addresses you would like Trivial Security never scan</p>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="ignore_list">Ignored Targets List</label>
+        </div>
+        <div class="input-column column">
+            <textarea id="ignore_list" name="ignore_list" placeholder="separate each target on a new line">{{ account_config.blacklisted_ips if account_config.blacklisted_ips }}
+{{ account_config.blacklisted_domains if account_config.blacklisted_domains }}</textarea>
+        </div>
+        <div class="label-column column">
+            <label for="nameservers">Preferred DNS nameservers (Enterprise Only)</label>
+        </div>
+        <div class="input-column column">
+            <textarea id="nameservers" name="nameservers" placeholder="separate each IP address on a new line">{{ account_config.nameservers if account_config.nameservers }}</textarea>
+            <button id="scanner-lists-button" type="button">Update</button>
+        </div>
+    </div>
+</section>
+
+<section class="fields">
+    <h2>Update Email</h2>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="email">New Email</label>
+        </div>
+        <div class="input-column column">
+            <input type="email" name="email" id="email" placeholder="Enter your new email here">
+        </div>
+        <div class="label-column column">
+            <label for="password">Current Password</label>
+        </div>
+        <div class="input-column column">
+            <input type="password" name="password" id="password" placeholder="Enter your current password here">
+            <button id="change-email-button" type="button">Update</button>
+        </div>
+    </div>
+</section>
+
+<section class="fields">
+    <h2>Change Password</h2>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="old_password">Old Password</label>
+        </div>
+        <div class="input-column column">
+            <input type="password" id="old_password" name="old_password" placeholder="Enter your old password here">
+        </div>
+        <div class="label-column column">
+            <label for="new_password">New Password</label>
+        </div>
+        <div class="input-column column">
+            <input type="password" id="new_password" name="new_password" placeholder="Enter your new password here">
+        </div>
+        <div class="label-column column">
+            <label for="repeat_password">Confirm Password</label>
+        </div>
+        <div class="input-column column">
+            <input type="password" id="repeat_password" name="repeat_password" placeholder="Repeat your new password here">
+            <button id="change-password-button" type="button">Update</button>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
