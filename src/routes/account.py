@@ -39,6 +39,28 @@ def account_preferences():
 
     return render_template('account/preferences.html', **params)
 
+@blueprint.route('/add-mfa', methods=['GET'])
+@login_required
+def account_add_mfa():
+    params = public_params()
+    params['page'] = 'preferences'
+    params['page_title'] = 'Add MFA'
+    params['js_includes'] = [
+        "vendor/micromustache.umd.8.0.3.min.js",
+        "vendor/cbor.0.1.0.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "account/add-mfa.min.js"
+    ]
+    params['css_includes'] = [
+        "public/main.css",
+        "public/confirmation.css",
+        "account/add-mfa.css"
+    ]
+    params['account'] = current_user
+
+    return render_template('account/add-mfa.html', **params)
+
 @blueprint.route('/organisation/<page>', methods=['GET'])
 @blueprint.route('/organisation', methods=['GET'])
 @login_required

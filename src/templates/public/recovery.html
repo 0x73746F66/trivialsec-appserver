@@ -4,12 +4,6 @@
 <link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/recovery.css" />
 <input type="hidden" id="auth_hash" value="{{ auth_hash }}">
 
-<div id="app-messages">
-    {% if error %}<div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>{% endif %}
-    {% if success %}<div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>{% endif %}
-    {% if info %}<div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>{% endif %}
-    {% if warning %}<div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>{% endif %}
-</div>
 <section class="main bg-dark">
     <div class="main__top">
         <a class="main__logo" href="{{ site_url }}">

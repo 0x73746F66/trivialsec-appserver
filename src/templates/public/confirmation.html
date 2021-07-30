@@ -4,12 +4,6 @@
 <link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/confirmation.css" />
 <input type="hidden" id="confirmation_hash" value="{{ confirmation_hash }}">
 
-<div id="app-messages">
-    {% if error %}<div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>{% endif %}
-    {% if success %}<div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>{% endif %}
-    {% if info %}<div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>{% endif %}
-    {% if warning %}<div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>{% endif %}
-</div>
 <section class="main bg-dark">
     <div class="main__top">
         <a class="main__logo" href="/">
@@ -40,14 +34,14 @@
                 <fieldset class="ChooseMfa__fieldset">
                     <label class="ChooseMfa__label totp">
                         <input name="mfaType" type="radio" value="totp">
-                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt>
+                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt />
                         Software/App Verification Code
                     </label>
                 </fieldset>
                 <fieldset class="ChooseMfa__fieldset">
                     <label class="ChooseMfa__label webauthn">
                         <input name="mfaType" type="radio" value="webauthn">
-                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt >
                         Hardware Security Key
                     </label>
                 </fieldset>

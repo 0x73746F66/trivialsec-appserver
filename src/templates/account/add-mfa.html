@@ -1,12 +1,8 @@
 {% extends 'public/layout.html' %} 
 {% block body %}
-<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/main.css" />
-<link rel="stylesheet" type="text/css" href="{{ asset_url }}/styles/public/login.css" />
-<input type="hidden" id="auth_hash" value="{{ auth_hash }}">
-
 <section class="main bg-dark">
     <div class="main__top">
-        <a class="main__logo" href="{{ site_url }}">
+        <a class="main__logo" href="/">
             <img alt="icon" src="{{ asset_url }}/images/icon-64x64.png">
             <div>Trivial Security</div>
         </a>
@@ -17,31 +13,26 @@
             <a id="app-link" href="{{ app_url }}/dashboard">Dashboard</a>
         </div>
     </div>
-    <div class="main__jumbo">
-        <div class="main__jumbo-title">
-            Multi-factor Authentication
-        </div>
-    </div>
     <div class="ChooseMfa__formContainer">
         <div class="Card__card LoginCard__card choose-mfa">
             <h1 class="LoginCard__header">
-                Authentication Method
+                Add Multi-factor Authentication (MFA)
             </h1>
             <div class="Card__card--inner">
                 <h2 class="ChooseMfa__subheader">
-                    Choose one of the following:
+                    Choose one of the following methods:
                 </h2>
                 <fieldset class="ChooseMfa__fieldset">
                     <label class="ChooseMfa__label totp">
                         <input name="mfaType" type="radio" value="totp">
-                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt>
+                        <img src="{{ asset_url }}/images/icon-totp.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt />
                         Software/App Verification Code
                     </label>
                 </fieldset>
                 <fieldset class="ChooseMfa__fieldset">
                     <label class="ChooseMfa__label webauthn">
                         <input name="mfaType" type="radio" value="webauthn">
-                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
+                        <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper" alt >
                         Hardware Security Key
                     </label>
                 </fieldset>
@@ -50,7 +41,7 @@
         </div>
         <div class="Card__card LoginCard__card confirm-webauthn hide">
             <h1 class="LoginCard__header">
-                Attempting Verification..
+                Final Step - Verification
             </h1>
             <div>
                 <div class="success-checkmark_off hide">
@@ -62,18 +53,18 @@
                     </div>
                 </div>
                 <h2 class="ChooseMfa__subheader">
-                    Verify using your Hardware Security Key
+                    Verify your Hardware Security Key Registration with Trivial Security
                 </h2>
                 <img src="{{ asset_url }}/images/icon-security-key.svg" class="ChooseMfa__factorIconWrapper ChooseMfa__iconWrapper">
                 <p class="ChooseMfa__parra">
                     Touch sensor
                 </p>
-                <button id="retry-webauthn" type="button" class="LoginActionButton__button wait_recaptcha">Retry</button>
+                <button id="retry-webauthn" type="button" class="LoginActionButton__button wait_recaptcha">Verify</button>
             </div>
         </div>
         <div class="Card__card LoginCard__card verify-totp hide">
             <h1 class="LoginCard__header">
-                TOTP Verification
+                Final Step - Verification
             </h1>
             <div>
                 <div class="success-checkmark_off hide">
@@ -84,8 +75,24 @@
                         <div class="icon-fix"></div>
                     </div>
                 </div>
+                <div class="img-wrapper--container">
+                    <div class="img-wrapper--inner">
+                        <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">
+                            <img src="{{ asset_url }}/images/google_play.svg" class="img-wrapper" alt="Google Authenticator on Play Store">
+                        </a>
+                    </div>
+                    <div class="img-wrapper--inner">
+                        <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank">
+                            <img src="{{ asset_url }}/images/app_store.svg" class="img-wrapper" alt="Google Authenticator in App Store">
+                        </a>        
+                    </div>    
+                </div>
+                <div class="ChooseMfa__parra">
+                    Can't scan the image and need the code?
+                </div>
+                <div id="totp-secret-code" class="source-code"></div>
                 <div id="totp-message" class="ChooseMfa__parra">
-                    {{ totp_message }}
+                    ...
                 </div>
                 <fieldset class="totp__fieldset">
                     <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
@@ -95,11 +102,12 @@
                     <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
                     <input type="number" name="totpcode[]" class="verify-code" placeholder="?" min="0" max="9" required />
                 </fieldset>
-                <button id="verify-totp" type="button" class="LoginActionButton__button wait_recaptcha verify-code">Verify Code</button>
+                <button id="verify-totp" type="button" class="LoginActionButton__button wait_recaptcha verify-code hide">Verify Code</button>
             </div>
         </div>
     </div>
 </section>
+<a id="temporary"></a>
 <div class="footer__spacer"></div>
 <div class="footer">
     <div>
@@ -107,9 +115,4 @@
         <a href="/terms.html">Terms of Service</a> | <a href="/privacy.html">Privacy Policy</a>
     </div>
 </div>
-<script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
-<script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
-<script type=text/javascript src="{{ asset_url }}/js/utils.min.js"></script>
-<script type=text/javascript src="{{ asset_url }}/js/api.min.js"></script>
-<script type=text/javascript src="{{ asset_url }}/js/public/login.min.js"></script>
 {% endblock %}

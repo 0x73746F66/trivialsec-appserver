@@ -20,13 +20,14 @@
 </section>
 
 <section class="fields">
-    <h2>Multi-factor Authentication</h2>
+    <h2><img src="{{ asset_url }}/images/icon-totp.svg" alt /> Multi-factor Authentication</h2>
     <div class="fields-row">
         <div class="label-column column">
             <label for="scratch_code">Recovery Code</label>
         </div>
         <div class="input-column column">
             <input type="text" name="scratch_code" id="scratch_code" value="{{ account.scratch_code|truncate(4,true,'') }}-??????-????????-??????" disabled>
+            <span class="msg"></span>
             <button id="regenerate" type="button">Regenerate Code</button>
         </div>
     </div>
@@ -35,10 +36,10 @@
             <label for="scratch_code">Time-based One-time Password (TOTP)</label>
         </div>
         <div class="input-column column">
-            {% if account.totp_mfa %}
-            <div class="msg">TOTP is already setup for this account <time datetime="{{ account.totp_mfa }}">{{ account.totp_mfa }}</time></div>
+            {% if account.totp_mfa_id %}
+            <div class="fields--message">TOTP is setup for this account</div>
             {% else %}
-            <button id="setup_totp" type="button">Setup TOTP</button>
+            <a class="add-mfa" href="/account/add-mfa" target="_blank">Setup TOTP</a>
             {% endif %}
         </div>
     </div>
@@ -46,7 +47,9 @@
         <div class="input-column column">
             <div class="mfa-list">
                 <table class="actions striped hover">
-                    <caption><h2>Registered U2F Devices</h2></caption>
+                    <caption>
+                        <h2><img src="{{ asset_url }}/images/icon-security-key.svg" alt /> Registered U2F Devices</h2>
+                    </caption>
                     <thead>
                         <th scope="col">Nickname</th>
                         <th scope="col">Date Registered</th>
@@ -57,11 +60,12 @@
                     <tr data-mfa-id="{{ u2f_key.mfa_id }}">
                         <td contenteditable class="u2fkeyname">{{ u2f_key.name }}</td>
                         <td><time datetime="{{ u2f_key.registered }}"></time></td>
-                        <td title="Delete">✗</td>
+                        <td title="Remove Device"><button class="remove-device">Remove</button></td>
                     </tr>
                     {% endfor %}
                     </tbody>
                 </table>
+                <a class="add-mfa" href="/account/add-mfa" target="_blank">Add Device</a>
             </div>
         </div>
     </div>

@@ -37,20 +37,6 @@
     <body class="sidenav-closed">
     {% include 'backend/navbar.html' %}
     <div class="container">
-        <div id="app-messages">
-            {% if error %}
-            <div class="alert alert-error"><i class="icofont-error"></i> {{ error }}</div>
-            {% endif %}
-            {% if success %}
-            <div class="alert alert-success"><i class="icofont-tick-mark"></i> {{ success }}</div>
-            {% endif %}
-            {% if info %}
-            <div class="alert alert-info"><i class="icofont-info-circle"></i> {{ info }}</div>
-            {% endif %}
-            {% if warning %}
-            <div class="alert alert-warning"><i class="icofont-warning"></i> {{ warning }}</div>
-            {% endif %}
-        </div>
         {% block body %}{% endblock %}
         {% if account.is_authenticated %}
         <input name="socketio_token" type="hidden" value="{{ account.account.socket_key }}"/>
