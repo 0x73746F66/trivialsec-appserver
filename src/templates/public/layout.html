@@ -36,6 +36,9 @@
         {% if account.u2f_keys %}
             data-keys="{{ account.u2f_keys | to_json }}"
         {% endif %}
+        {% if account.totp_mfa_id %}
+            data-mfa-id="{{ account.totp_mfa_id }}"
+        {% endif %}
         {% if account.apikey %}
             data-api-key-id="{{ account.apikey.api_key }}"
         {% endif %}>
