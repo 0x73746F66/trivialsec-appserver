@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint
 from flask_login import current_user, login_required
-from trivialsec.decorators import internal_users
+from trivialsec.decorators import internal_users_only
 from trivialsec.helpers.config import config
 from trivialsec.helpers.datalists import namespaces, software_and_configuration_checks, ttps, effects, unusual_behaviors, sensitive_data_identifications, vulnerabilities, aws_security_best_practices, industry_and_regulatory_standards, methods, types, categories
 from trivialsec.models.domain import Domains
@@ -20,7 +20,7 @@ blueprint = Blueprint('backend', __name__)
 
 @blueprint.route('/', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def backend():
     params = public_params()
     params['page_title'] = 'Backend'
@@ -32,7 +32,7 @@ def backend():
 @blueprint.route('/domains/<page>', methods=['GET'])
 @blueprint.route('/domains', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def domains_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Domains'
@@ -70,7 +70,7 @@ def domains_backend(page: int = 1):
 @blueprint.route('/recommendations/<page>', methods=['GET'])
 @blueprint.route('/recommendations', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def recommendations(page: int = 1):
     params = public_params()
     params['page_title'] = 'Recommendations'
@@ -98,7 +98,7 @@ def recommendations(page: int = 1):
 
 @blueprint.route('/services', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def services():
     params = public_params()
     params['page_title'] = 'Services'
@@ -129,7 +129,7 @@ def services():
 @blueprint.route('/links', methods=['GET'])
 @blueprint.route('/links/<page>', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def links_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Links'
@@ -160,7 +160,7 @@ def links_backend(page: int = 1):
 @blueprint.route('/subscribers', methods=['GET'])
 @blueprint.route('/subscribers/<page>', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def subscribers_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Subscribers'
@@ -189,7 +189,7 @@ def subscribers_backend(page: int = 1):
 @blueprint.route('/invitations/<page>', methods=['GET'])
 @blueprint.route('/invitations', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def invitations_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Invitations'
@@ -222,7 +222,7 @@ def invitations_backend(page: int = 1):
 @blueprint.route('/accounts/<page>', methods=['GET'])
 @blueprint.route('/accounts', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def accounts_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Accounts'
@@ -256,7 +256,7 @@ def accounts_backend(page: int = 1):
 @blueprint.route('/users/<page>', methods=['GET'])
 @blueprint.route('/users', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def users(page: int = 1):
     params = public_params()
     params['page_title'] = 'Users'
@@ -288,7 +288,7 @@ def users(page: int = 1):
 @blueprint.route('/keyvalues/<page>', methods=['GET'])
 @blueprint.route('/keyvalues', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def keyvalues(page: int = 1):
     params = public_params()
     params['page_title'] = 'Public Content'
@@ -319,7 +319,7 @@ def keyvalues(page: int = 1):
 @blueprint.route('/feeds/<page>', methods=['GET'])
 @blueprint.route('/feeds', methods=['GET'])
 @login_required
-@internal_users
+@internal_users_only
 def feeds_backend(page: int = 1):
     params = public_params()
     params['page_title'] = 'Data Sources'

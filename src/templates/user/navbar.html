@@ -29,48 +29,35 @@
     </div>
     <nav role="navigation" class="navigation-menu">
       <ul>
-        {% if account.is_authenticated and not page == 'setup' %}
+        {% if account.is_authenticated %}
         <li class="{% if page == 'panel' %}active {% endif %}nav-panel">
           <a href="/dashboard">
             <img src="{{ asset_url }}/images/icon-arrow-left-white.svg" alt />
             <span>Back to Application</span>
           </a>
         </li>
-        <li class="{% if page == 'settings' %}active {% endif %}nav-settings">
-          <a href="/account/settings">
-            <img src="{{ asset_url }}/images/icon-settings-white.svg" alt />
-            <span>Organisation Settings</span>
+        <li class="{% if page == 'preferences' %}active {% endif %}nav-preferences">
+          <a href="/me">
+            <img src="{{ asset_url }}/images/icon-user-white.svg" alt />
+            <span>My Account</span>
           </a>
         </li>
-        <li class="{% if page == 'organisation' %}active {% endif %}nav-organisation">
-          <a href="/account/organisation">
-            <img src="{{ asset_url }}/images/icon-org-white.svg" alt />
-            <span>Member Administration</span>
+        <li class="{% if page == 'security' %}active {% endif %}nav-security">
+          <a href="/me/security">
+            <img src="{{ asset_url }}/images/icon-login-white.svg" alt />
+            <span>Security</span>
           </a>
         </li>
-        <li class="{% if page == 'subscription' %}active {% endif %}nav-subscription">
-          <a href="/account/subscription">
-            <img src="{{ asset_url }}/images/icon-subscription-white.svg" alt />
-            <span>Subscription</span>
+        <li class="{% if page == 'notifications' %}active {% endif %}nav-notifications">
+          <a href="/me/notifications">
+            <img src="{{ asset_url }}/images/icon-notifications-white.svg" alt />
+            <span>Notifications</span>
           </a>
         </li>
-        <li class="{% if page == 'integrations' %}active {% endif %}nav-integrations">
-          <a href="/account/integrations">
-            <img src="{{ asset_url }}/images/icon-integration-white.svg" alt />
-            <span>Integrations</span>
-          </a>
-        </li>
-        <li class="{% if page == 'webhooks' %}active {% endif %}nav-webhooks">
-          <a href="/account/webhooks">
+        <li class="{% if page == 'apikeys' %}active {% endif %}nav-apikeys">
+          <a href="/me/apikeys">
             <img src="{{ asset_url }}/images/icon-api-white.svg" alt />
-            <span>Webhooks</span>
-          </a>
-        </li>
-        {% elif page == 'setup' %}
-        <li class="{% if page == 'setup' %}active {% endif %}nav-setup">
-          <a href="/account/setup/{{step}}">
-            <img src="{{ asset_url }}/images/icon-rocket.svg" alt />
-            <span>Account Setup</span>
+            <span>API Keys</span>
           </a>
         </li>
         {% endif %}
@@ -79,28 +66,15 @@
     </nav>
   </div>
   <div class="sidebar-footer">
-    {% if account.is_authenticated and not page == 'setup' %}
+    {% if account.is_authenticated %}
     <a data-toggle="tooltip" href="/support" title="Support">
         <img src="{{ asset_url }}/images/icon-support-white.svg" alt />
     </a>
     <a data-toggle="tooltip" href="/documentation" title="Documentation">
       <img src="{{ asset_url }}/images/icon-question-circle-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/me" title="User Preferences">
-        <img src="{{ asset_url }}/images/icon-user-white.svg" alt />
-    </a>
-    <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
-      <img src="{{ asset_url }}/images/icon-logout-white.svg" alt />
-    </a>
-    {% elif page == 'setup' %}
-    <a data-toggle="tooltip" href="/support" title="Support">
-      <img src="{{ asset_url }}/images/icon-support-white.svg" alt />
-    </a>
-    <a data-toggle="tooltip" href="/account/setup/1" title="Setup">
-      <img src="{{ asset_url }}/images/icon-cog-white.svg" alt />
-    </a>
-    <a data-toggle="tooltip" href="/documentation" title="Documentation">
-      <img src="{{ asset_url }}/images/icon-question-circle-white.svg" alt />
+    <a data-toggle="tooltip" href="/account/settings" title="Organisation Settings">
+        <img src="{{ asset_url }}/images/icon-settings-white.svg" alt />
     </a>
     <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
       <img src="{{ asset_url }}/images/icon-logout-white.svg" alt />

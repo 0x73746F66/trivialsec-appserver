@@ -1,26 +1,16 @@
-{% extends 'account/layout.html' %} 
+{% extends 'user/layout.html' %} 
 {% block body %}
 <ul class="breadcrumbs">
     <li><a href="/dashboard">Home</a></li>
-    <li><a href="/account/organisation">{{ account.email }}</a></li>
-    <li>User Preferences</li>
+    <li><a href="/me">{{ account.email }}</a></li>
+    <li>Security</li>
 </ul>
 
 <section class="fields">
-    <h2>Change Email Address</h2>
-    <div class="fields-row">
-        <div class="label-column column">
-            <label for="email">Email</label>
-        </div>
-        <div class="input-column column">
-            <input type="email" name="email" id="email" placeholder="Enter your new email here" value="{{ account.email }}">
-            <span class="msg"></span>
-        </div>
+    <div class="heading">
+        <img src="{{ asset_url }}/images/icon-totp.svg" alt />
+        Multi-factor Authentication
     </div>
-</section>
-
-<section class="fields">
-    <h2><img src="{{ asset_url }}/images/icon-totp.svg" alt /> Multi-factor Authentication</h2>
     <div class="fields-row">
         <div class="label-column column">
             <label for="scratch_code">Recovery Code</label>
@@ -39,7 +29,7 @@
             {% if account.totp_mfa_id %}
             <div class="fields--message">TOTP is setup for this account</div>
             {% else %}
-            <a class="add-mfa" href="/account/add-mfa" target="_blank">Setup TOTP</a>
+            <a class="add-mfa" href="/me/add-mfa" target="_blank">Setup TOTP</a>
             {% endif %}
         </div>
     </div>
@@ -48,7 +38,8 @@
             <div class="mfa-list">
                 <table class="actions striped hover">
                     <caption>
-                        <h2><img src="{{ asset_url }}/images/icon-security-key.svg" alt /> Registered U2F Devices</h2>
+                        <img src="{{ asset_url }}/images/icon-security-key.svg" alt />
+                        Registered U2F Devices
                     </caption>
                     <thead>
                         <th scope="col">Nickname</th>
@@ -65,7 +56,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <a class="add-mfa" href="/account/add-mfa" target="_blank">Add Device</a>
+                <a class="add-mfa" href="/me/add-mfa" target="_blank">Add Device</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,99 @@
+{% extends 'user/layout.html' %} 
+{% block body %}
+<ul class="breadcrumbs">
+    <li><a href="/dashboard">Home</a></li>
+    <li><a href="/me">{{ account.email }}</a></li>
+    <li>Preferences</li>
+</ul>
+
+<section class="profile__header">
+    <div class="profile">
+        <div class="backdrop"></div>
+        <div class="avatar">
+            <img src="{{ asset_url }}/images/icon-users.svg" alt />
+        </div>
+    </div>
+    <div class="profile__roles">
+        <h3>Permissions</h3>
+        <ul>
+            {% if roles.is_owner_member %}
+            <li>
+                <img src="{{ asset_url }}/images/icon-key-white.svg" alt />
+                Owner
+            </li>
+            {% endif %}
+            {% if roles.is_billing_member %}
+            <li>
+                <img src="{{ asset_url }}/images/icon-key-white.svg" alt />
+                Billing
+            </li>
+            {% endif %}
+            {% if roles.is_audit_member %}
+            <li>
+                <img src="{{ asset_url }}/images/icon-key-white.svg" alt />
+                Audit
+            </li>
+            {% endif %}
+            {% if roles.is_readonly_member %}
+            <li>
+                <img src="{{ asset_url }}/images/icon-key-white.svg" alt />
+                Read-Only
+            </li>
+            {% endif %}
+        </ul>
+        
+    </div>
+    <div class="profile__info">
+        <h3>Info</h3>
+        <div>
+            <span>Issues</span>: {{ assigned_issues | default('0') }} Assigned
+        </div>
+        <div>
+            <span>Watching</span>: {{ watched_issues | default('0') }} Issues
+        </div>
+        <div>
+            <span>Triage</span>: {{ closed_issues | default('0') }} Findings
+        </div>
+        <div>
+            <span>Closed</span>: {{ closed_vulnerabilities | default('0') }} Vulnerabilities
+        </div>
+    </div>
+</section>
+
+<section class="fields">
+    <div class="heading">
+        <img src="{{ asset_url }}/images/icon-email.svg" alt />
+        Change Email Address
+    </div>
+    <div class="fields-row">
+        <div class="label-column column">
+            <label for="email">Email</label>
+        </div>
+        <div class="input-column column">
+            <input type="email" name="email" id="email" placeholder="Enter your new email here" value="{{ account.email }}">
+            <span class="msg"></span>
+        </div>
+    </div>
+</section>
+
+<section class="fields" data-member-id="{{ account.member_id }}">
+    <h2>Latest Activity</h2>
+    <div class="fields-row">
+        <div class="input-column column">
+            <div class="activity-list">
+                <table>
+                    <tbody>
+                    {% for activity in activity_logs %}
+                    <tr data-activity-id="{{ activity.activity_log_id }}">
+                        <td>{{ activity.action }}</td>
+                        <td>{{ activity.description }}</td>
+                        <td><time datetime="{{ activity.occurred }}"></time></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

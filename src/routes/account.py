@@ -15,54 +15,8 @@ from templates import public_params
 blueprint = Blueprint('account', __name__)
 
 @blueprint.route('/', methods=['GET'])
-@blueprint.route('/preferences', methods=['GET'])
-@login_required
-def account_preferences():
-    params = public_params()
-    params['page_title'] = 'Preferences'
-    params['page'] = 'preferences'
-    params['js_includes'] = [
-        "vendor/timeago.min.js",
-        "utils.min.js",
-        "api.min.js",
-        "account/preferences.min.js"
-    ]
-    params['css_includes'] = [
-        "account/scaffolding.css",
-        "account/main.css",
-        "account/preferences.css"
-    ]
-    params['account'] = current_user
-    account_config = AccountConfig(account_id=current_user.account_id)
-    if account_config.hydrate():
-        params['account_config'] = account_config
-
-    return render_template('account/preferences.html', **params)
-
-@blueprint.route('/add-mfa', methods=['GET'])
-@login_required
-def account_add_mfa():
-    params = public_params()
-    params['page'] = 'preferences'
-    params['page_title'] = 'Add MFA'
-    params['js_includes'] = [
-        "vendor/micromustache.umd.8.0.3.min.js",
-        "vendor/cbor.0.1.0.min.js",
-        "utils.min.js",
-        "api.min.js",
-        "account/add-mfa.min.js"
-    ]
-    params['css_includes'] = [
-        "public/main.css",
-        "public/confirmation.css",
-        "account/add-mfa.css"
-    ]
-    params['account'] = current_user
-
-    return render_template('account/add-mfa.html', **params)
-
-@blueprint.route('/organisation/<page>', methods=['GET'])
 @blueprint.route('/organisation', methods=['GET'])
+@blueprint.route('/organisation/<page>', methods=['GET'])
 @login_required
 def account_organisation(page: int = 1):
     params = public_params()
@@ -120,6 +74,26 @@ def account_organisation(page: int = 1):
     params['invitations'] = invitations_arr
 
     return render_template('account/organisation.html', **params)
+
+@blueprint.route('/settings', methods=['GET'])
+@login_required
+def account_settings():
+    params = public_params()
+    params['page_title'] = 'Organisation Settings'
+    params['page'] = 'settings'
+    params['js_includes'] = ["account/settings.min.js"]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "account/scaffolding.css",
+        "account/main.css",
+        "account/settings.css"
+    ]
+    params['account'] = current_user
+    account_config = AccountConfig(account_id=current_user.account_id)
+    if account_config.hydrate():
+        params['account_config'] = account_config
+
+    return render_template('account/settings.html', **params)
 
 @blueprint.route('/member/<member_id>/<page>', methods=['GET'])
 @blueprint.route('/member/<member_id>', methods=['GET'])
@@ -229,26 +203,6 @@ def account_integrations():
         params['account_config'] = account_config
 
     return render_template('account/integrations.html', **params)
-
-@blueprint.route('/notifications', methods=['GET'])
-@login_required
-def account_notifications():
-    params = public_params()
-    params['page_title'] = 'Notifications'
-    params['page'] = 'notifications'
-    params['js_includes'] = ["account/notifications.min.js"]
-    params['css_includes'] = [
-        "vendor/choices.9.0.1.min.css",
-        "account/scaffolding.css",
-        "account/main.css",
-        "account/notifications.css"
-    ]
-    params['account'] = current_user
-    account_config = AccountConfig(account_id=current_user.account_id)
-    if account_config.hydrate():
-        params['account_config'] = account_config
-
-    return render_template('account/notifications.html', **params)
 
 @blueprint.route('/setup/<step>', methods=['GET'])
 @login_required

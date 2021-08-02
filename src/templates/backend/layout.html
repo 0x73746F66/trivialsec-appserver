@@ -33,6 +33,8 @@
         {% if account.apikey %}
             data-api-key-id="{{ account.apikey.api_key }}"
         {% endif %}>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/micromustache.umd.8.0.3.min.js"></script>
     </head>  
     <body class="sidenav-closed">
     {% include 'backend/navbar.html' %}
