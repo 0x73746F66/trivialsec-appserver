@@ -106,8 +106,26 @@ def user_notifications():
         "user/notifications.css"
     ]
     params['account'] = current_user
-    account_config = AccountConfig(account_id=current_user.account_id)
-    if account_config.hydrate():
-        params['account_config'] = account_config
 
     return render_template('user/notifications.html', **params)
+
+@blueprint.route('/apikeys', methods=['GET'])
+@login_required
+def user_apikeys():
+    params = public_params()
+    params['page_title'] = 'Api Keys'
+    params['page'] = 'apikeys'
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "user/apikeys.min.js"
+    ]
+    params['css_includes'] = [
+        "vendor/choices.9.0.1.min.css",
+        "user/scaffolding.css",
+        "user/main.css",
+        "user/apikeys.css"
+    ]
+    params['account'] = current_user
+
+    return render_template('user/apikeys.html', **params)
