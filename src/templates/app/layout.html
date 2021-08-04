@@ -4,15 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Trivial Security{% if page_title %} - {{ page_title }}{% endif %}</title>
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/flags/flag-icon.min.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/vendor/choices.9.0.1.min.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/main.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/tables.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/meter.css" />
-        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/scaffolding.css" />
-        <script type=text/javascript src="{{ asset_url }}/js/vendor/timeago.min.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/site.js"></script>
-        <script type=text/javascript src="{{ asset_url }}/js/app/main.js"></script>
+        {% if css_includes %}
+        {% for css_include in css_includes %}
+        <link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/{{ css_include }}" />
+        {% endfor %}
+        {% endif %}
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url }}/images/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset_url }}/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset_url }}/images/favicon-16x16.png">
@@ -25,29 +21,46 @@
             data-recaptcha-site-key="{{ recaptcha_site_key }}"
             data-domain-name="{{ app_domain }}"
             data-domain-scheme="{{ app_scheme }}"
-            data-websocket-domain="{{ socket_domain }}"
-            data-websocket-scheme="{{ socket_scheme }}"
             data-api-domain="{{ api_domain }}"
             data-api-scheme="{{ api_scheme }}"
+            data-websocket-domain="{{ socket_domain }}"
+            data-websocket-scheme="{{ socket_scheme }}"
+        {% if account.account.socket_key %}
+            data-websocket-uuid="{{ account.account.socket_key }}"
+        {% endif %}
         {% if account %}
             data-account-id="{{ account.account_id }}"
+            data-account-email="{{ account.email }}"
+        {% endif %}
+        {% if account.u2f_keys %}
+            data-keys="{{ account.u2f_keys | to_json }}"
+        {% endif %}
+        {% if account.totp_mfa_id %}
+            data-mfa-id="{{ account.totp_mfa_id }}"
         {% endif %}
         {% if account.apikey %}
             data-api-key-id="{{ account.apikey.api_key }}"
         {% endif %}>
+        {% if account.is_authenticated %}
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/socket.io.4.1.3.min.js"></script>
+        {% endif %}
         <script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
         <script type=text/javascript src="{{ asset_url }}/js/vendor/micromustache.umd.8.0.3.min.js"></script>
-    </head>  
-    <body class="sidenav-closed">
+        <script type=text/javascript src="{{ asset_url }}/js/site.min.js"></script>
+        {% if js_includes %}
+        {% for js_include in js_includes %}
+        <script type=text/javascript src="{{ asset_url }}/js/{{ js_include }}"></script>
+        {% endfor %}
+        {% endif %}
+    </head>
+    <body class="sidenav-open">
         {% include 'app/navbar.html' %}
-        <section class="container">
-            {% block body %}{% endblock %}
-            {% if account.is_authenticated %}
-            <input name="socketio_token" type="hidden" value="{{ account.account.socket_key }}"/>
-            <script type=text/javascript src="{{ asset_url }}/js/vendor/socket.io.2.3.0.min.js"></script>
-            <script type=text/javascript src="{{ asset_url }}/js/vendor/choices.9.0.1.min.js"></script>
-            <script type=text/javascript src="{{ asset_url }}/js/vendor/ejs.3.0.2.min.js"></script>
-            {% endif %}
-        </section>
+        {% include 'toast.html' %}
+        {% include 'totp.html' %}
+
+        <div class="container">
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 </html>

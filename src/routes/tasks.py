@@ -12,5 +12,14 @@ def page_reports():
     params['page_title'] = 'My Tasks'
     params['page'] = 'tasks'
     params['account'] = current_user
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "app/tasks.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/tasks.css"
+    ]
 
     return render_template('app/tasks.html', **params)

@@ -11,36 +11,9 @@
         </a>
       </div>
       {% endif %}
-      <ul class="breadcrumbs">
-          <li><a href="/dashboard">Dashboard</a></li>
-          {% if page == 'scopes' and not project %}
-          <li>Scopes</li>
-          {% elif page == 'tasks' and not task %}
-          <li>Task List</li>
-          {% elif page == 'inventory' %}
-          <li>Inventory</li>
-          {% elif page == 'reports' %}
-          <li>Reports</li>
-          {% elif page == 'findings' and not finding %}
-          <li>Findings</li>
-          {% endif %}
-          {% if project %}
-          <li><a href="/scopes">Scopes</a></li>
-          <li>{{ project.name }}</li>
-          {% endif %}
-          {% if domain and domain.project %}
-          <li><a href="/scopes">Scopes</a></li>
-          <li><a href="/scope/{{ domain.project.project_id }}">{{ domain.project.name }}</a></li>
-          {% if domain %}
-          {% if domain.parent_domain_id %}
-          <li><a href="/domain/{{ domain.parent_domain_id }}">{{ domain.parent.name }}</a></li>
-          {% endif %}
-          <li>{{ domain.name }}</li>
-          {% endif %}
-          {% endif %}
-      </ul>
-    </nav>
-    <div class="toggle-sidenav"><i class="icofont-rounded-double-left"></i></div>
+      <div class="menu-closer toggle-sidenav">
+          <img class="toggler" src="{{ asset_url }}/images/icon-close-sidenav.svg" alt />
+      </div>
 </div>
 <div class="sidebar-column">
   <div class="navigation-bar">
@@ -48,8 +21,8 @@
       <img src="{{ asset_url }}/images/icon-64x64.png">
       <span>Trivial Security</span>
     </a>
-    <div class="menu-opener">
-      <i class="icofont-rounded-double-right"></i>
+    <div class="menu-opener toggle-sidenav">
+      <img class="toggler" src="{{ asset_url }}/images/icon-open-sidenav.svg" alt />
     </div>
     <nav role="navigation" class="navigation-menu">
       <ul>
@@ -64,20 +37,26 @@
         {% if account.is_authenticated %}
         <li class="{% if page == 'dashboard' %}active {% endif %}nav-dashboard">
           <a href="/dashboard">
-            <i class="icofont-dashboard"></i>
+            <img src="{{ asset_url }}/images/icon-dashboard-white.svg" alt />
             <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="{% if page == 'scopes' %}active {% endif %}nav-scopes">
-          <a href="/scopes">
-            <i class="icofont-bullseye"></i>
-            <span>Scopes</span>
           </a>
         </li>
         <li class="{% if page == 'tasks' %}active {% endif %}nav-tasks">
           <a href="/tasks">
-            <i class="icofont-tasks"></i>
+            <img src="{{ asset_url }}/images/icon-clipboard-white.svg" alt />
             <span>My Tasks</span>
+          </a>
+        </li>
+        <li class="{% if page == 'projects' %}active {% endif %}nav-projects">
+          <a href="/projects">
+            <img src="{{ asset_url }}/images/icon-add-project-white.svg" alt />
+            <span>Projects</span>
+          </a>
+        </li>
+        <li class="{% if page == 'reports' %}active {% endif %}nav-reports">
+          <a href="/reports">
+            <img src="{{ asset_url }}/images/icon-report-white.svg" alt />
+            <span>Reports</span>
           </a>
         </li>
         {# <li class="{% if page == 'repositories' %}active {% endif %}nav-repositories">
@@ -85,26 +64,20 @@
             <i class="icofont-code"></i>
             <span>Repositories</span>
           </a>
-        </li> #}
-        {# <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
+        </li>
+        <li class="{% if page == 'inventory' %}active {% endif %}nav-inventory">
           <a href="/inventory">
             <i class="icofont-clip-board"></i>
             <span>Inventory</span>
           </a>
-        </li> #}
-        {# <li class="{% if page == 'findings' %}active {% endif %}nav-findings">
+        </li>
+        <li class="{% if page == 'findings' %}active {% endif %}nav-findings">
           <a href="/findings">
             <i class="icofont-safety"></i>
             <span>Findings</span>
           </a>
-        </li> #}
-        <li class="{% if page == 'reports' %}active {% endif %}nav-reports">
-          <a href="/reports">
-            <i class="icofont-archive"></i>
-            <span>Reports</span>
-          </a>
         </li>
-        {# <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
+        <li class="{% if page == 'feed' %}active {% endif %}nav-feed">
           <a href="/feed">
             <i class="icofont-rss-feed"></i>
             <span>Feed</span>
@@ -118,29 +91,29 @@
   <div class="sidebar-footer">
     {% if account.is_authenticated %}
     <a data-toggle="tooltip" href="/support" title="Support">
-      <i class="icofont-question-circle"></i>
+        <img src="{{ asset_url }}/images/icon-support-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/account/preferences" title="Preferences">
-      <i class="icofont-options"></i>
+    <a data-toggle="tooltip" href="/documentation" title="Documentation">
+      <img src="{{ asset_url }}/images/icon-question-circle-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/notifications" title="Notifications">
-      <i class="icofont-notification"></i>
+    <a data-toggle="tooltip" href="/me/preferences" title="User Preferences">
+        <img src="{{ asset_url }}/images/icon-user-white.svg" alt />
     </a>
     <a id="app-logout-action" data-toggle="tooltip" href="/logout" title="Logout">
-      <i class="icofont-logout"></i>
+      <img src="{{ asset_url }}/images/icon-logout-white.svg" alt />
     </a>
     {% else %}
     <a data-toggle="tooltip" href="/support" title="Support">
-      <i class="icofont-question-circle"></i>
+      <img src="{{ asset_url }}/images/icon-support-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/contact" title="Contact">
-      <i class="icofont-headphone-alt-2"></i>
+    <a data-toggle="tooltip" href="/documentation" title="Documentation">
+      <img src="{{ asset_url }}/images/icon-question-circle-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/register" title="Register">
-      <i class="icofont-sign-out"></i>
+    <a data-toggle="tooltip" href="/me/preferences" title="User Preferences">
+        <img src="{{ asset_url }}/images/icon-user-white.svg" alt />
     </a>
-    <a data-toggle="tooltip" href="/login" title="Login">
-      <i class="icofont-sign-in"></i>
+    <a id="app-logout-action" data-toggle="tooltip" href="{{ site_url }}" title="Login">
+      <img src="{{ asset_url }}/images/icon-login-white.svg" alt />
     </a>
     {% endif %}
   </div>

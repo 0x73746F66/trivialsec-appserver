@@ -22,10 +22,13 @@
             data-recaptcha-site-key="{{ recaptcha_site_key }}"
             data-domain-name="{{ app_domain }}"
             data-domain-scheme="{{ app_scheme }}"
-            data-websocket-domain="{{ socket_domain }}"
-            data-websocket-scheme="{{ socket_scheme }}"
             data-api-domain="{{ api_domain }}"
             data-api-scheme="{{ api_scheme }}"
+            data-websocket-domain="{{ socket_domain }}"
+            data-websocket-scheme="{{ socket_scheme }}"
+        {% if account.account.socket_key %}
+            data-websocket-uuid="{{ account.account.socket_key }}"
+        {% endif %}
         {% if stripe_publishable_key %}
             data-stripe-publishable-key="{{ stripe_publishable_key }}"
         {% endif %}

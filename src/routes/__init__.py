@@ -89,6 +89,7 @@ def before_request():
 @app.after_request
 def after_request(response):
     if request.method in ["GET", "POST"]:
+        allowed_origin_socket = config.get_app().get("socket_url")
         allowed_origin_assets = config.get_app().get("asset_url")
         allowed_origin_api = config.get_app().get("api_url")
         allowed_origin_site = config.get_app().get("app_url")
@@ -102,7 +103,7 @@ def after_request(response):
                 "frame-src https://www.google.com https://recaptcha.google.com",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
-                f"connect-src 'self' {allowed_origin_api}",
+                f"connect-src 'self' {allowed_origin_api} {allowed_origin_socket}",
                 f"img-src 'self' data: {allowed_origin_assets}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
                 f"font-src https://fonts.gstatic.com {allowed_origin_assets} {allowed_origin_site}",

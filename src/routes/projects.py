@@ -12,9 +12,19 @@ blueprint = Blueprint('projects', __name__)
 @login_required
 def page_projects():
     params = public_params()
-    params['page_title'] = 'Scopes'
-    params['page'] = 'scopes'
+    params['page_title'] = 'Projects'
+    params['page'] = 'projects'
     params['account'] = current_user
+    params['js_includes'] = [
+        "websocket.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "app/projects.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/projects.css"
+    ]
 
     project_arr = []
     projects = Projects().find_by([

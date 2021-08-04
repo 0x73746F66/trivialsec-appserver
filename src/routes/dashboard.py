@@ -12,4 +12,13 @@ def page_dashboard():
     params['page_title'] = 'Dashboard'
     params['page'] = 'dashboard'
     params['account'] = current_user
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "app/dashboard.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/dashboard.css"
+    ]
     return render_template('app/dashboard.html', **params)

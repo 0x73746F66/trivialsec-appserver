@@ -16,8 +16,8 @@ blueprint = Blueprint('project', __name__)
 @login_required
 def page_project(project_id, page: int = 1):
     params = public_params()
-    params['page'] = 'scopes'
-    params['uri_page'] = 'scope'
+    params['page'] = 'projects'
+    params['uri_page'] = 'project'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
@@ -107,8 +107,8 @@ def page_project(project_id, page: int = 1):
 @login_required
 def page_project_jobs(project_id, page: int = 1):
     params = public_params()
-    params['page'] = 'scopes'
-    params['uri_page'] = 'scope'
+    params['page'] = 'projects'
+    params['uri_page'] = 'project'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
@@ -193,8 +193,8 @@ def page_project_jobs(project_id, page: int = 1):
 @login_required
 def page_project_reports(project_id, page: int = 1):
     params = public_params()
-    params['page'] = 'scopes'
-    params['uri_page'] = 'scope'
+    params['page'] = 'projects'
+    params['uri_page'] = 'project'
     params['account'] = current_user
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
