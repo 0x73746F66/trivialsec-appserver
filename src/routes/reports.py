@@ -12,5 +12,15 @@ def page_reports():
     params['page_title'] = 'Reports'
     params['page'] = 'reports'
     params['account'] = current_user
+    params['js_includes'] = [
+        "websocket.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "app/reports.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/reports.css"
+    ]
 
     return render_template('app/reports.html', **params)

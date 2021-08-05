@@ -1,14 +1,8 @@
 from flask import render_template, Blueprint, redirect, url_for
 from flask_login import current_user, login_required
 from trivialsec.models.account_config import AccountConfig
-from trivialsec.models.activity_log import ActivityLog, ActivityLogs
-from trivialsec.models.domain import Domains
-from trivialsec.models.member import Member, Members
-from trivialsec.models.role import Role, Roles
-from trivialsec.models.invitation import Invitations
-from trivialsec.models.plan import Plan
-from trivialsec.models.plan_invoice import PlanInvoices
-from trivialsec.helpers.config import config
+from trivialsec.models.activity_log import ActivityLogs
+from trivialsec.models.finding import Findings
 from templates import public_params
 
 
@@ -36,11 +30,11 @@ def user_preferences():
         "user/preferences.css"
     ]
     params['account'] = current_user
-    account_config = AccountConfig(account_id=current_user.account_id)
-    if account_config.hydrate():
-        params['account_config'] = account_config
-
     params['activity_logs'] = ActivityLogs().find_by([('member_id', current_user.member_id)], limit=20)
+    params['assigned_issues'] = Findings().count([('assignee_id', current_user.member_id), ('state', 'ACTIVE'), ('verification_state', 'UNKNOWN')])
+    params['watched_issues'] = len(Findings().get_watched_findings(member_id=current_user.member_id))
+    params['triage_issues'] = Findings().count([('assignee_id', current_user.member_id), ('state', 'ACTIVE'), ('verification_state', ['BENIGN_POSITIVE', 'FALSE_POSITIVE', 'TRUE_POSITIVE'])])
+    params['resolved_issues'] = Findings().count([('assignee_id', current_user.member_id), ('state', 'RESOLVED'), ('verification_state', ['BENIGN_POSITIVE', 'FALSE_POSITIVE', 'TRUE_POSITIVE'])])
 
     return render_template('user/preferences.html', **params)
 
@@ -129,3 +123,45 @@ def user_apikeys():
     params['account'] = current_user
 
     return render_template('user/apikeys.html', **params)
+
+@blueprint.route('/asssigned-issues', methods=['GET'])
+@login_required
+def page_asssigned_issues():
+    params = public_params()
+    params['page_title'] = 'My Issues'
+    params['page'] = 'triage'
+    params['account'] = current_user
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "app/triage-unknown.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/triage-unknown.css"
+    ]
+    findings = Findings().find_by([('assignee_id', current_user.member_id), ('state', 'ACTIVE'), ('verification_state', 'UNKNOWN')], limit=10).load_details()
+    params['triage_issues'] = sorted(findings, key=lambda k: k.severity_normalized, reverse=True) 
+
+    return render_template('user/asssigned-issues.html', **params)
+
+@blueprint.route('/watched-issues', methods=['GET'])
+@login_required
+def page_watched_issues():
+    params = public_params()
+    params['page_title'] = 'Watching'
+    params['page'] = 'triage'
+    params['account'] = current_user
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "app/triage-unknown.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/triage-unknown.css"
+    ]
+    findings = Findings().get_watched_findings(member_id=current_user.member_id, limit=10).load_details()
+    params['watched_issues'] = sorted(findings, key=lambda k: k.severity_normalized, reverse=True) 
+
+    return render_template('user/watched-issues.html', **params)

@@ -1,6 +1,11 @@
 {% extends 'app/layout.html' %} 
 {% block body %}
-<link rel= "stylesheet" type= "text/css" href="{{ asset_url }}/styles/app/project.css">
+<ul class="breadcrumbs">
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/projects">Projects</a></li>
+    <li>{{ page_title }}</li>
+</ul>
+
 {% if project.domains|length == 1 and not project.domains[0].http_last_checked %}
 <div class="alert alert-warning loading-project"><i class="icofont-warning"></i> Loading, please allow a moment to prepare the new project<i class="icofont-close"></i></div>
 {% endif %}
@@ -12,7 +17,7 @@
         <a href="/project/{{ project.project_id }}/reports">Reports</a>
     </div>
     <div class="project-body">
-        <section class="fields" id="domains-list"{% if not project.domains %} style="display: none;"{% endif %}>
+        <section class="fields{% if not project.domains %} hide{% endif %}" id="domains-list">
             <div class="fields-row">
                 <div class="input-column column">
                     <div class="domains-list">
@@ -120,6 +125,5 @@
         </section>
     </div>
 </div>
-<script type=text/javascript src="{{ asset_url }}/js/vendor/chart.min.js"></script>
-<script type=text/javascript src="{{ asset_url }}/js/app/project.js"></script>
+
 {% endblock %}

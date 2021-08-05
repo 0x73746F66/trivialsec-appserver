@@ -42,7 +42,7 @@ def create_app() -> Flask:
         from routes.finding import blueprint as finding_blueprint
         from routes.reports import blueprint as reports_blueprint
         from routes.feed import blueprint as feed_blueprint
-        from routes.tasks import blueprint as tasks_blueprint
+        from routes.triage import blueprint as triage_blueprint
         from routes.backend import blueprint as backend_blueprint
         from routes.user import blueprint as user_blueprint
         from routes.webhook import blueprint as webhook_blueprint
@@ -59,7 +59,7 @@ def create_app() -> Flask:
         app.register_blueprint(finding_blueprint, url_prefix='/finding')
         app.register_blueprint(reports_blueprint, url_prefix='/reports')
         app.register_blueprint(feed_blueprint, url_prefix='/feed')
-        app.register_blueprint(tasks_blueprint, url_prefix='/tasks')
+        app.register_blueprint(triage_blueprint, url_prefix='/triage')
         app.register_blueprint(dashboard_blueprint, url_prefix='/dashboard')
         app.register_blueprint(account_blueprint, url_prefix='/account')
         app.register_blueprint(backend_blueprint, url_prefix='/backend')

@@ -1,0 +1,41 @@
+{% extends 'app/layout.html' %} 
+{% block body %}
+<ul class="breadcrumbs">
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/triage">Triage</a></li>
+    <li>{{ page_title }}</li>
+</ul>
+
+<section class="fields">
+    <div class="fields-row">
+        <div class="input-column column">
+            <div class="issues-list">
+                <table>
+                    <caption>
+                        <h3>Issues</h3>
+                    </caption>
+                    <thead>
+                        <th scope="col">Title</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Workflow State</th>
+                        <th scope="col">Verification State</th>
+                        <th scope="col">Last Observed</th>
+                    </thead>
+                    <tbody>
+                    {% for finding in triage_issues %}
+                    <tr data-activity-id="{{ finding.finding_id }}">
+                        <td>{{ finding.detail_title }}</td>
+                        <td>{{ finding.state }}</td>
+                        <td>{{ finding.workflow_state }}</td>
+                        <td>{{ finding.verification_state }}</td>
+                        <td><time datetime="{{ finding.last_observed_at }}"></time></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

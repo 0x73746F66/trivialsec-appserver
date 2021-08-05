@@ -52,10 +52,10 @@
             <span>Watching</span>: {{ watched_issues | default('0') }} Issues
         </div>
         <div>
-            <span>Triage</span>: {{ closed_issues | default('0') }} Findings
+            <span>Triage</span>: {{ triage_issues | default('0') }} Findings
         </div>
         <div>
-            <span>Closed</span>: {{ closed_vulnerabilities | default('0') }} Vulnerabilities
+            <span>Resolved</span>: {{ resolved_issues | default('0') }} Vulnerabilities
         </div>
     </div>
 </section>

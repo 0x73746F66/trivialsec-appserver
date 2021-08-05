@@ -19,6 +19,17 @@ def page_project(project_id, page: int = 1):
     params['page'] = 'projects'
     params['uri_page'] = 'project'
     params['account'] = current_user
+    params['js_includes'] = [
+        "websocket.min.js",
+        "chart.min.js",
+        "utils.min.js",
+        "api.min.js",
+        "app/project.min.js"
+    ]
+    params['css_includes'] = [
+        "app/main.css",
+        "app/project.css"
+    ]
     project = Project(project_id=int(project_id))
     if not project.hydrate() or project.account_id != current_user.account_id:
         return abort(404)
@@ -100,6 +111,7 @@ def page_project(project_id, page: int = 1):
         project_dict['domains'].append(domain_dict)
 
     params['project'] = project_dict
+    params['page_title'] = project.name
 
     return render_template('app/project.html', **params)
 

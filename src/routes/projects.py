@@ -25,7 +25,6 @@ def page_projects():
         "app/main.css",
         "app/projects.css"
     ]
-
     project_arr = []
     projects = Projects().find_by([
         ('account_id', current_user.account_id),
@@ -71,13 +70,15 @@ def page_projects():
         })
     params['projects'] = project_arr
 
-    # for domain in Domains().find_by(
-    #     [('account_id', current_user.account_id)],
-    #     order_by=['created_at', 'DESC'],
-    #     limit=1000,
-    #     cache_key=f'page_projects/{current_user.account_id}'
-    #     ):
-    #     domain_names.append(domain.name)
+    for domain in Domains().find_by([
+            ('account_id', current_user.account_id),
+            ('deleted', 0),
+        ],
+        order_by=['created_at', 'DESC'],
+        limit=1000,
+        cache_key=f'domains/account_id/{current_user.account_id}'
+        ):
+        domain_names.append(domain.name)
 
     params['datalists'] = [{
         'name': 'projects',

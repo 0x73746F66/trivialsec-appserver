@@ -5,7 +5,18 @@
     <li><a href="/dashboard">Dashboard</a></li>
     <li>{{ page_title }}</li>
 </ul>
-
+<template id="tmpl-project-row">{% raw %}
+    <tr data-project-id="{{ project_id }}" class="highlight">
+        <td width="5px"><div class="border info"></div></td>
+        <td>{{ project_name }}</td>
+        <td title="Domains"><i class="icofont-globe"></i><div>1</div></td>
+        <td width="65px"><span title="High Severity Findings" class="label high">0</span></td>
+        <td width="65px"><span title="Medium Severity Findings" class="label medium">0</span></td>
+        <td width="65px"><span title="Low Severity Findings" class="label low">0</span></td>
+        <td width="65px"><span title="Informational Findings" class="label info">0</span></td>
+        <td width="100px"><span class="details">Details</span><i class="icofont-curved-right"></i></td>
+    </tr>{% endraw %}
+</template>
 <div class="projects-container">
     {% if not roles.is_readonly_member %}
     <div class="create_project_form">
@@ -16,21 +27,24 @@
     </div>
     {% endif %}
 
-    <section class="fields" id="projects-list"{% if not projects %} style="display: none;"{% endif %}>
+    <section class="fields" id="projects-list">
         <div class="fields-row">
             <div class="input-column column">
                 <div class="projects-list">
-                    <table cellspacing="0" cellpadding="0">
+                    <table class="checkboxes striped hover">
+                        <caption>
+                            {% if not projects %}No {% endif %}Projects
+                        </caption>
                         <thead>
-                            <th></th>
-                            <th>Project Name</th>
-                            <th>Domains</th>
-                            <th colspan="5">Findings</th>
+                            <th scope="col"></th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Domains</th>
+                            <th scope="col" colspan="5">Findings</th>
                         </thead>
                         <tbody>
                         {% for project in projects %}
                         <tr class="highlight" data-project-id="{{ project.project_id }}">
-                            <td width="5px">
+                            <td>
                                 <div class="border {% if project.findings_high > 0 %}high{% elif project.findings_med > 0 %}med{% elif project.findings_low > 0 %}low{% else %}info{% endif %}"></div>
                             </td>
                             <td>
@@ -50,9 +64,7 @@
             </div>
         </div>
     </section>
-    {% if not projects %}
-    <span id="no-projects">No Projects</span>
-    {% endif %}
+
 </div>
 
 {% endblock %}
