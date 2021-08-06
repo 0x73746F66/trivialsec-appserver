@@ -9,8 +9,9 @@ def public_params() -> dict:
     conf = {
         'app_version': config.app_version,
         'recaptcha_site_key': config.recaptcha_site_key,
+        'archive_bucket': config.aws.get('public_bucket'),
         'public_bucket': config.aws.get('public_bucket'),
-        'public_object_prefix': config.aws.get('public_object_prefix'),
+        'env_prefix': config.aws.get('env_prefix'),
         'stripe_publishable_key': config.stripe_publishable_key,
         'year': date.today().year,
         'roles': {

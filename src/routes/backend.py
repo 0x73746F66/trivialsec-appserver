@@ -60,8 +60,8 @@ def domains_backend(page: int = 1):
             'verification_hash': current_user.account.verification_hash,
             'verified': domain.verified,
             'deleted': domain.deleted,
-            'thumbnail_url': f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/{config.aws.get("public_object_prefix")}{domain.name}-render-320x240.jpeg' if domain.screenshot else None,
-            'screen_url': f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/{config.aws.get("public_object_prefix")}{domain.name}-full.jpeg' if domain.screenshot else None
+            'thumbnail_url': f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None,
+            'screen_url': f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
         })
 
     params['domains'] = domains_arr
