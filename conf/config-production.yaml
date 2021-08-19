@@ -18,8 +18,6 @@ app:
   backend:
     socket_scheme: "wss://"
     socket_domain: ws.trivialsec.com
-  cve:
-    url: http://search:5180
   nameservers:
     - 169.254.169.253
   nmap:
