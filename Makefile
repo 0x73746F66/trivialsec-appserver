@@ -87,7 +87,7 @@ pull: ## pulls latest image
 rebuild: down build-ci ## Brings down the stack and builds it anew
 
 debug:
-	docker-compose run appserver python3 -u -d -X dev uwsgi.py
+	docker-compose run appserver python3 -u -d -X dev run.py
 
 docker-login: ## login to docker cli using $DOCKER_USER and $DOCKER_PASSWORD
 	@echo $(shell [ -z "${DOCKER_PASSWORD}" ] && echo "DOCKER_PASSWORD missing" )

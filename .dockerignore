@@ -19,3 +19,4 @@ README.md
 assets/
 deploy/
 **/*.tgz
+python-libs/

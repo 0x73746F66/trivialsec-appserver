@@ -36,6 +36,15 @@ def confirmation_link(confirmation_hash :str):
     params = public_params()
     params['page'] = 'confirmation'
     params['page_title'] = 'Complete Registration'
+    params['js_includes'] = [
+        "utils.min.js",
+        "api.min.js",
+        "public/confirmation.min.js"
+    ]
+    params['css_includes'] = [
+        "public/main.css",
+        "public/confirmation.css"
+    ]
     params['confirmation_hash'] = confirmation_hash
     try:
         confirmation_url = f'/confirmation/{confirmation_hash}'
@@ -67,6 +76,11 @@ def confirmation_link(confirmation_hash :str):
                 ).persist()
 
         if member.member_id:
+            account = Account(account_id=member.account_id)
+            account.hydrate()
+            apikey = get_public_api_key(member.member_id)
+            setattr(member, 'apikey', apikey)
+            setattr(member, 'account', account)
             member.hydrate()
             params['account'] = member
             params['apikey'] = get_public_api_key(member.member_id)

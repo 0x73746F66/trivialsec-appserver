@@ -43,7 +43,6 @@ def create_app() -> Flask:
         from routes.reports import blueprint as reports_blueprint
         from routes.feed import blueprint as feed_blueprint
         from routes.triage import blueprint as triage_blueprint
-        from routes.backend import blueprint as backend_blueprint
         from routes.user import blueprint as user_blueprint
         from routes.webhook import blueprint as webhook_blueprint
         app.add_template_filter(to_json_filter, name='to_json')
@@ -62,7 +61,6 @@ def create_app() -> Flask:
         app.register_blueprint(triage_blueprint, url_prefix='/triage')
         app.register_blueprint(dashboard_blueprint, url_prefix='/dashboard')
         app.register_blueprint(account_blueprint, url_prefix='/account')
-        app.register_blueprint(backend_blueprint, url_prefix='/backend')
         app.register_blueprint(user_blueprint, url_prefix='/me')
         app.register_blueprint(webhook_blueprint, url_prefix='/webhook')
 
