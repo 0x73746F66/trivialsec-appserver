@@ -1,21 +1,15 @@
-<script type=text/javascript>
-    findings_data = [
-        {{ project.findings_info }},
-        {{ project.findings_low }},
-        {{ project.findings_med }},
-        {{ project.findings_high }}
-    ];
-    jobs_data = [
-        {{ project.jobs_completed }},
-        {{ project.jobs_total - project.jobs_completed }},
-        {{ project.jobs_total }}
-    ]
-</script>
+<input type="hidden" id="findings-info" value="{{ project.findings_info | default(0) }}"/>
+<input type="hidden" id="findings-low" value="{{ project.findings_low | default(0) }}"/>
+<input type="hidden" id="findings-medium" value="{{ project.findings_med | default(0) }}"/>
+<input type="hidden" id="findings-high" value="{{ project.findings_high | default(0) }}"/>
+<input type="hidden" id="jobs-completed" value="{{ project.jobs_completed | default(0) }}"/>
+<input type="hidden" id="jobs-pending" value="{{ project.jobs_total - project.jobs_completed | default(0) }}"/>
+<input type="hidden" id="jobs-total" value="{{ project.jobs_total | default(0) }}"/>
 <div class="banner-area">
     <div class="project-header">
         <div class="heading-area">
             <div class="heading">
-                <i class="icofont-bullseye"></i> {{ project.name }}
+                {{ project.name }}
             </div>
             <div class="sub-heading">Created <time datetime="{{ project.created_at }}"></time></div>
         </div>
@@ -36,7 +30,7 @@
 
         <div class="project-actions" data-project-id="{{ project.project_id }}">
             <div>
-                <span class="archive-project" title="Archive Project"><i class="icofont-archive"></i></span>
+                <span class="archive-project" title="Archive Project"><img src="{{ asset_url }}/images/icon-archive-white.svg" alt /></span>
             </div>
         </div>
     </div>

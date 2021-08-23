@@ -20,8 +20,9 @@ def page_project(project_id, page: int = 1):
     params['uri_page'] = 'project'
     params['account'] = current_user
     params['js_includes'] = [
+        "vendor/timeago.min.js",
+        "vendor/chart.3.5.1.min.js",
         "websocket.min.js",
-        "chart.min.js",
         "utils.min.js",
         "api.min.js",
         "app/project.min.js"
@@ -99,7 +100,7 @@ def page_project(project_id, page: int = 1):
             domain_dict[col] = getattr(domain, col)
         domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
         domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-        if hasattr(domain, 'http_last_checked'):
+        if domain_dict.get('http_last_checked'):
             http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
             for domain_stat in domain.stats:
                 created_at = datetime.fromisoformat(domain_stat.created_at)
@@ -111,7 +112,9 @@ def page_project(project_id, page: int = 1):
         project_dict['domains'].append(domain_dict)
 
     params['project'] = project_dict
-    params['page_title'] = project.name
+    params['page_title'] = project.name    
+    if len(params['project']['domains']) == 1 and params['project']['domains'][0].get('http_last_checked') is None:
+        params['warning'] = 'Loading, please allow a moment to prepare the new project'
 
     return render_template('app/project.html', **params)
 

@@ -7,14 +7,14 @@
 </ul>
 <template id="tmpl-project-row">{% raw %}
     <tr data-project-id="{{ project_id }}" class="highlight">
-        <td width="5px"><div class="border info"></div></td>
+        <td><div class="border info"></div></td>
         <td>{{ project_name }}</td>
         <td title="Domains"><i class="icofont-globe"></i><div>1</div></td>
-        <td width="65px"><span title="High Severity Findings" class="label high">0</span></td>
-        <td width="65px"><span title="Medium Severity Findings" class="label medium">0</span></td>
-        <td width="65px"><span title="Low Severity Findings" class="label low">0</span></td>
-        <td width="65px"><span title="Informational Findings" class="label info">0</span></td>
-        <td width="100px"><span class="details">Details</span><i class="icofont-curved-right"></i></td>
+        <td><span title="High Severity Findings" class="label high">0</span></td>
+        <td><span title="Medium Severity Findings" class="label medium">0</span></td>
+        <td><span title="Low Severity Findings" class="label low">0</span></td>
+        <td><span title="Informational Findings" class="label info">0</span></td>
+        <td><span class="details">Details</span><img class="caret" src="{% endraw %}{{ asset_url }}{% raw %}/images/icon-caret-right.svg" alt /></td>
     </tr>{% endraw %}
 </template>
 <div class="projects-container">
@@ -23,7 +23,7 @@
         <input type="hidden" id="project-tracking-id">
         <input autocomplete="off" type="text" name="project_name" id="project_name_input" placeholder="Enter project name" tabindex="1" list="projects">
         <input autocomplete="off" type="text" name="domain_name" id="domain_name_input" placeholder="Enter domain name" tabindex="2" list="domains">
-        <button id="create_project_input" type="button" tabindex="3"><i class="icofont-ui-add"></i> New project</button>
+        <button id="create_project_input" type="button" tabindex="3"> New project</button>
     </div>
     {% endif %}
 
@@ -55,7 +55,7 @@
                             <td width="65px"><span title="Medium Severity Findings" class="label medium">{{ project.findings_med }}</span></td>
                             <td width="65px"><span title="Low Severity Findings" class="label low">{{ project.findings_low }}</span></td>
                             <td width="65px"><span title="Informational Findings" class="label info">{{ project.findings_info }}</span></td>
-                            <td width="100px"><span class="details">Details</span><i class="icofont-curved-right"></i></td>
+                            <td width="100px"><span class="details">Details</span><img class="caret" src="{{ asset_url }}/images/icon-caret-right.svg" alt /></td>
                         </tr>
                         {% endfor %}
                         </tbody>

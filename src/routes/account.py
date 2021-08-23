@@ -148,7 +148,7 @@ def account_subscription():
     params['page'] = 'subscription'
     params['js_includes'] = [
         "vendor/timeago.min.js",
-        "vendor/chart.min.js",
+        "vendor/chart.3.5.1.min.js",
         "utils.min.js",
         "api.min.js",
         "account/subscription.min.js",

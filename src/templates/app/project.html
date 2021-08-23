@@ -5,10 +5,6 @@
     <li><a href="/projects">Projects</a></li>
     <li>{{ page_title }}</li>
 </ul>
-
-{% if project.domains|length == 1 and not project.domains[0].http_last_checked %}
-<div class="alert alert-warning loading-project"><i class="icofont-warning"></i> Loading, please allow a moment to prepare the new project<i class="icofont-close"></i></div>
-{% endif %}
 {% include 'app/project-banner.html' %}
 <div class="project-container">
     <div class="container-tabs">

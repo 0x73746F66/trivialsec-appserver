@@ -7,7 +7,6 @@ from trivialsec.helpers.config import config
 from gunicorn.glogging import logging
 from pyotp import TOTP
 import webauthn
-
 from trivialsec.helpers.sendgrid import send_email, upsert_contact
 from trivialsec.decorators import control_timing_attacks, require_recaptcha, prepared_json
 from trivialsec.models.apikey import ApiKey
@@ -78,10 +77,10 @@ def confirmation_link(confirmation_hash :str):
         if member.member_id:
             account = Account(account_id=member.account_id)
             account.hydrate()
+            member.hydrate()
             apikey = get_public_api_key(member.member_id)
             setattr(member, 'apikey', apikey)
             setattr(member, 'account', account)
-            member.hydrate()
             params['account'] = member
             params['apikey'] = get_public_api_key(member.member_id)
             return render_template('public/confirmation.html', **params)
@@ -127,6 +126,7 @@ def login(auth_hash :str):
         error401 = messages.ERR_ACCESS_DENIED
         member = Member(confirmation_url=f'/login/{auth_hash}')
         if not member.exists(['confirmation_url']):
+            logger.debug('missing auth_hash in member.confirmation_url')
             return redirect(f"{www}?{urlencode({'error': error401})}", code=401)
 
         member.hydrate()
@@ -139,17 +139,20 @@ def login(auth_hash :str):
             logger.debug(f'unverified user {member.member_id}')
             return redirect(f"{www}?{urlencode({'error': error401})}", code=401)
 
-        u2f_keys = MemberMfas()
+        u2f_keys = []
         index = 0
-        for u2f_key in u2f_keys.find_by([('member_id', member.member_id), ('type', 'webauthn'), ('active', True)], limit=1000):
+        for u2f_key in MemberMfas().find_by([('member_id', member.member_id), ('type', 'webauthn'), ('active', True)], limit=1000):
             index += 1
-            params['u2f_keys'].append({
+            u2f_keys.append({
                 'name': u2f_key.name or f'Key {index}',
                 'webauthn_id': u2f_key.webauthn_id,
                 'registered': u2f_key.created_at.isoformat()
             })
+        apikey = get_public_api_key(member.member_id)
+        setattr(member, 'apikey', apikey)
+        setattr(member, 'u2f_keys', u2f_keys)
+        setattr(member, 'account', account)
         params['account'] = member
-        params['apikey'] = get_public_api_key(member.member_id)
 
     except Exception as err:
         logger.exception(err)

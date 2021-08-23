@@ -93,9 +93,6 @@ def after_request(response):
         allowed_origin_assets = config.get_app().get("asset_url")
         allowed_origin_api = config.get_app().get("api_url")
         allowed_origin_site = config.get_app().get("app_url")
-        if hasattr(current_user, 'apikey'):
-            allowed_origin_site = current_user.apikey.allowed_origin
-
         response.headers.add('Access-Control-Allow-Origin', allowed_origin_site)
         if request.method == "GET":
             response.headers.add('Content-Security-Policy', '; '.join([
@@ -103,6 +100,7 @@ def after_request(response):
                 "frame-src https://www.google.com https://recaptcha.google.com",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
+                "style-src-attr 'sha256-pILX+5FGCpLRHvNBgtABIdSMmytrYudGxJBUYXY1t0s=' 'unsafe-hashes'",
                 f"connect-src 'self' {allowed_origin_api} {allowed_origin_socket}",
                 f"img-src 'self' data: {allowed_origin_assets}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",
