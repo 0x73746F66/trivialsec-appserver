@@ -18,6 +18,9 @@
                 <div class="input-column column">
                     <div class="domains-list">
                         <table>
+                            {% if not project.domains %}
+                            <caption>No Domains</caption>
+                            {% endif %}
                             <thead>
                             <tr>
                                 <th scope="col"></th>
@@ -37,7 +40,7 @@
                                     <span class="pip"></span>
                                     {% endif %}
                                 </td>
-                                <td class="click-through"><a href="/domain/{{ domain.domain_id }}"><span class="icofont-globe"></span> {{ domain.name }}</a></td>
+                                <td class="click-through"><a href="/domain/{{ domain.domain_id }}">{{ domain.name }}</a></td>
                                 <td class="click-through">
                                 {% if domain.html_title %}
                                 {{ domain.html_title.value }}
@@ -45,42 +48,42 @@
                                 </td>
                                 {% if domain.dns_registered %}
                                     {% if domain.dns_registered.value == '1' %}
-                                <td class="click-through" title="Domain Name Registered"><img class="icon" src="{{ asset_url }}/images/icon-www.svg" alt /></td>
+                                <td class="click-through td-small" title="Domain Name Registered"><img class="icon" src="{{ asset_url }}/images/icon-www.svg" alt /></td>
                                     {% else %}
-                                <td class="click-through" title="Domain Name Not Registered{% if domain.dns_answer.value %} {{ domain.dns_answer.value }}{% endif %}"><img class="icon" src="{{ asset_url }}/images/icon-www-red.svg" alt /></td>
+                                <td class="click-through td-small" title="Domain Name Not Registered{% if domain.dns_answer.value %} {{ domain.dns_answer.value }}{% endif %}"><img class="icon" src="{{ asset_url }}/images/icon-www-red.svg" alt /></td>
                                     {% endif %}
                                 {% elif domain.dns_answer %}
-                                <td class="click-through" title="{{ domain.dns_answer.value }}"><img class="icon" src="{{ asset_url }}/images/icon-dns.svg" alt /></td>
+                                <td class="click-through td-small" title="{{ domain.dns_answer.value }}"><img class="icon" src="{{ asset_url }}/images/icon-dns.svg" alt /></td>
                                 {% else %}
-                                <td class="click-through" title="DNS Unknown"><img class="icon" src="{{ asset_url }}/images/icon-dns-red.svg" alt /></td>
+                                <td class="click-through td-small" title="DNS Unknown"><img class="icon" src="{{ asset_url }}/images/icon-dns-red.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.app_verified %}
                                     {% if domain.app_verified.value == '1' %}
-                                <td class="click-through" title="Verified"><img class="icon" src="{{ asset_url }}/images/icon-verified.svg" alt /></td>
+                                <td class="click-through td-small" title="Verified"><img class="icon" src="{{ asset_url }}/images/icon-verified.svg" alt /></td>
                                     {% else %}
-                                <td class="click-through" title="Unverified - Please complete account DNS verification"><img class="icon" src="{{ asset_url }}/images/icon-unverified.svg" alt /></td>
+                                <td class="click-through td-small" title="Unverified - Please complete account DNS verification"><img class="icon" src="{{ asset_url }}/images/icon-unverified.svg" alt /></td>
                                     {% endif %}
                                 {% else %}
-                                <td class="click-through" title="Verification Unknown"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Verification Unknown"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.http_protocol and domain.http_protocol.value in ['TLSv1.2', 'TLSv1.3'] %}
-                                <td class="click-through" title="{{ domain.http_protocol.value }}"><img class="icon" src="{{ asset_url }}/images/icon-tls.svg" alt /></td>
+                                <td class="click-through td-small" title="{{ domain.http_protocol.value }}"><img class="icon" src="{{ asset_url }}/images/icon-tls.svg" alt /></td>
                                 {% elif domain.http_protocol %}
-                                <td class="click-through" title="Insecure Connection"><img class="icon" src="{{ asset_url }}/images/icon-not-secured.svg" alt /></td>
+                                <td class="click-through td-small" title="Insecure Connection"><img class="icon" src="{{ asset_url }}/images/icon-not-secured.svg" alt /></td>
                                 {% else %}
-                                <td class="click-through" title="Connection Tests - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Connection Tests - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.http_certificate_expiry %}
                                 {% if 'valid' in  domain.http_certificate_expiry.data|lower %}
-                                <td class="click-through" title="{{ domain.http_certificate_expiry.data }}"><img class="icon" src="{{ asset_url }}/images/icon-certificate.svg" alt /></td>
+                                <td class="click-through td-small" title="{{ domain.http_certificate_expiry.data }}"><img class="icon" src="{{ asset_url }}/images/icon-certificate.svg" alt /></td>
                                 {% else %}
-                                <td class="click-through" title="{{ domain.http_certificate_expiry.data }}"><img class="icon" src="{{ asset_url }}/images/icon-lock-error.svg" alt /></td>
+                                <td class="click-through td-small" title="{{ domain.http_certificate_expiry.data }}"><img class="icon" src="{{ asset_url }}/images/icon-lock-error.svg" alt /></td>
                                 {% endif %}
                                 {% else %}
-                                <td class="click-through" title="TLS Tests - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="TLS Tests - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.phishtank %}
-                                <td class="click-through" title="Fraud Check: {{ domain.phishtank.value }}">
+                                <td class="click-through td-small" title="Fraud Check: {{ domain.phishtank.value }}">
                                 {% if domain.phishtank.value == 'Unclassified' %}
                                 <img class="icon" src="{{ asset_url }}/images/icon-public-safety.svg" alt />
                                 {% else %}
@@ -88,10 +91,10 @@
                                 {% endif %}
                                 </td>
                                 {% else %}
-                                <td class="click-through" title="Fraud Checks - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Fraud Checks - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.safe_browsing %}
-                                <td class="click-through" title="Google Safe Browsing: {{ domain.safe_browsing.value }}">
+                                <td class="click-through td-small" title="Google Safe Browsing: {{ domain.safe_browsing.value }}">
                                 {% if domain.safe_browsing.value == 'Safe' %}
                                 <img class="icon" src="{{ asset_url }}/images/icon-google-safe-browsing.svg" alt />
                                 {% else %}
@@ -99,10 +102,10 @@
                                 {% endif %}
                                 </td>
                                 {% else %}
-                                <td class="click-through" title="Safe Browsing Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Safe Browsing Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.honey_score %}
-                                <td class="click-through" title="Honeypot Score {{ domain.honey_score.value }}">
+                                <td class="click-through td-small" title="Honeypot Score {{ domain.honey_score.value }}">
                                 {% if domain.honey_score.value >= '0.5' %}
                                 <img class="icon" src="{{ asset_url }}/images/icon-honeypot-red.svg" alt />
                                 {% else %}
@@ -110,10 +113,10 @@
                                 {% endif %}
                                 </td>
                                 {% else %}
-                                <td class="click-through" title="Honey Score Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Honey Score Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 {% if domain.threat_type %}
-                                <td class="click-through" title="Threat Score for {{ domain.threat_type.value }} {{ domain.threat_score.value }}/255">
+                                <td class="click-through td-small" title="Threat Score for {{ domain.threat_type.value }} {{ domain.threat_score.value }}/255">
                                 {% if domain.threat_score.value|int > 15 %}
                                 <img class="icon" src="{{ asset_url }}/images/icon-spy.svg" alt />
                                 {% elif domain.threat_score.value|int > 100 %}
@@ -123,7 +126,7 @@
                                 {% endif %}
                                 </td>
                                 {% else %}
-                                <td class="click-through" title="Threat Score Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
+                                <td class="click-through td-small" title="Threat Score Check - No Data"><img class="icon" src="{{ asset_url }}/images/icon-not-visible.svg" alt /></td>
                                 {% endif %}
                                 <td class="click-through" title="Last Checked">
                                 {% if domain.http_last_checked %}
@@ -131,16 +134,16 @@
                                 {% endif %}
                                 </td>
                                 {% if domain.enabled %}
-                                <td class="toggle-monitoring" data-monitoring="on">
+                                <td class="toggle-monitoring td-small" data-monitoring="on">
                                 <img class="icon" src="{{ asset_url }}/images/icon-toggle-on.svg" alt title="Disable domain monitoring"/>
                                 </td>
                                 {% else %}
-                                <td class="toggle-monitoring" data-monitoring="off">
+                                <td class="toggle-monitoring td-small" data-monitoring="off">
                                 <img class="icon" src="{{ asset_url }}/images/icon-toggle-off.svg" alt title="Enable domain monitoring"/>
                                 </td>
                                 {% endif %}
-                                <td class="delete-domain">
-                                <div id="delete-domain" title="Delete domain record"><img class="icon" src="{{ asset_url }}/images/icon-archive.svg" alt /></div>
+                                <td class="delete-domain td-small">
+                                <div id="delete-domain" title="Delete domain record"><img class="icon" src="{{ asset_url }}/images/icon-trash-red.svg" alt /></div>
                                 </td>
                                 <td class="click-through"><img class="caret" src="{{ asset_url }}/images/icon-caret-right.svg" alt /></td>
                             </tr>
