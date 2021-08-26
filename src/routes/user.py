@@ -20,8 +20,6 @@ def user_preferences():
     params['page_title'] = 'Preferences'
     params['page'] = 'preferences'
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "user/preferences.min.js"
     ]
     params['css_includes'] = [
@@ -46,8 +44,6 @@ def user_security():
     params['page'] = 'security'
     params['js_includes'] = [
         "vendor/timeago.min.js",
-        "utils.min.js",
-        "api.min.js",
         "user/security.min.js"
     ]
     params['css_includes'] = [
@@ -69,8 +65,6 @@ def user_add_mfa():
     params['page'] = 'security'
     params['page_title'] = 'Add MFA'
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "user/add-mfa.min.js"
     ]
     params['css_includes'] = [
@@ -89,8 +83,6 @@ def user_notifications():
     params['page_title'] = 'Notifications'
     params['page'] = 'notifications'
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "user/notifications.min.js"
     ]
     params['css_includes'] = [
@@ -110,8 +102,6 @@ def user_apikeys():
     params['page_title'] = 'Api Keys'
     params['page'] = 'apikeys'
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "user/apikeys.min.js"
     ]
     params['css_includes'] = [
@@ -132,8 +122,6 @@ def page_asssigned_issues():
     params['page'] = 'triage'
     params['account'] = current_user
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "app/triage-unknown.min.js"
     ]
     params['css_includes'] = [
@@ -153,8 +141,6 @@ def page_watched_issues():
     params['page'] = 'triage'
     params['account'] = current_user
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "app/triage-unknown.min.js"
     ]
     params['css_includes'] = [

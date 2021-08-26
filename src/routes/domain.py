@@ -3,6 +3,7 @@ from flask import render_template, Blueprint, abort
 from flask_login import current_user, login_required
 from trivialsec.helpers.config import config
 from trivialsec.models.domain import Domains, Domain
+from trivialsec.models.domain_stat import DomainStat
 from trivialsec.models.finding import Findings
 from trivialsec.models.dns_record import DnsRecords
 from trivialsec.models.known_ip import KnownIps
@@ -46,15 +47,20 @@ def page_domain(domain_id):
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
     domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-    if hasattr(domain, 'http_last_checked'):
-        http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+    for domain_stat in domain.stats:
+        if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+            domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+            break
+    if domain_dict.get('http_last_checked'):
+        http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
         for domain_stat in domain.stats:
             created_at = datetime.fromisoformat(domain_stat.created_at)
-            if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+            if created_at == http_last_checked:
                 domain_dict[domain_stat.domain_stat] = {
                     'value': domain_stat.domain_value,
                     'data': domain_stat.domain_data,
                 }
+
     domain_dict['verification_hash'] = current_user.account.verification_hash
     project = Project(project_id=domain.project_id)
     project.hydrate()
@@ -106,11 +112,15 @@ def page_domain_jobs(domain_id):
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
     domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-    if hasattr(domain, 'http_last_checked'):
-        http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+    for domain_stat in domain.stats:
+        if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+            domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+            break
+    if domain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+        http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
         for domain_stat in domain.stats:
             created_at = datetime.fromisoformat(domain_stat.created_at)
-            if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+            if created_at == http_last_checked:
                 domain_dict[domain_stat.domain_stat] = {
                     'value': domain_stat.domain_value,
                     'data': domain_stat.domain_data,
@@ -159,11 +169,16 @@ def page_domain_findings(domain_id):
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
     domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-    if hasattr(domain, 'http_last_checked'):
-        http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+    for domain_stat in domain.stats:
+        if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+            domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+            break
+
+    if domain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+        http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
         for domain_stat in domain.stats:
             created_at = datetime.fromisoformat(domain_stat.created_at)
-            if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+            if created_at == http_last_checked:
                 domain_dict[domain_stat.domain_stat] = {
                     'value': domain_stat.domain_value,
                     'data': domain_stat.domain_data,
@@ -215,11 +230,15 @@ def page_domain_inventory(domain_id):
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
     domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-    if hasattr(domain, 'http_last_checked'):
-        http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+    for domain_stat in domain.stats:
+        if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+            domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+            break
+    if domain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+        http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
         for domain_stat in domain.stats:
             created_at = datetime.fromisoformat(domain_stat.created_at)
-            if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+            if created_at == http_last_checked:
                 domain_dict[domain_stat.domain_stat] = {
                     'value': domain_stat.domain_value,
                     'data': domain_stat.domain_data,
@@ -280,11 +299,15 @@ def page_domain_subdomains(domain_id, page=1):
         domain_dict[col] = getattr(domain, col)
     domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
     domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-    if hasattr(domain, 'http_last_checked'):
-        http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+    for domain_stat in domain.stats:
+        if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+            domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+            break
+    if domain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+        http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
         for domain_stat in domain.stats:
             created_at = datetime.fromisoformat(domain_stat.created_at)
-            if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+            if created_at == http_last_checked:
                 domain_dict[domain_stat.domain_stat] = {
                     'value': domain_stat.domain_value,
                     'data': domain_stat.domain_data,
@@ -321,11 +344,15 @@ def page_domain_subdomains(domain_id, page=1):
             subdomain_dict[col] = getattr(subdomain, col)
         subdomain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{subdomain.name}-render-320x240.jpeg' if subdomain.screenshot else None
         subdomain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{subdomain.name}-full.jpeg' if subdomain.screenshot else None
-        if hasattr(subdomain, 'http_last_checked'):
-            http_last_checked = datetime.fromisoformat(getattr(subdomain, 'http_last_checked')).replace(microsecond=0)
+        for domain_stat in subdomain.stats:
+            if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+                subdomain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+                break
+        if subdomain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+            http_last_checked = datetime.fromisoformat(subdomain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
             for domain_stat in subdomain.stats:
                 created_at = datetime.fromisoformat(domain_stat.created_at)
-                if created_at == http_last_checked or domain_stat.domain_value == getattr(subdomain, 'http_last_checked'):
+                if created_at == http_last_checked:
                     subdomain_dict[domain_stat.domain_stat] = {
                         'value': domain_stat.domain_value,
                         'data': domain_stat.domain_data,

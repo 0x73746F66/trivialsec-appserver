@@ -32,9 +32,11 @@
             <div class="input-column column">
                 <div class="projects-list">
                     <table class="checkboxes striped hover">
+                        {% if not projects %}
                         <caption>
-                            {% if not projects %}No {% endif %}Projects
+                            No Projects
                         </caption>
+                        {% endif %}
                         <thead>
                             <th scope="col"></th>
                             <th scope="col">Project Name</th>
@@ -43,19 +45,19 @@
                         </thead>
                         <tbody>
                         {% for project in projects %}
-                        <tr class="highlight" data-project-id="{{ project.project_id }}">
+                        <tr class="highlight" data-project-id="{{ project.canonical_id }}">
                             <td>
                                 <div class="border {% if project.findings_high > 0 %}high{% elif project.findings_med > 0 %}med{% elif project.findings_low > 0 %}low{% else %}info{% endif %}"></div>
                             </td>
                             <td>
-                                {{ project.name }}
+                                <a href="/project/{{ project.canonical_id }}">{{ project.name }}</a>
                             </td>
-                            <td title="Domains"><i class="icofont-globe"></i><div>{{ project.domains }}</div></td>
-                            <td width="65px"><span title="High Severity Findings" class="label high">{{ project.findings_high }}</span></td>
-                            <td width="65px"><span title="Medium Severity Findings" class="label medium">{{ project.findings_med }}</span></td>
-                            <td width="65px"><span title="Low Severity Findings" class="label low">{{ project.findings_low }}</span></td>
-                            <td width="65px"><span title="Informational Findings" class="label info">{{ project.findings_info }}</span></td>
-                            <td width="100px"><span class="details">Details</span><img class="caret" src="{{ asset_url }}/images/icon-caret-right.svg" alt /></td>
+                            <td title="Domains"><div>{{ project.domains }}</div></td>
+                            <td><span title="High Severity Findings" class="label high">{{ project.findings_high }}</span></td>
+                            <td><span title="Medium Severity Findings" class="label medium">{{ project.findings_med }}</span></td>
+                            <td><span title="Low Severity Findings" class="label low">{{ project.findings_low }}</span></td>
+                            <td><span title="Informational Findings" class="label info">{{ project.findings_info }}</span></td>
+                            <td><span class="details">Details</span><img class="caret" src="{{ asset_url }}/images/icon-caret-right.svg" alt /></td>
                         </tr>
                         {% endfor %}
                         </tbody>

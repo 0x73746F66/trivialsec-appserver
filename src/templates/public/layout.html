@@ -22,6 +22,8 @@
             data-recaptcha-site-key="{{ recaptcha_site_key }}"
             data-domain-name="{{ app_domain }}"
             data-domain-scheme="{{ app_scheme }}"
+            data-static-domain="{{ asset_domain }}"
+            data-static-scheme="{{ asset_scheme }}"
             data-api-domain="{{ api_domain }}"
             data-api-scheme="{{ api_scheme }}"
             data-websocket-domain="{{ socket_domain }}"
@@ -45,10 +47,18 @@
         {% if account.apikey %}
             data-api-key-id="{{ account.apikey.api_key }}"
         {% endif %}>
+        {% if account.is_authenticated %}
+        <script type=text/javascript src="{{ asset_url }}/js/vendor/socket.io.4.1.3.min.js"></script>
+        {% endif %}
         <script type=text/javascript src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
         <script type=text/javascript src="{{ asset_url }}/js/vendor/cbor.0.1.0.min.js"></script>
         <script type=text/javascript src="{{ asset_url }}/js/vendor/micromustache.umd.8.0.3.min.js"></script>
         <script type=text/javascript src="{{ asset_url }}/js/site.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/utils.min.js"></script>
+        <script type=text/javascript src="{{ asset_url }}/js/api.min.js"></script>
+        {% if account.is_authenticated %}
+        <script type=text/javascript src="{{ asset_url }}/js/websocket.min.js"></script>
+        {% endif %}
         {% if js_includes %}
         {% for js_include in js_includes %}
         <script type=text/javascript src="{{ asset_url }}/js/{{ js_include }}"></script>

@@ -3,6 +3,7 @@ from flask import render_template, Blueprint, abort
 from flask_login import current_user, login_required
 from trivialsec.helpers.config import config
 from trivialsec.models.domain import Domains
+from trivialsec.models.domain_stat import DomainStat
 from trivialsec.models.job_run import JobRuns
 from trivialsec.models.project import Project
 from trivialsec.models.finding import Findings
@@ -11,10 +12,10 @@ from templates import public_params
 
 blueprint = Blueprint('project', __name__)
 
-@blueprint.route('/<project_id>/domains/<page>', methods=['GET'])
-@blueprint.route('/<project_id>', methods=['GET'])
+@blueprint.route('/<canonical_id>/domains/<page>', methods=['GET'])
+@blueprint.route('/<canonical_id>', methods=['GET'])
 @login_required
-def page_project(project_id, page: int = 1):
+def page_project(canonical_id :str, page: int = 1):
     params = public_params()
     params['page'] = 'projects'
     params['uri_page'] = 'project'
@@ -22,17 +23,14 @@ def page_project(project_id, page: int = 1):
     params['js_includes'] = [
         "vendor/timeago.min.js",
         "vendor/chart.3.5.1.min.js",
-        "websocket.min.js",
-        "utils.min.js",
-        "api.min.js",
         "app/project.min.js"
     ]
     params['css_includes'] = [
         "app/main.css",
         "app/project.css"
     ]
-    project = Project(project_id=int(project_id))
-    if not project.hydrate() or project.account_id != current_user.account_id:
+    project = Project(canonical_id=canonical_id)
+    if not project.hydrate('canonical_id') or project.account_id != current_user.account_id:
         return abort(404)
 
     params['page_title'] = project.name
@@ -51,7 +49,7 @@ def page_project(project_id, page: int = 1):
         page_size=page_size,
         page_num=page_num
     )
-    params['pagination']['page_id'] = project_id
+    params['pagination']['page_id'] = project.canonical_id
     params['pagination']['sub_page'] = 'domains'
 
     project_dict = {'domains': []}
@@ -100,11 +98,15 @@ def page_project(project_id, page: int = 1):
             domain_dict[col] = getattr(domain, col)
         domain_dict['thumbnail_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-render-320x240.jpeg' if domain.screenshot else None
         domain_dict['screen_url'] = f'https://{config.aws.get("public_bucket")}.s3-{config.aws.get("region_name")}.amazonaws.com/captures/{domain.name}-full.jpeg' if domain.screenshot else None
-        if domain_dict.get('http_last_checked'):
-            http_last_checked = datetime.fromisoformat(getattr(domain, 'http_last_checked')).replace(microsecond=0)
+        for domain_stat in domain.stats:
+            if domain_stat.domain_stat == DomainStat.HTTP_LAST_CHECKED:
+                domain_dict[DomainStat.HTTP_LAST_CHECKED] = domain_stat.domain_value
+                break
+        if domain_dict.get(DomainStat.HTTP_LAST_CHECKED):
+            http_last_checked = datetime.fromisoformat(domain_dict[DomainStat.HTTP_LAST_CHECKED]).replace(microsecond=0)
             for domain_stat in domain.stats:
                 created_at = datetime.fromisoformat(domain_stat.created_at)
-                if created_at == http_last_checked or domain_stat.domain_value == getattr(domain, 'http_last_checked'):
+                if created_at == http_last_checked:
                     domain_dict[domain_stat.domain_stat] = {
                         'value': domain_stat.domain_value,
                         'data': domain_stat.domain_data,
@@ -112,20 +114,25 @@ def page_project(project_id, page: int = 1):
         project_dict['domains'].append(domain_dict)
 
     params['project'] = project_dict
-    params['page_title'] = project.name    
+    params['page_title'] = project.name
+    params['toasts'] = []
     if len(params['project']['domains']) == 1 and params['project']['domains'][0].get('http_last_checked') is None:
-        params['warning'] = 'Loading, please allow a moment to prepare the new project'
+        params['toasts'].append({
+            'type': 'warning',
+            'heading': 'Loading',
+            'message': 'Please allow a moment to prepare the new project',
+        })
 
     return render_template('app/project.html', **params)
 
-@blueprint.route('/<project_id>/jobs', methods=['GET'])
+@blueprint.route('/<canonical_id>/jobs', methods=['GET'])
 @login_required
-def page_project_jobs(project_id, page: int = 1):
+def page_project_jobs(canonical_id :str, page :int = 1):
     params = public_params()
     params['page'] = 'projects'
     params['uri_page'] = 'project'
     params['account'] = current_user
-    project = Project(project_id=int(project_id))
+    project = Project(project_id=canonical_id)
     if not project.hydrate() or project.account_id != current_user.account_id:
         return abort(404)
 

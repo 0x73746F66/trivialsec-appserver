@@ -10,48 +10,19 @@
     </div>{% endraw %}
 </template>
 <section class="toast__container">
-    {% if warning %}
-    <div id="alert-warning" class="toast toast--active" role="alert" aria-live="assertive" aria-atomic="true">
+    {% set defaults = {'info': 'Information', 'success': 'Success', 'warning': 'Warning', 'error': 'Error'} %}
+    {% if toasts %}
+    {% for toast in toasts %}
+    {% set message_type = toast.type or 'info' %}
+    <div id="alert-{{ loop.index }}" class="toast toast--active toast--{{ message_type }}" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast__icon">
-            <img src="{{ asset_url }}/images/icon-warning-white.svg" alt />
+            <img src="{{ asset_url }}/images/icon-{{ message_type }}-white.svg" alt />
         </div>
         <div class="toast__content">
-            <h2>Information</h2>
-            <p class="alert">{{ warning }}</p>
+            <h2>{{ toast.heading | default(defaults[message_type]) }}</h2>
+            <p class="alert">{{ toast.message }}</p>
         </div>
     </div>
-    {% endif %}
-    {% if info %}
-    <div id="alert-info" class="toast toast--active" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast__icon">
-            <img src="{{ asset_url }}/images/icon-info-white.svg" alt />
-        </div>
-        <div class="toast__content">
-            <h2>Information</h2>
-            <p class="alert">{{ info }}</p>
-        </div>
-    </div>
-    {% endif %}
-    {% if error %}
-    <div id="alert-error" class="toast toast--active toast--warning" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast__icon">
-            <img src="{{ asset_url }}/images/icon-error-white.svg" alt />
-        </div>
-        <div class="toast__content">
-            <h2>Error</h2>
-            <p class="alert">{{ error }}</p>
-        </div>
-    </div>
-    {% endif %}
-    {% if success %}
-    <div id="alert-success" class="toast toast--active toast--success" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast__icon">    
-            <img src="{{ asset_url }}/images/icon-success-white.svg" alt />
-        </div>
-        <div class="toast__content">
-            <h2>Success</h2>
-            <p class="alert">{{ success }}</p>
-        </div>
-    </div>
+    {% endfor %}
     {% endif %}
 </section>

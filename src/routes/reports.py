@@ -13,9 +13,6 @@ def page_reports():
     params['page'] = 'reports'
     params['account'] = current_user
     params['js_includes'] = [
-        "websocket.min.js",
-        "utils.min.js",
-        "api.min.js",
         "app/reports.min.js"
     ]
     params['css_includes'] = [

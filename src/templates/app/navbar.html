@@ -26,14 +26,6 @@
     </div>
     <nav role="navigation" class="navigation-menu">
       <ul>
-        {% if roles.is_internal_member %}
-        <li class="nav-backend">
-          <a href="/backend/accounts">
-            <i class="icofont-arrow-left"></i>
-            <span>Backend</span>
-          </a>
-        </li>
-        {% endif %}
         {% if account.is_authenticated %}
         <li class="{% if page == 'dashboard' %}active {% endif %}nav-dashboard">
           <a href="/dashboard">

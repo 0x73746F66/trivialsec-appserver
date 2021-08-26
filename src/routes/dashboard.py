@@ -13,8 +13,6 @@ def page_dashboard():
     params['page'] = 'dashboard'
     params['account'] = current_user
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "app/dashboard.min.js"
     ]
     params['css_includes'] = [

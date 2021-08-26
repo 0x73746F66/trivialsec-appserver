@@ -16,9 +16,6 @@ def page_projects():
     params['page'] = 'projects'
     params['account'] = current_user
     params['js_includes'] = [
-        "websocket.min.js",
-        "utils.min.js",
-        "api.min.js",
         "app/projects.min.js"
     ]
     params['css_includes'] = [
@@ -36,6 +33,7 @@ def page_projects():
         project_names.append(project.name)
         project_arr.append({
             'project_id': project.project_id,
+            'canonical_id': project.canonical_id,
             'name': project.name,
             'domains': Domains().count([
                 ('parent_domain_id', None),

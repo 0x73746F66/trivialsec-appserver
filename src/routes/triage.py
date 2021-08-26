@@ -13,8 +13,6 @@ def page_triage():
     params['page'] = 'triage'
     params['account'] = current_user
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "app/triage.min.js"
     ]
     params['css_includes'] = [
@@ -35,8 +33,6 @@ def page_triage_unknown():
     params['page'] = 'triage'
     params['account'] = current_user
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "app/triage-unknown.min.js"
     ]
     params['css_includes'] = [

@@ -36,8 +36,6 @@ def confirmation_link(confirmation_hash :str):
     params['page'] = 'confirmation'
     params['page_title'] = 'Complete Registration'
     params['js_includes'] = [
-        "utils.min.js",
-        "api.min.js",
         "public/confirmation.min.js"
     ]
     params['css_includes'] = [
@@ -118,6 +116,13 @@ def login(auth_hash :str):
     params = public_params()
     params['page'] = 'login'
     params['page_title'] = 'Magic Link Login'
+    params['js_includes'] = [
+        "public/login.min.js"
+    ]
+    params['css_includes'] = [
+        "public/main.css",
+        "public/login.css"
+    ]
     params['auth_hash'] = auth_hash
     params['totp_message'] = messages.INFO_TOTP_GENERATION
     params['u2f_keys'] = []
