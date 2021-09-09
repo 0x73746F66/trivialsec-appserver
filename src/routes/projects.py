@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint
 from flask_login import current_user, login_required
-from trivialsec.models.domain import Domains
+from trivialsec.models.domain import DomainMonitoring
 from trivialsec.models.project import Projects
 from trivialsec.models.finding import Findings
 from templates import public_params
@@ -35,9 +35,7 @@ def page_projects():
             'project_id': project.project_id,
             'canonical_id': project.canonical_id,
             'name': project.name,
-            'domains': Domains().count([
-                ('parent_domain_id', None),
-                ('deleted', 0),
+            'domains': DomainMonitoring().count([
                 ('account_id', current_user.account_id),
                 ('project_id', project.project_id)
             ]),
@@ -68,15 +66,14 @@ def page_projects():
         })
     params['projects'] = project_arr
 
-    for domain in Domains().find_by([
+    for domain in DomainMonitoring().find_by([
             ('account_id', current_user.account_id),
-            ('deleted', 0),
         ],
         order_by=['created_at', 'DESC'],
         limit=1000,
         cache_key=f'domains/account_id/{current_user.account_id}'
         ):
-        domain_names.append(domain.name)
+        domain_names.append(domain.domain_name)
 
     params['datalists'] = [{
         'name': 'projects',
