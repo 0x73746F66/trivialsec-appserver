@@ -8,7 +8,9 @@
 <template id="tmpl-project-row">{% raw %}
     <tr data-project-id="{{ project_id }}" class="highlight">
         <td><div class="border info"></div></td>
-        <td>{{ project_name }}</td>
+        <td>
+            <a class="secondary" href="/project/{{ project_id }}">{{ project_name }}</a>
+        </td>
         <td title="Domains"><i class="icofont-globe"></i><div>1</div></td>
         <td><span title="High Severity Findings" class="label high">0</span></td>
         <td><span title="Medium Severity Findings" class="label medium">0</span></td>
@@ -50,7 +52,7 @@
                                 <div class="border {% if project.findings_high > 0 %}high{% elif project.findings_med > 0 %}med{% elif project.findings_low > 0 %}low{% else %}info{% endif %}"></div>
                             </td>
                             <td>
-                                <a href="/project/{{ project.canonical_id }}">{{ project.name }}</a>
+                                <a class="secondary" href="/project/{{ project.canonical_id }}">{{ project.name }}</a>
                             </td>
                             <td title="Domains"><div>{{ project.domains }}</div></td>
                             <td><span title="High Severity Findings" class="label high">{{ project.findings_high }}</span></td>
