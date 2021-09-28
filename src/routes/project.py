@@ -88,7 +88,7 @@ def page_project(canonical_id :str, page: int = 1):
 
     for domain_record in DomainMonitoring().find_by(search_filter, limit=page_size, offset=offset):
         domain = Domain()
-        domain.hydrate(query_string=f'domain_name:"{domain_record.domain_name}"')
+        domain.hydrate()
         domain_dict = domain.get_doc()
         domain_dict['domain_monitoring_id'] = domain_record.domain_monitoring_id
         domain_dict['schedule'] = domain_record.schedule

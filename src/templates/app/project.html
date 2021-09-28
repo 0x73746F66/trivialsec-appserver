@@ -32,7 +32,7 @@
                             </thead>
                             <tbody>
                             {% for domain in project.domains %}
-                            <tr data-domain-id="{{ domain.domain_id }}" class="{% if not domain.http_last_checked %}disabled-events{% endif %}">
+                            <tr data-domain-id="{{ domain.domain_monitoring_id }}" class="{% if not domain.http_last_checked %}disabled-events{% endif %}">
                                 <td class="click-through" title="{% if domain.http_code %}HTTP {{ domain.http_code.value }}{% endif %}">
                                     {% if domain.http_code %}
                                     <span class="pip http-{{ domain.http_code.value|http_code_group }}">{{ domain.http_code.value }}</span>
