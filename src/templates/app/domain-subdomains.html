@@ -28,9 +28,9 @@
                             <tbody>
                             {% for domain in domain.subdomains %}
                             <tr data-domain-id="{{ domain.domain_id }}" class="{% if not domain.http_last_checked %}disabled-events{% endif %}">
-                                <td width="10px" class="click-through" title="{% if domain.http_code %}HTTP {{ domain.http_code.value }}{% endif %}">
+                                <td width="10px" class="click-through" title="{% if domain.http_code %}HTTP {{ domain.http_status }}{% endif %}">
                                     {% if domain.http_code %}
-                                    <span class="pip http-{{ domain.http_code.value|http_code_group }}">{{ domain.http_code.value }}</span>
+                                    <span class="pip http-{{ domain.http_status|http_code_group }}">{{ domain.http_status }}</span>
                                     {% else %}
                                     <span class="pip"></span>
                                     {% endif %}

@@ -1,6 +1,5 @@
 from flask import render_template, Blueprint, abort
 from flask_login import current_user, login_required
-from trivialsec.helpers.config import config
 from trivialsec.models.domain import Domain, DomainMonitoring
 from trivialsec.models.job_run import JobRuns
 from trivialsec.models.project import Project
@@ -88,6 +87,7 @@ def page_project(canonical_id :str, page: int = 1):
 
     for domain_record in DomainMonitoring().find_by(search_filter, limit=page_size, offset=offset):
         domain = Domain()
+        domain.domain_name = domain_record.domain_name
         domain.hydrate()
         domain_dict = domain.get_doc()
         domain_dict['domain_monitoring_id'] = domain_record.domain_monitoring_id
@@ -102,7 +102,7 @@ def page_project(canonical_id :str, page: int = 1):
     params['project'] = project_dict
     params['page_title'] = project.name
     params['toasts'] = []
-    if len(params['project']['domains']) == 1:
+    if len(params['project']['domains']) == 1 and params['project']['domains'][0].get('assessed_at') is None:
         params['toasts'].append({
             'type': 'warning',
             'heading': 'Loading',

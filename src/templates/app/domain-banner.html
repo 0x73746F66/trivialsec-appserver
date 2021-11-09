@@ -14,7 +14,7 @@ findings_chart_config = {{ domain.findings_severity }};
     <div class="banner-sections">
         <div class="heading-area">
             <div class="heading">
-                <i class="icofont-globe"></i> {{ domain.name }} {% if domain.http_code %}<span class="pip http-{{ domain.http_code.value|http_code_group }}"{% if domain.http_code.data %} title="{{ domain.http_code.data }}"{% endif %}>{{ domain.http_code.value }}</span>{% else %}<span class="pip"></span>{% endif %}
+                <i class="icofont-globe"></i> {{ domain.name }} {% if domain.http_status %}<span class="pip http-{{ domain.http_status|http_code_group }}"{% if domain.http_status.data %} title="{{ domain.http_status.data }}"{% endif %}>{{ domain.http_status }}</span>{% else %}<span class="pip"></span>{% endif %}
             </div>
             <div class="sub-heading">Source: {{ domain.source }}{% if domain.dns_registered and domain.dns_registered.value %} | Domain Registered{% else %} | Domain Unregistered{% endif %}</div>
         </div>        

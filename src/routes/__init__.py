@@ -100,7 +100,7 @@ def after_request(response):
                 "frame-src https://www.google.com https://recaptcha.google.com",
                 "form-action 'none'",
                 "frame-ancestors 'none'",
-                "style-src-attr 'sha256-pILX+5FGCpLRHvNBgtABIdSMmytrYudGxJBUYXY1t0s=' 'unsafe-hashes'",
+                "style-src-attr 'sha256-pILX+5FGCpLRHvNBgtABIdSMmytrYudGxJBUYXY1t0s=' 'sha256-wK4n87cEV+DaOorOySn50J1N+etqDZQSmu9zgJp4nu4=' 'unsafe-hashes'",
                 f"connect-src 'self' {allowed_origin_api} {allowed_origin_socket}",
                 f"img-src 'self' data: {allowed_origin_assets}",
                 f"script-src https://www.gstatic.com https://www.google.com {allowed_origin_assets}",

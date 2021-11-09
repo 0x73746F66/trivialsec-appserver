@@ -1,6 +1,6 @@
 from datetime import datetime
 from urllib.parse import urlencode
-from flask import request, session, redirect, url_for, render_template, abort, jsonify, Blueprint, current_app as app
+from flask import request, session, redirect, url_for, render_template, abort, jsonify, Response, Blueprint, current_app as app
 from flask_login import current_user, logout_user, login_user, login_required
 from trivialsec.helpers import messages
 from trivialsec.helpers.config import config
@@ -350,7 +350,20 @@ def logout():
     except Exception:
         pass
 
-    return redirect(config.get_app().get("site_url"))
+    location = config.get_app().get("site_url")
+    response = Response(
+        '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n'
+        "<title>Logout</title>\n"
+        "<h1>Log out success</h1>\n"
+        "<p>You should be redirected automatically to target URL: "
+        f'<a href="{location}">{location}</a>. If'
+        " not click the link.",
+        302,
+        mimetype="text/html",
+    )
+    response.headers["Location"] = location
+    response.headers["Clear-Site-Data"] = "*"
+    return redirect(location=location, Response=response)
 
 @control_timing_attacks(seconds=2)
 @blueprint.route('/recovery', methods=['GET'])
