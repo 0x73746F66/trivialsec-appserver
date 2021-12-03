@@ -1,11 +1,12 @@
 from os import getenv
 import multiprocessing
-from glob import glob
+from dotenv import dotenv_values
 
+env_vars = dotenv_values(".env")
 num_cpu :int = multiprocessing.cpu_count()
 wsgi_app :str = 'app:create_app()'
-proc_name :str = getenv('APP_NAME', 'appserver')
-loglevel :str = getenv('LOG_LEVEL', 'ERROR')
+proc_name :str = getenv('APP_NAME', env_vars.get('APP_NAME', 'trivialsec'))
+loglevel :str = getenv('LOG_LEVEL', env_vars.get('LOG_LEVEL', 'ERROR'))
 logconfig_dict = {
     'version': 1,
     'formatters': {
@@ -21,18 +22,30 @@ logconfig_dict = {
             'level': loglevel,
             'formatter': 'default_formatter',
         },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': loglevel,
+            'maxBytes': 1024*1024,
+            'backupCount': 5,
+            'filename': '/var/log/gunicorn/application.log',
+            'formatter': 'default_formatter'
+        },
     },
     'loggers': {
+        'logs': {
+            'handlers': ['file', 'console'],
+            'level': loglevel,
+            'propagate': True,
+        }
     },
     'root': {
-        'level': 'DEBUG',
-        'propagate': False,
-        'handlers': ['console']
+        'level': loglevel,
+        'propagate': True,
+        'handlers': ['file', 'console']
     },
     'incremental': False,
     'disable_existing_loggers': False,
 }
-daemon :bool = False
 user :str = 'trivialsec'
 group :str = 'trivialsec'
 chdir :str = '/srv/app'
@@ -41,7 +54,7 @@ strip_header_spaces :bool = True
 accesslog :str = '/var/log/gunicorn/access.log'
 disable_redirect_access_to_syslog :bool = True
 errorlog :str = '/var/log/gunicorn/error.log'
-bind :str = f"0.0.0.0:{getenv('FLASK_RUN_PORT', '5000')}"
+bind :str = f"0.0.0.0:{getenv('FLASK_RUN_PORT', env_vars.get('FLASK_RUN_PORT', '5000'))}"
 workers :int = num_cpu * 2 + 1
 threads :int = num_cpu * 2
 timeout :int = 20
@@ -49,8 +62,7 @@ graceful_timeout :int = 30
 keepalive :int = 2
 limit_request_line :int = 4094
 limit_request_field_size :int = 8190
-reload :bool = getenv('FLASK_DEBUG') == '1'
-reload_extra_files = glob('*.html')
+reload :bool = getenv('FLASK_DEBUG', env_vars.get('FLASK_DEBUG', '0')) == '1'
 reload_engine :str = 'poll'
 preload_app :bool = True
 
@@ -82,7 +94,7 @@ preload_app :bool = True
 #     print('pre_exec gunicorn')
 
 # def pre_request(worker, req):
-#     worker.log.debug(f"{req.method} {req.path}")
+#     worker.log.info(f"{req.method} {req.path}")
 
 # def post_request(worker, req, environ, resp):
 #     print('post_request gunicorn')
