@@ -75,5 +75,3 @@ def webhook_received(event_type :str, stripe_data :dict) -> int:
             default_payment_method=stripe_data.get('default_payment_method'),
             stripe_plan_data=stripe_data['items']['data'][0]['plan']
         )
-
-    return None

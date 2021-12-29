@@ -1,7 +1,7 @@
 from datetime import datetime
 from gunicorn.glogging import logging
 from flask import Response, request, redirect, current_app as app
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager
 from trivialsec.models.member import Member
 from trivialsec.models.member_mfa import MemberMfa, MemberMfas
 from trivialsec.models.account import Account
@@ -14,17 +14,12 @@ logger = logging.getLogger(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-@app.teardown_request
-def teardown_request_func(error: Exception = None):
-    if error:
-        logger.error(error)
-
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return redirect(config.get_app().get("site_url"), code=401)
 
 @login_manager.user_loader
-def load_user(user_id: int) -> Member:
+def load_user(user_id: int):
     for unauthenticated_path in config.public_endpoints:
         if request.path.startswith(unauthenticated_path):
             return None

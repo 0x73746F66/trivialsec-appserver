@@ -371,14 +371,22 @@ def account_recovery():
     params = public_params()
     params['page'] = 'recovery'
     params['page_title'] = 'Account Recovery'
+    params['js_includes'] = [
+        "public/recovery.min.js"
+    ]
+    params['css_includes'] = [
+        "public/main.css",
+        "public/recovery.css"
+    ]
+
     return render_template('public/recovery.html', **params)
 
 @blueprint.route('/invitation-request/approve/<invitation_hash>', methods=['GET'])
 @login_required
 def account_recovery_accept(invitation_hash :str):
     params = public_params()
-    params['page'] = 'recovery'
-    params['page_title'] = 'Account Recovery'
+    params['page'] = 'invitation'
+    params['page_title'] = 'Invitation Request'
     try:
         params['invitation_hash'] = invitation_hash
         invitee = Invitation()

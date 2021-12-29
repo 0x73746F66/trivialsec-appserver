@@ -1,14 +1,11 @@
 from os import getenv
-import redis
 from flask import Flask
-from flask_sessionstore import Session
+from flask_session import Session
 from werkzeug.debug import DebuggedApplication
 from werkzeug.middleware.proxy_fix import ProxyFix
 from trivialsec.helpers.config import config
 from templates import from_json_filter, to_json_filter, http_code_group_filter
 
-
-app = Flask(__name__, root_path='/srv/app', instance_relative_config=False)
 
 def create_app() -> Flask:
     app = Flask(__name__, root_path='/srv/app', instance_relative_config=False)
@@ -16,7 +13,7 @@ def create_app() -> Flask:
         PREFERRED_URL_SCHEME='https',
         SECRET_KEY=config.session_secret_key,
         SESSION_TYPE='redis',
-        SESSION_USE_SIGNER=True,
+        SESSION_USE_SIGNER=False,
         SESSION_REDIS=config.redis_client
     )
 
@@ -29,6 +26,7 @@ def create_app() -> Flask:
 
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
     Session(app)
+
     with app.app_context():
         from routes.root import blueprint as public_blueprint
         from routes.account import blueprint as account_blueprint

@@ -7,6 +7,7 @@ from trivialsec.services.roles import is_internal_member, is_audit_member, is_bi
 
 def public_params() -> dict:
     conf = {
+        'account': {'account': {}},
         'app_version': config.app_version,
         'recaptcha_site_key': config.recaptcha_site_key,
         'archive_bucket': config.aws.get('public_bucket'),
